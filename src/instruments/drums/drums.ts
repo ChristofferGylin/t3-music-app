@@ -1,17 +1,11 @@
 import { Volume, Sampler, Player } from "tone";
 import { Time } from "tone/build/esm/core/type/Units";
 import { kits } from "./kits";
+import ChannelType from "~/types/ChannelType";
 
 export type DrumsType = {
   masterVolume: Volume;
-  channels: {
-    name: string;
-    sampler: Sampler;
-    release: Time;
-    attack: Time;
-    volume: number;
-    play: (time?: Time) => void;
-  }[];
+  channels: ChannelType[];
 };
 
 const drums = function (): DrumsType {

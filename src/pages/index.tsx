@@ -7,6 +7,7 @@ import * as Tone from "tone";
 import drums, { DrumsType } from "~/instruments/drums/drums";
 
 import { api } from "~/utils/api";
+import Drums from "~/components/drums/Drums";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
@@ -34,18 +35,7 @@ export default function Home() {
     <>
       <main className=" flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          {drummachine.current?.channels.map((channel) => {
-            return (
-              <button
-                className="mx-4 my-2 border"
-                onClick={() => {
-                  channel.play();
-                }}
-              >
-                {channel.name}
-              </button>
-            );
-          })}
+          {drummachine.current && <Drums drummachine={drummachine.current} />}
         </div>
       </main>
     </>
