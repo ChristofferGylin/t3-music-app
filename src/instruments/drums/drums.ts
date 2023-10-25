@@ -36,7 +36,7 @@ const drums = function (): DrumsType {
 
   return {
     masterVolume: new Volume(-10).toDestination(),
-    channels: channels,
+    channels: channels || [],
   };
 };
 
