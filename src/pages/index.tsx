@@ -8,35 +8,19 @@ import drums, { DrumsType } from "~/instruments/drums/drums";
 
 import { api } from "~/utils/api";
 import Drums from "~/components/drums/Drums";
+import { Scene } from "~/types/Scene";
+import { useContext } from "react";
+import { AppContext, ContextType } from "~/context";
+import ScenesContainer from "~/components/ScenesContainer";
+
+type InstrumentsType = Array<DrumsType>;
 
 export default function Home() {
-  const [loaded, setLoaded] = useState(false);
-  const drummachine = useRef<DrumsType | null>(null);
-
-  const pattern = createPatternDrums();
-
-  const loadApp = async () => {
-    await Tone.start();
-    drummachine.current = drums();
-    setLoaded(true);
-  };
-
-  if (!loaded) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <button onClick={loadApp} className="border border-slate-500 px-6 py-2">
-          Load Drum Machine
-        </button>
-      </div>
-    );
-  }
-
+  const { scenesState } = useContext(AppContext) as ContextType;
   return (
     <>
-      <main className=" flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          {drummachine.current && <Drums drummachine={drummachine.current} />}
-        </div>
+      <main className=" flex min-h-screen flex-col bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        <ScenesContainer />
       </main>
     </>
   );

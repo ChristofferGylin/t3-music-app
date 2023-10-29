@@ -1,8 +1,8 @@
 export type PatternDrums = {
-  id: string;
+  type: "drums";
   pattern: { start: number[] }[];
 };
 export type PatternKeys = {
-  id: string;
+  type: "keys";
   pattern: { start: string[]; stop: string[] }[];
 };

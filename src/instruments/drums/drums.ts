@@ -4,8 +4,11 @@ import { kits } from "./kits";
 import ChannelType from "~/types/ChannelType";
 
 export type DrumsType = {
+  currentStep: number;
   masterVolume: Volume;
+  name: string;
   channels: ChannelType[];
+  type: "drums";
 };
 
 const drums = function (): DrumsType {
@@ -29,8 +32,11 @@ const drums = function (): DrumsType {
   });
 
   return {
+    currentStep: 0,
+    name: "drums",
     masterVolume: new Volume(-10).toDestination(),
     channels: channels || [],
+    type: "drums",
   };
 };
 
