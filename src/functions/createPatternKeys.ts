@@ -1,9 +1,8 @@
 import { PatternKeys } from "~/types/Pattern";
-import { v4 as uuid } from "uuid";
 
 const createPatternDrums = (): PatternKeys => {
   const pattern: PatternKeys = {
-    id: uuid(),
+    type: "keys",
     pattern: [],
   };
 

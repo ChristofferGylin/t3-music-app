@@ -7,7 +7,6 @@ import TransportControls from "./TransportControls";
 
 const Header = () => {
   const [loaded, setLoaded] = useState(false);
-  //const [pattern, setPattern] = useState(createPatternDrums());
   const { instruments, scenes, loop, currentScene, nextScene, newScene } =
     useContext(AppContext) as ContextType;
 
@@ -73,7 +72,7 @@ const Header = () => {
             }
           }
         } else {
-          instruments.current[i].currentStep++;
+          instruments.current[i]!.currentStep++;
         }
       }
     }
