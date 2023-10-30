@@ -4,6 +4,7 @@ const createPatternDrums = (): PatternDrums => {
   const pattern: PatternDrums = {
     type: "drums",
     pattern: [],
+    resolution: 16,
   };
 
   for (let i = 0; i < 64; i++) {
