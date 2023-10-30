@@ -7,8 +7,15 @@ import TransportControls from "./TransportControls";
 
 const Header = () => {
   const [loaded, setLoaded] = useState(false);
-  const { instruments, scenes, loop, currentScene, nextScene, newScene } =
-    useContext(AppContext) as ContextType;
+  const {
+    instruments,
+    scenes,
+    loop,
+    currentScene,
+    nextScene,
+    newScene,
+    newInstrument,
+  } = useContext(AppContext) as ContextType;
 
   const repeatFunction = (time: Time) => {
     if (instruments.current !== null && instruments.current !== undefined) {
@@ -81,9 +88,8 @@ const Header = () => {
   const loadApp = async () => {
     await Tone.start();
     instruments.current.push(drums());
-    newScene();
-    newScene();
-    newScene();
+    //newScene();
+    newInstrument("drums");
     Tone.Transport.scheduleRepeat(repeatFunction, "64n");
     setLoaded(true);
   };

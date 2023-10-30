@@ -1,6 +1,7 @@
 import { TfiLoop } from "react-icons/tfi";
 import { AiFillStepBackward } from "react-icons/ai";
 import { BsStopFill } from "react-icons/bs";
+import { GiBrainDump } from "react-icons/gi";
 import TransportButton from "./TransportButton";
 import { AppContext, ContextType } from "~/context";
 import { useContext, useState } from "react";
@@ -8,9 +9,15 @@ import * as Tone from "tone";
 import { BsFillPlayFill } from "react-icons/bs";
 
 const TransportControls = () => {
-  const { loopState, toggleLoop, rewind } = useContext(
-    AppContext,
-  ) as ContextType;
+  const {
+    loopState,
+    toggleLoop,
+    rewind,
+    instruments,
+    instrumentsState,
+    scenes,
+    scenesState,
+  } = useContext(AppContext) as ContextType;
   const [started, setStarted] = useState(false);
 
   const handleStart = () => {
@@ -50,6 +57,16 @@ const TransportControls = () => {
         callback={handleStart}
       />
       <TransportButton Icon={TfiLoop} state={loopState} callback={toggleLoop} />
+      <TransportButton
+        Icon={GiBrainDump}
+        state={false}
+        callback={() => {
+          console.log("scenes:", scenes);
+          console.log("scenesState:", scenesState);
+          console.log("instruments:", instruments);
+          console.log("instrumentsState:", instrumentsState);
+        }}
+      />
     </div>
   );
 };

@@ -1,7 +1,4 @@
-type KitsType = {
-  title: string;
-  url: string;
-}[][];
+import { KitsType } from "~/types/KitsType";
 
 export const kits: KitsType = [
   [
