@@ -95,7 +95,7 @@ const Header = () => {
   };
 
   return (
-    <nav className="flex items-center justify-center bg-slate-800 p-1">
+    <nav className="fixed right-0 top-0 flex h-14 w-full items-center justify-center bg-slate-800 p-1">
       {loaded ? (
         <TransportControls />
       ) : (
