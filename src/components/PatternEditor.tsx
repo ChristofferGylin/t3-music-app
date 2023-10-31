@@ -1,34 +1,27 @@
 import { DrumsType } from "~/instruments/drums/drums";
 import { PatternDrums, PatternKeys } from "~/types/Pattern";
+import { useContext } from "react";
+import { AppContext, ContextType } from "~/context";
+import { EditNote } from "~/types/EditNote";
 
 type PatternEditorProps = {
   instrument: DrumsType;
   pattern: PatternDrums | PatternKeys;
+  sceneIndex: number;
+  instrumentIndex: number;
 };
 
-const PatternEditor = ({ instrument, pattern }: PatternEditorProps) => {
-  const addNote = () => {
-    console.log("add note");
-  };
-  const deleteNote = () => {
-    console.log("delete note");
-  };
+const PatternEditor = ({
+  instrument,
+  pattern,
+  sceneIndex,
+  instrumentIndex,
+}: PatternEditorProps) => {
+  const { addNote, deleteNote } = useContext(AppContext) as ContextType;
 
   const colorActive = "bg-green-400";
   const colorInactive = "bg-slate-700";
-  let divider = 16;
 
-  switch (pattern.resolution) {
-    case 16:
-      divider = 4;
-      break;
-
-    case 32:
-      divider = 2;
-      break;
-  }
-
-  console.log(pattern);
   const things = [];
 
   for (let i = 0; i < 176; i++) {
@@ -52,18 +45,29 @@ const PatternEditor = ({ instrument, pattern }: PatternEditorProps) => {
           )
             return;
 
-          console.log(`${stepIndex}`);
           let bgColor;
-          let callback;
+          let callback: (data: EditNote) => void;
           const elements = [];
 
           for (let i = 0; i < instrument.channels.length; i++) {
+            const editNoteArgs: EditNote = {
+              instrument: instrumentIndex,
+              type: "drums",
+              step: stepIndex,
+              note: i,
+              scene: sceneIndex,
+            };
+
             if (step.start.filter((trig) => trig === i).length > 0) {
               bgColor = colorActive;
-              callback = deleteNote;
+              callback = () => {
+                deleteNote(editNoteArgs);
+              };
             } else {
               bgColor = colorInactive;
-              callback = addNote;
+              callback = () => {
+                addNote(editNoteArgs);
+              };
             }
 
             elements.push(

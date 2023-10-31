@@ -9,11 +9,10 @@ import drums, { DrumsType } from "~/instruments/drums/drums";
 import { Scene } from "~/types/Scene";
 import { v4 as uuid } from "uuid";
 import createPatternDrums from "./functions/createPatternDrums";
-import createPatternDrums2 from "./functions/createPatternDrums2";
 import { kits } from "./instruments/drums/kits";
 import { InstrumentStateDrumsType } from "./types/InstrumentStateType";
 import { KitsType } from "./types/KitsType";
-import createPatternDrums3 from "./functions/createPatternDrums3";
+import { EditNote } from "./types/EditNote";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -31,6 +30,8 @@ export type ContextType = {
   nextScene: () => void;
   newScene: () => void;
   rewind: () => void;
+  addNote: (data: EditNote) => void;
+  deleteNote: (data: EditNote) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -40,11 +41,9 @@ type InstrumentsType = Array<DrumsType>;
 const Context = ({ children }: { children: ReactNode }) => {
   const [scenesState, setScenesState] = useState<Scene[]>([
     { id: uuid(), patterns: [createPatternDrums()] },
-    { id: uuid(), patterns: [createPatternDrums2()] },
   ]);
   const scenes = useRef<Scene[]>([
     { id: uuid(), patterns: [createPatternDrums()] },
-    { id: uuid(), patterns: [createPatternDrums2()] },
   ]);
   const instruments = useRef<InstrumentsType>([]);
   const [instrumentsState, setInstrumentsState] = useState<
@@ -76,7 +75,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           return [...old, newDrumsState];
         });
         scenes.current.forEach((scene) => {
-          scene.patterns.push(createPatternDrums3());
+          scene.patterns.push(createPatternDrums());
         });
         setScenesState(scenes.current);
 
@@ -89,7 +88,7 @@ const Context = ({ children }: { children: ReactNode }) => {
 
     for (let i = 0; i < instruments.current.length; i++) {
       if (instruments.current[i]?.type === "drums") {
-        newScene.patterns.push(createPatternDrums2());
+        newScene.patterns.push(createPatternDrums());
       }
     }
 
@@ -102,6 +101,58 @@ const Context = ({ children }: { children: ReactNode }) => {
 
   const updateScenes = (update: Scene[]) => {
     setScenesState(update);
+  };
+
+  const addNote = (data: EditNote) => {
+    console.log("add note data:", data);
+    if (data.type === "drums") {
+      scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
+        data.step
+      ]?.start.push(data.note);
+
+      setScenesState((old) => {
+        const newState = [...old];
+
+        newState[data.scene]?.patterns[data.instrument]?.pattern[
+          data.step
+        ]?.start.push(data.note);
+
+        return newState;
+      });
+    }
+  };
+
+  const deleteNote = (data: EditNote) => {
+    console.log("delete note data:", data);
+    if (data.type === "drums") {
+      scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
+        data.step
+      ]?.start.forEach((note, index) => {
+        if (note === data.note) {
+          scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
+            data.step
+          ]?.start.splice(index, 1);
+        }
+      });
+
+      setScenesState((old) => {
+        const newState = [...old];
+
+        newState[data.scene]?.patterns[data.instrument]?.pattern[
+          data.step
+        ]?.start.forEach((note, index) => {
+          if (note === data.note) {
+            newState[data.scene]?.patterns[data.instrument]?.pattern[
+              data.step
+            ]?.start.splice(index, 1);
+          }
+        });
+
+        return newState;
+      });
+    }
+
+    setScenesState(scenes.current);
   };
 
   const rewind = () => {
@@ -152,6 +203,8 @@ const Context = ({ children }: { children: ReactNode }) => {
         newScene,
         loopState,
         rewind,
+        addNote,
+        deleteNote,
       }}
     >
       {children}

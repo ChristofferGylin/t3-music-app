@@ -4,6 +4,7 @@ import PatternEditor from "~/components/PatternEditor";
 import { AppContext, ContextType } from "~/context";
 
 const Editor = () => {
+  console.log("render Editor Page");
   const { instruments, scenesState } = useContext(AppContext) as ContextType;
   const router = useRouter();
 
@@ -25,7 +26,12 @@ const Editor = () => {
 
   return (
     <div>
-      <PatternEditor instrument={instrument} pattern={pattern} />
+      <PatternEditor
+        instrument={instrument}
+        pattern={pattern}
+        sceneIndex={sceneIndex}
+        instrumentIndex={instrumentIndex}
+      />
     </div>
   );
 };
