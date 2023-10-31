@@ -9,6 +9,7 @@ export type DrumsType = {
   name: string;
   channels: ChannelType[];
   type: "drums";
+  modelName: string;
 };
 
 const drums = function (): DrumsType {
@@ -37,6 +38,7 @@ const drums = function (): DrumsType {
     masterVolume: new Volume(-10).toDestination(),
     channels: channels || [],
     type: "drums",
+    modelName: "Drums",
   };
 };
 

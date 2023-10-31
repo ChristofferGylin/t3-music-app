@@ -1,7 +1,9 @@
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import PatternEditor from "~/components/PatternEditor";
+import Drums from "~/components/drums/Drums";
 import { AppContext, ContextType } from "~/context";
+import { DrumsType } from "~/instruments/drums/drums";
 
 const Editor = () => {
   console.log("render Editor Page");
@@ -24,6 +26,17 @@ const Editor = () => {
     return;
   }
 
+  let InstrumentComponent;
+
+  switch (instrument.modelName) {
+    case "Drums":
+      InstrumentComponent = Drums;
+      break;
+
+    default:
+      InstrumentComponent = Drums;
+  }
+
   return (
     <div>
       <PatternEditor
@@ -32,6 +45,7 @@ const Editor = () => {
         pattern={pattern}
         instrumentIndex={instrumentIndex}
       />
+      {<InstrumentComponent drummachine={instrument} />}
     </div>
   );
 };
