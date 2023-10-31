@@ -3,6 +3,7 @@ import { PatternDrums, PatternKeys } from "~/types/Pattern";
 import { useContext } from "react";
 import { AppContext, ContextType } from "~/context";
 import { EditNote } from "~/types/EditNote";
+import { kits } from "~/instruments/drums/kits";
 
 type PatternEditorProps = {
   instrument: DrumsType;
@@ -30,58 +31,76 @@ const PatternEditor = ({
 
   if (pattern.type === "drums") {
     return (
-      <ul className="grid w-full grid-flow-col grid-rows-11 justify-start gap-0 bg-blue-950">
-        {pattern.pattern.map((step, stepIndex) => {
-          if (
-            pattern.resolution === 16 &&
-            stepIndex % 4 !== 0 &&
-            stepIndex !== 0
-          )
-            return;
-          if (
-            pattern.resolution === 32 &&
-            stepIndex % 2 !== 0 &&
-            stepIndex !== 0
-          )
-            return;
+      <div className="flex w-full overflow-auto bg-slate-700">
+        <ul className="sticky left-0 top-0 grid grid-flow-col grid-rows-11 justify-start gap-0 bg-blue-950">
+          {kits[0]?.map((drum, index) => {
+            return (
+              <li
+                onClick={() => {
+                  instrument.channels[index]?.play();
+                }}
+                key={`drumLabel#${index}`}
+                className={`flex h-8 w-24 items-center justify-start border-b border-r border-slate-600 bg-slate-800 px-2 text-xs font-light uppercase tracking-wide text-slate-300`}
+              >
+                {drum.title}
+              </li>
+            );
+          })}
+        </ul>
+        <ul className="grid grid-flow-col grid-rows-11 justify-start gap-0 bg-blue-950">
+          {pattern.pattern.map((step, stepIndex) => {
+            if (
+              pattern.resolution === 16 &&
+              stepIndex % 4 !== 0 &&
+              stepIndex !== 0
+            )
+              return;
+            if (
+              pattern.resolution === 32 &&
+              stepIndex % 2 !== 0 &&
+              stepIndex !== 0
+            )
+              return;
 
-          let bgColor;
-          let callback: (data: EditNote) => void;
-          const elements = [];
+            let bgColor;
+            let callback: () => void;
+            const elements = [];
 
-          for (let i = 0; i < instrument.channels.length; i++) {
-            const editNoteArgs: EditNote = {
-              instrument: instrumentIndex,
-              type: "drums",
-              step: stepIndex,
-              note: i,
-              scene: sceneIndex,
-            };
-
-            if (step.start.filter((trig) => trig === i).length > 0) {
-              bgColor = colorActive;
-              callback = () => {
-                deleteNote(editNoteArgs);
+            for (let i = 0; i < instrument.channels.length; i++) {
+              const editNoteArgs: EditNote = {
+                instrument: instrumentIndex,
+                type: "drums",
+                step: stepIndex,
+                note: i,
+                scene: sceneIndex,
               };
-            } else {
-              bgColor = colorInactive;
-              callback = () => {
-                addNote(editNoteArgs);
-              };
+
+              if (step.start.filter((trig) => trig === i).length > 0) {
+                bgColor = colorActive;
+                callback = () => {
+                  deleteNote(editNoteArgs);
+                };
+              } else {
+                bgColor = colorInactive;
+                callback = () => {
+                  instrument.channels[i]?.play();
+                  addNote(editNoteArgs);
+                };
+              }
+
+              elements.push(
+                <li
+                  onClick={callback}
+                  key={`step#${stepIndex}sample${i}`}
+                  className={`flex h-8 w-12 items-center justify-center border-b border-r border-slate-600 ${bgColor}`}
+                ></li>,
+              );
             }
 
-            elements.push(
-              <li
-                onClick={callback}
-                key={`step#${stepIndex}sample${i}`}
-                className={`flex h-6 w-12 items-center justify-center border-b border-r border-slate-600 ${bgColor}`}
-              ></li>,
-            );
-          }
-
-          return elements;
-        })}
-      </ul>
+            return elements;
+          })}
+        </ul>
+      </div>
     );
   } else {
     return (
