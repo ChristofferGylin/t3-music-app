@@ -28,8 +28,8 @@ const Editor = () => {
     <div>
       <PatternEditor
         instrument={instrument}
-        pattern={pattern}
         sceneIndex={sceneIndex}
+        pattern={pattern}
         instrumentIndex={instrumentIndex}
       />
     </div>

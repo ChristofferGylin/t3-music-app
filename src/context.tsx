@@ -151,8 +151,6 @@ const Context = ({ children }: { children: ReactNode }) => {
         return newState;
       });
     }
-
-    setScenesState(scenes.current);
   };
 
   const rewind = () => {
