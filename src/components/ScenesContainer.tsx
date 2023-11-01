@@ -29,13 +29,6 @@ const ScenesContainer = () => {
         Icon={AiOutlinePlusCircle}
         callback={newScene}
       />
-      <IconButton
-        state={false}
-        Icon={PiPianoKeysFill}
-        callback={() => {
-          newInstrument("drums");
-        }}
-      />
     </div>
   );
 };

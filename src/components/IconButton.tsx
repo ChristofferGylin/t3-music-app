@@ -7,7 +7,7 @@ type IconButtonProps = {
 };
 
 const IconButton = ({ Icon, callback, state }: IconButtonProps) => {
-  let iconColor = "fill-slate-300";
+  let iconColor = "fill-slate-300 hover:fill-slate-200";
 
   if (state) {
     iconColor = "fill-green-400";
@@ -15,7 +15,7 @@ const IconButton = ({ Icon, callback, state }: IconButtonProps) => {
 
   return (
     <button className="px-4 py-2" onClick={callback}>
-      <Icon className={`text-2xl ${iconColor} hover:fill-slate-200`} />
+      <Icon className={`text-2xl ${iconColor}`} />
     </button>
   );
 };

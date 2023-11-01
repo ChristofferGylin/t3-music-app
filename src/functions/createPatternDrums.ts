@@ -1,7 +1,5 @@
 import { PatternDrums } from "~/types/Pattern";
 
-type PatternType = { start: number[] };
-
 const createPatternDrums = (): PatternDrums => {
   const pattern: PatternDrums = {
     type: "drums",
@@ -9,12 +7,10 @@ const createPatternDrums = (): PatternDrums => {
     resolution: 16,
   };
 
-  const patternTriggers: PatternType = {
-    start: [],
-  };
-
   for (let i = 0; i < 64; i++) {
-    pattern.pattern.push(patternTriggers);
+    pattern.pattern.push({
+      start: [],
+    });
   }
 
   return pattern;

@@ -1,3 +1,4 @@
+import * as Tone from "tone";
 import React, {
   MutableRefObject,
   ReactNode,
@@ -24,7 +25,7 @@ export type ContextType = {
   toggleLoop: () => void;
   currentScene: MutableRefObject<number>;
   currentSceneState: number;
-  updateCurrentScene: (update: number) => void;
+  setSceneAndPlay: (update: number) => void;
   nextScene: () => void;
   newScene: () => void;
   rewind: () => void;
@@ -158,9 +159,14 @@ const Context = ({ children }: { children: ReactNode }) => {
     loop.current = !loop.current;
   };
 
-  const updateCurrentScene = (update: number) => {
+  const setSceneAndPlay = (update: number) => {
     currentScene.current = update;
     setCurrentSceneState(update);
+    setLoopState(true);
+    loop.current = true;
+    rewind();
+    if (Tone.Transport.state === "paused" || Tone.Transport.state === "stopped")
+      Tone.Transport.start();
   };
 
   const nextScene = () => {
@@ -185,7 +191,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         toggleLoop,
         currentScene,
         currentSceneState,
-        updateCurrentScene,
+        setSceneAndPlay,
         nextScene,
         newScene,
         loopState,
