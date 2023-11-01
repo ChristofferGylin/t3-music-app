@@ -4,6 +4,7 @@ import SceneComponent from "./SceneComponent";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { PiPianoKeysFill } from "react-icons/pi";
 import TransportButton from "./TransportButton";
+import IconButton from "./IconButton";
 
 const ScenesContainer = () => {
   const { scenesState, newScene, newInstrument } = useContext(
@@ -22,12 +23,13 @@ const ScenesContainer = () => {
           );
         })}
       </ul>
-      <TransportButton
+
+      <IconButton
         state={false}
         Icon={AiOutlinePlusCircle}
         callback={newScene}
       />
-      <TransportButton
+      <IconButton
         state={false}
         Icon={PiPianoKeysFill}
         callback={() => {

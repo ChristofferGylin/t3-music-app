@@ -7,7 +7,7 @@ type TransportButtonProps = {
 };
 
 const TransportButton = ({ Icon, callback, state }: TransportButtonProps) => {
-  let iconColor = "fill-slate-300";
+  let iconColor = "fill-slate-300 hover:fill-slate-200";
 
   if (state) {
     iconColor = "fill-green-400";
