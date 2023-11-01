@@ -87,9 +87,6 @@ const Header = () => {
 
   const loadApp = async () => {
     await Tone.start();
-    instruments.current.push(drums());
-    //newScene();
-    newInstrument("drums");
     Tone.Transport.scheduleRepeat(repeatFunction, "64n");
     setLoaded(true);
   };

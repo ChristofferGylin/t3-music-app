@@ -33,16 +33,16 @@ const PatternEditor = ({
     return (
       <div className="flex w-full overflow-auto bg-slate-700">
         <ul className="sticky left-0 top-0 grid grid-flow-col grid-rows-11 justify-start gap-0 bg-blue-950">
-          {kits[0]?.map((drum, index) => {
+          {instrument.channels.map((channel, index) => {
             return (
               <li
                 onClick={() => {
-                  instrument.channels[index]?.play();
+                  channel.play();
                 }}
                 key={`drumLabel#${index}`}
                 className={`flex h-8 w-24 items-center justify-start border-b border-r border-slate-600 bg-slate-800 px-2 text-xs font-light uppercase tracking-wide text-slate-300`}
               >
-                {drum.title}
+                {channel.name}
               </li>
             );
           })}
@@ -64,9 +64,9 @@ const PatternEditor = ({
 
             let bgColor;
             let callback: () => void;
-            const elements = [];
+            const elements: JSX.Element[] = [];
 
-            for (let i = 0; i < instrument.channels.length; i++) {
+            instrument.channels.forEach((channel, i) => {
               const editNoteArgs: EditNote = {
                 instrument: instrumentIndex,
                 type: "drums",
@@ -83,7 +83,7 @@ const PatternEditor = ({
               } else {
                 bgColor = colorInactive;
                 callback = () => {
-                  instrument.channels[i]?.play();
+                  channel.play();
                   addNote(editNoteArgs);
                 };
               }
@@ -95,7 +95,7 @@ const PatternEditor = ({
                   className={`flex h-8 w-12 items-center justify-center border-b border-r border-slate-600 ${bgColor}`}
                 ></li>,
               );
-            }
+            });
 
             return elements;
           })}

@@ -1,9 +1,14 @@
 import { useContext } from "react";
 import { AppContext, ContextType } from "~/context";
 import SceneComponent from "./SceneComponent";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import { PiPianoKeysFill } from "react-icons/pi";
+import TransportButton from "./TransportButton";
 
 const ScenesContainer = () => {
-  const { scenesState } = useContext(AppContext) as ContextType;
+  const { scenesState, newScene, newInstrument } = useContext(
+    AppContext,
+  ) as ContextType;
   return (
     <div className="flex h-full w-full flex-col items-start justify-start gap-4 p-2">
       <ul>
@@ -17,6 +22,18 @@ const ScenesContainer = () => {
           );
         })}
       </ul>
+      <TransportButton
+        state={false}
+        Icon={AiOutlinePlusCircle}
+        callback={newScene}
+      />
+      <TransportButton
+        state={false}
+        Icon={PiPianoKeysFill}
+        callback={() => {
+          newInstrument("drums");
+        }}
+      />
     </div>
   );
 };

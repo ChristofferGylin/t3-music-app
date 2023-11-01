@@ -11,7 +11,6 @@ import { v4 as uuid } from "uuid";
 import createPatternDrums from "./functions/createPatternDrums";
 import { kits } from "./instruments/drums/kits";
 import { InstrumentStateDrumsType } from "./types/InstrumentStateType";
-import { KitsType } from "./types/KitsType";
 import { EditNote } from "./types/EditNote";
 
 export type ContextType = {
@@ -20,7 +19,6 @@ export type ContextType = {
   instruments: MutableRefObject<InstrumentsType>;
   instrumentsState: InstrumentStateDrumsType[];
   newInstrument: (instrumentType: string) => void;
-  updateScenes: (update: Scene[]) => void;
   loop: MutableRefObject<boolean>;
   loopState: boolean;
   toggleLoop: () => void;
@@ -39,12 +37,8 @@ export const AppContext = createContext<ContextType | null>(null);
 type InstrumentsType = Array<DrumsType>;
 
 const Context = ({ children }: { children: ReactNode }) => {
-  const [scenesState, setScenesState] = useState<Scene[]>([
-    { id: uuid(), patterns: [createPatternDrums()] },
-  ]);
-  const scenes = useRef<Scene[]>([
-    { id: uuid(), patterns: [createPatternDrums()] },
-  ]);
+  const [scenesState, setScenesState] = useState<Scene[]>([]);
+  const scenes = useRef<Scene[]>([]);
   const instruments = useRef<InstrumentsType>([]);
   const [instrumentsState, setInstrumentsState] = useState<
     InstrumentStateDrumsType[]
@@ -77,7 +71,8 @@ const Context = ({ children }: { children: ReactNode }) => {
         scenes.current.forEach((scene) => {
           scene.patterns.push(createPatternDrums());
         });
-        setScenesState(scenes.current);
+
+        setScenesState([...scenes.current]);
 
         break;
     }
@@ -97,10 +92,6 @@ const Context = ({ children }: { children: ReactNode }) => {
     });
 
     scenes.current.push(newScene);
-  };
-
-  const updateScenes = (update: Scene[]) => {
-    setScenesState(update);
   };
 
   const addNote = (data: EditNote) => {
@@ -123,7 +114,6 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const deleteNote = (data: EditNote) => {
-    console.log("delete note data:", data);
     if (data.type === "drums") {
       scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
         data.step
@@ -188,7 +178,6 @@ const Context = ({ children }: { children: ReactNode }) => {
       value={{
         scenes,
         scenesState,
-        updateScenes,
         instruments,
         instrumentsState,
         newInstrument,
