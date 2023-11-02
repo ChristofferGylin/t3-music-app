@@ -7,7 +7,7 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import Header from "~/components/Header";
 import Context from "~/context";
-import MainContainer from "~/components/MainContainer";
+import Wrapper from "~/components/Wrapper";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -16,10 +16,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <Context>
       <SessionProvider session={session}>
-        <MainContainer>
+        <Wrapper>
           <Header />
           <Component {...pageProps} />
-        </MainContainer>
+        </Wrapper>
       </SessionProvider>
     </Context>
   );

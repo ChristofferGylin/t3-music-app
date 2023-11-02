@@ -64,6 +64,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           currentKit: kits[0]!,
           masterVolume: newDrums.masterVolume.volume.value,
           channelVolumes,
+          modelName: "Drums",
         };
 
         setInstrumentsState((old) => {

@@ -2,17 +2,13 @@ import { useContext } from "react";
 import { AppContext, ContextType } from "~/context";
 import SceneComponent from "./SceneComponent";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import { PiPianoKeysFill } from "react-icons/pi";
-import TransportButton from "./TransportButton";
 import IconButton from "./IconButton";
 
 const ScenesContainer = () => {
-  const { scenesState, newScene, newInstrument } = useContext(
-    AppContext,
-  ) as ContextType;
+  const { scenesState, newScene } = useContext(AppContext) as ContextType;
   return (
-    <div className="flex h-full w-full flex-col items-start justify-start gap-4 p-2">
-      <ul>
+    <div className="flex h-2/3 w-screen flex-col items-start justify-start gap-0.5 p-2 pb-96">
+      <ul className="flex flex-col">
         {scenesState.map((scene, index) => {
           return (
             <SceneComponent

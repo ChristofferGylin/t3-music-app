@@ -5,4 +5,5 @@ export type InstrumentStateDrumsType = {
   currentKit: { url: string; title: string }[];
   masterVolume: number;
   channelVolumes: number[];
+  modelName: string;
 };

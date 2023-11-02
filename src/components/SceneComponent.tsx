@@ -16,8 +16,8 @@ const SceneComponent = ({ sceneIndex, scene }: SceneComponentProps) => {
   ) as ContextType;
 
   return (
-    <li key={`scene#${sceneIndex}`} className="flex p-2">
-      <div className="flex flex-col">
+    <li key={`scene#${sceneIndex}`} className="flex h-32 bg-slate-500 p-2">
+      <div className="sticky left-0 top-0 flex aspect-video w-24 flex-col bg-slate-500">
         <div className="flex justify-between">
           <IconButton
             state={
@@ -31,7 +31,7 @@ const SceneComponent = ({ sceneIndex, scene }: SceneComponentProps) => {
           />
         </div>
       </div>
-      <ul className="flex gap-4">
+      <ul className="flex w-full gap-0.5">
         {scene.patterns.map((pattern, index) => {
           return (
             <li key={`scene#${sceneIndex}-pattern#${index}`}>
@@ -41,11 +41,12 @@ const SceneComponent = ({ sceneIndex, scene }: SceneComponentProps) => {
                   query: { instrument: index, scene: sceneIndex },
                 }}
               >
-                <div className="h-24 w-24 rounded border border-purple-800 bg-purple-600 hover:bg-purple-500"></div>
+                <div className="aspect-video w-24 rounded border border-purple-800 bg-purple-600 hover:bg-purple-500"></div>
               </Link>
             </li>
           );
         })}
+        <div className="w-24"></div>
       </ul>
     </li>
   );
