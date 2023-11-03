@@ -1,12 +1,10 @@
 import InnerContainer from "./InnerContainer";
 import SideContainer from "./SideContainer";
-import { useRef, MutableRefObject } from "react";
+import { useRef, MutableRefObject, SyntheticEvent } from "react";
 import { useContext } from "react";
 import { AppContext, ContextType } from "~/context";
-import SceneComponent from "../SceneComponent";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import IconButton from "../IconButton";
-import { PiPianoKeysFill } from "react-icons/pi";
 import ChannelComponent from "./ChannelComponent";
 import SceneControls from "./SceneControls";
 import Link from "next/link";
@@ -14,25 +12,22 @@ import ChannelContainer from "./ChannelContainer";
 import MasterComponent from "./MasterComponent";
 
 const MainContainer = () => {
-  const scrollRefScenes = useRef<MutableRefObject<HTMLDivElement | null>>(null);
-  const scrollRefChannels =
-    useRef<MutableRefObject<HTMLDivElement | null>>(null);
+  const scrollRefScenes = useRef<HTMLDivElement | null>(null);
+  const scrollRefChannels = useRef<HTMLDivElement | null>(null);
   const { scenesState, newScene, newInstrument, instrumentsState } = useContext(
     AppContext,
   ) as ContextType;
 
-  const handleScroll = (
-    event: React.UIEventHandler<HTMLDivElement>,
-    target: MutableRefObject<HTMLDivElement>,
-  ) => {
-    if (target.current !== null) {
-      target.current.scrollLeft = event.target.scrollLeft;
+  const handleScroll = (event: SyntheticEvent, target: HTMLDivElement) => {
+    if (target !== null) {
+      const eventTarget = event.target as HTMLDivElement;
+      target.scrollLeft = eventTarget.scrollLeft;
     }
   };
 
   return (
-    <main className="grid-rows-main-horizontal grid h-full w-full">
-      <div className="grid-cols-main-vertical grid h-full w-full overflow-auto">
+    <main className="grid h-full w-full grid-rows-main-horizontal">
+      <div className="grid h-full w-full grid-cols-main-vertical overflow-auto">
         <SideContainer>
           {scenesState.map((scene, index) => {
             return <SceneControls sceneIndex={index} />;
@@ -49,7 +44,9 @@ const MainContainer = () => {
           ref={scrollRefScenes}
           className="no-scrollbar flex h-full w-full flex-col overflow-auto"
           onScroll={(e) => {
-            handleScroll(e, scrollRefChannels);
+            if (scrollRefChannels.current !== null) {
+              handleScroll(e, scrollRefChannels.current);
+            }
           }}
         >
           {scenesState.map((scene, index) => {
@@ -84,11 +81,15 @@ const MainContainer = () => {
           })}
         </div>
       </div>
-      <div className="grid-cols-main-vertical grid h-full w-full overflow-auto">
+      <div className="grid h-full w-full grid-cols-main-vertical overflow-auto">
         <MasterComponent />
 
         <div
-          onScroll={(e) => handleScroll(e, scrollRefScenes)}
+          onScroll={(e) => {
+            if (scrollRefScenes.current !== null) {
+              handleScroll(e, scrollRefScenes.current);
+            }
+          }}
           className="flex h-full w-full flex-col gap-0.5 overflow-auto bg-slate-800"
           ref={scrollRefChannels}
         >
