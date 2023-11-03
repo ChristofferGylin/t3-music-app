@@ -49,19 +49,19 @@ const MainContainer = () => {
             }
           }}
         >
-          {scenesState.map((scene, index) => {
+          {scenesState.map((scene, sceneIndex) => {
             return (
               <InnerContainer>
                 {scene.patterns.map((pattern, index) => {
                   return (
                     <li
-                      key={`scene#${index}-pattern#${index}`}
+                      key={`scene#${sceneIndex}-pattern#${index}`}
                       className="flex h-14 items-center justify-center"
                     >
                       <Link
                         href={{
                           pathname: "/editor",
-                          query: { instrument: index, scene: index },
+                          query: { instrument: index, scene: sceneIndex },
                         }}
                         className="h-full"
                       >
