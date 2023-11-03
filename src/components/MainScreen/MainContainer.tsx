@@ -1,6 +1,6 @@
 import InnerContainer from "./InnerContainer";
 import SideContainer from "./SideContainer";
-import { useRef, MutableRefObject, SyntheticEvent } from "react";
+import { useRef, SyntheticEvent } from "react";
 import { useContext } from "react";
 import { AppContext, ContextType } from "~/context";
 import { AiOutlinePlusCircle } from "react-icons/ai";
@@ -30,9 +30,14 @@ const MainContainer = () => {
       <div className="grid h-full w-full grid-cols-main-vertical overflow-auto">
         <SideContainer>
           {scenesState.map((scene, index) => {
-            return <SceneControls sceneIndex={index} />;
+            return (
+              <SceneControls
+                key={`sceneControls#${index}`}
+                sceneIndex={index}
+              />
+            );
           })}
-          <li className="h-16 bg-slate-700">
+          <li key="newSceneButton" className="h-16 bg-slate-700">
             <IconButton
               state={false}
               Icon={AiOutlinePlusCircle}
@@ -51,7 +56,7 @@ const MainContainer = () => {
         >
           {scenesState.map((scene, sceneIndex) => {
             return (
-              <InnerContainer>
+              <InnerContainer key={`sceneContainer#${sceneIndex}`}>
                 {scene.patterns.map((pattern, index) => {
                   return (
                     <li
