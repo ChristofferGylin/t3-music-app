@@ -9,7 +9,7 @@ import React, {
 import drums, { DrumsType } from "~/instruments/drums/drums";
 import { Scene } from "~/types/Scene";
 import { v4 as uuid } from "uuid";
-import createPatternDrums from "./functions/createPatternDrums";
+import createPattern from "./functions/createPattern";
 import { kits } from "./instruments/drums/kits";
 import { InstrumentStateDrumsType } from "./types/InstrumentStateType";
 import { EditNote } from "./types/EditNote";
@@ -71,7 +71,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           return [...old, newDrumsState];
         });
         scenes.current.forEach((scene) => {
-          scene.patterns.push(createPatternDrums());
+          scene.patterns.push(createPattern("drums"));
         });
 
         setScenesState([...scenes.current]);
@@ -85,7 +85,7 @@ const Context = ({ children }: { children: ReactNode }) => {
 
     for (let i = 0; i < instruments.current.length; i++) {
       if (instruments.current[i]?.type === "drums") {
-        newScene.patterns.push(createPatternDrums());
+        newScene.patterns.push(createPattern("drums"));
       }
     }
 

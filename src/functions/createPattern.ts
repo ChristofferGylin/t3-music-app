@@ -1,8 +1,8 @@
 import { PatternType, PatternSteps } from "~/types/Pattern";
 
-const createPatternDrums = (): PatternType => {
+const createPattern = (type: "drums" | "keys"): PatternType => {
   const pattern: PatternType = {
-    type: "drums",
+    type: type,
     pattern: [],
     resolution: 16,
   };
@@ -19,4 +19,4 @@ const createPatternDrums = (): PatternType => {
   return pattern;
 };
 
-export default createPatternDrums;
+export default createPattern;
