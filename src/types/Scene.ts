@@ -1,6 +1,6 @@
-import { PatternDrums, PatternKeys } from "./Pattern";
+import { PatternType } from "./Pattern";
 
 export type Scene = {
   id: string;
-  patterns: (PatternDrums | PatternKeys)[];
+  patterns: PatternType[];
 };

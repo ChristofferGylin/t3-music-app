@@ -1,13 +1,12 @@
 import { DrumsType } from "~/instruments/drums/drums";
-import { PatternDrums, PatternKeys } from "~/types/Pattern";
+import { PatternType } from "~/types/Pattern";
 import { useContext } from "react";
 import { AppContext, ContextType } from "~/context";
 import { EditNote } from "~/types/EditNote";
-import { kits } from "~/instruments/drums/kits";
 
 type PatternEditorProps = {
   instrument: DrumsType;
-  pattern: PatternDrums | PatternKeys;
+  pattern: PatternType;
   sceneIndex: number;
   instrumentIndex: number;
 };

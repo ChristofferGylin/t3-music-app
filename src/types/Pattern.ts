@@ -1,10 +1,10 @@
-export type PatternDrums = {
-  type: "drums";
-  pattern: { start: number[] }[];
-  resolution: 16 | 32 | 64;
+export type PatternSteps = {
+  start: (number | string)[];
+  stop: (number | string)[];
 };
-export type PatternKeys = {
-  type: "keys";
-  pattern: { start: string[]; stop: string[] }[];
+
+export type PatternType = {
+  type: string;
+  pattern: PatternSteps[];
   resolution: 16 | 32 | 64;
 };
