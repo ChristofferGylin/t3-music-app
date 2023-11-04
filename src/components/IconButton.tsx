@@ -13,7 +13,8 @@ const IconButton = ({
   state = false,
   align,
 }: IconButtonProps) => {
-  let iconColor = "fill-slate-300 hover:fill-slate-200";
+  let iconColor =
+    "fill-slate-300 hover:fill-slate-200 stroke-slate-300 hover:stroke-slate-200 text-slate-300 hover:text-slate-200";
 
   let aligntment = "";
 
@@ -32,7 +33,7 @@ const IconButton = ({
   }
 
   if (state) {
-    iconColor = "fill-green-400";
+    iconColor = "fill-green-400 stroke-green-400 text-green-400";
   }
 
   return (

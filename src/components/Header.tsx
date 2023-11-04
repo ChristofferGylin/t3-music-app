@@ -5,6 +5,7 @@ import { AppContext, ContextType } from "~/context";
 import TransportControls from "./TransportControls";
 import BackButton from "./BackButton";
 import { useRouter } from "next/router";
+import HamburgerMenu from "./UI/HamburgerMenu/HamburgerMenu";
 
 const Header = () => {
   const [loaded, setLoaded] = useState(false);
@@ -101,6 +102,7 @@ const Header = () => {
           START APP
         </button>
       )}
+      <HamburgerMenu />
     </nav>
   );
 };
