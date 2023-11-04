@@ -26,7 +26,7 @@ const MainContainer = () => {
   };
 
   return (
-    <main className="grid h-full w-full grid-rows-main-horizontal">
+    <main className="grid h-full w-full grid-rows-main-horizontal pt-14">
       <div className="grid h-full w-full grid-cols-main-vertical overflow-auto">
         <SideContainerScene>
           {scenesState.map((scene, index) => {
