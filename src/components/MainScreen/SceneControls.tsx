@@ -1,6 +1,4 @@
 import * as Tone from "tone";
-import Link from "next/link";
-import { Scene } from "~/types/Scene";
 import IconButton from "../IconButton";
 import { BsFillPlayFill } from "react-icons/bs";
 import { AppContext, ContextType } from "~/context";

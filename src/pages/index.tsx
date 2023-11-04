@@ -1,7 +1,13 @@
-import ChannelsContainer from "~/components/ChannelsContainer";
-import MainContainer from "~/components/MainScreen/MainContainer";
-import ScenesContainer from "~/components/ScenesContainer";
+import { useSession } from "next-auth/react";
+import WelcomeScreen from "~/components/LandingPage/WelcomeScreen";
+import ProjectsContainer from "~/components/LandingPage/ProjectsContainer";
 
 export default function Home() {
-  return <MainContainer />;
+  const { data: session } = useSession();
+
+  return (
+    <main className="flex justify-center">
+      {!session || !session.user ? <WelcomeScreen /> : <ProjectsContainer />}
+    </main>
+  );
 }

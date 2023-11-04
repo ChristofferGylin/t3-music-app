@@ -1,5 +1,5 @@
-import InnerContainer from "./InnerContainer";
-import SideContainer from "./SideContainer";
+import SceneContainer from "./SceneContainer";
+import SideContainerScene from "./SideContainerScene";
 import { useRef, SyntheticEvent } from "react";
 import { useContext } from "react";
 import { AppContext, ContextType } from "~/context";
@@ -28,7 +28,7 @@ const MainContainer = () => {
   return (
     <main className="grid h-full w-full grid-rows-main-horizontal">
       <div className="grid h-full w-full grid-cols-main-vertical overflow-auto">
-        <SideContainer>
+        <SideContainerScene>
           {scenesState.map((scene, index) => {
             return (
               <SceneControls
@@ -44,7 +44,7 @@ const MainContainer = () => {
               callback={newScene}
             />
           </li>
-        </SideContainer>
+        </SideContainerScene>
         <div
           ref={scrollRefScenes}
           className="no-scrollbar flex h-full w-full flex-col overflow-auto"
@@ -56,7 +56,7 @@ const MainContainer = () => {
         >
           {scenesState.map((scene, sceneIndex) => {
             return (
-              <InnerContainer key={`sceneContainer#${sceneIndex}`}>
+              <SceneContainer key={`sceneContainer#${sceneIndex}`}>
                 {scene.patterns.map((pattern, index) => {
                   return (
                     <li
@@ -65,7 +65,7 @@ const MainContainer = () => {
                     >
                       <Link
                         href={{
-                          pathname: "/editor",
+                          pathname: "/studio/editor",
                           query: { instrument: index, scene: sceneIndex },
                         }}
                         className="h-full"
@@ -81,7 +81,7 @@ const MainContainer = () => {
                 >
                   <div className="h-full w-24 rounded"></div>
                 </li>
-              </InnerContainer>
+              </SceneContainer>
             );
           })}
         </div>

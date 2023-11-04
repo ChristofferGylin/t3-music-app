@@ -1,9 +1,4 @@
-import { PropsWithChildren, MutableRefObject } from "react";
-
-type InnerContainerProps = PropsWithChildren & {
-  scrollRef: MutableRefObject<HTMLUListElement | null>;
-  scrollControlled?: boolean;
-};
+import { PropsWithChildren } from "react";
 
 const ChannelContainer = ({ children }: PropsWithChildren) => {
   return (
