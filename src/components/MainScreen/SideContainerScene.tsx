@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 
-const SideContainer = ({ children }: PropsWithChildren) => {
+const SideContainerScene = ({ children }: PropsWithChildren) => {
   return <ul className="flex w-24 flex-col bg-slate-800">{children}</ul>;
 };
 
-export default SideContainer;
+export default SideContainerScene;

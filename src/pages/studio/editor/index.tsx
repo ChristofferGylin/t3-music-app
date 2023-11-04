@@ -3,10 +3,8 @@ import { useContext } from "react";
 import PatternEditor from "~/components/PatternEditor";
 import Drums from "~/components/drums/Drums";
 import { AppContext, ContextType } from "~/context";
-import { DrumsType } from "~/instruments/drums/drums";
 
 const Editor = () => {
-  console.log("render Editor Page");
   const { instruments, scenesState } = useContext(AppContext) as ContextType;
   const router = useRouter();
 

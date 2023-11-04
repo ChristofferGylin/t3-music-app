@@ -11,16 +11,14 @@ const ChannelComponent = ({
   instrumentIndex,
   instrument,
 }: SceneComponentProps) => {
-  const { setSceneAndPlay, toggleLoop, rewind, currentSceneState } = useContext(
-    AppContext,
-  ) as ContextType;
+  const { currentSceneState } = useContext(AppContext) as ContextType;
 
   return (
     <li key={`instrument#${instrumentIndex}`} className="h-full">
       <div className="flex h-full w-24 flex-col items-center justify-start rounded-t border border-slate-600 bg-slate-700/60 py-2">
         <Link
           href={{
-            pathname: "/editor",
+            pathname: "/studio/editor",
             query: { instrument: instrumentIndex, scene: currentSceneState },
           }}
           className="flex w-full items-center justify-center"

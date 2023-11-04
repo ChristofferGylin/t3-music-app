@@ -1,6 +1,5 @@
 import { Volume, Sampler, Player } from "tone";
 import { Time } from "tone/build/esm/core/type/Units";
-import { kits } from "./kits";
 import ChannelType from "~/types/ChannelType";
 
 export type DrumsType = {

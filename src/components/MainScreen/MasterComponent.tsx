@@ -1,15 +1,4 @@
-import Link from "next/link";
-import { AppContext, ContextType } from "~/context";
-import { useContext } from "react";
-import { InstrumentStateDrumsType } from "~/types/InstrumentStateType";
-type SceneComponentProps = {
-  instrumentIndex: number;
-  instrument: InstrumentStateDrumsType;
-};
-
 const MasterComponent = () => {
-  const {} = useContext(AppContext) as ContextType;
-
   return (
     <div className="flex h-full w-24 flex-col bg-slate-800 pt-1">
       <div key={`instrument#master`} className="h-full">

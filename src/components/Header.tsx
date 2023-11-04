@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
 import * as Tone from "tone";
-import drums from "~/instruments/drums/drums";
 import { Time } from "tone/build/esm/core/type/Units";
 import { AppContext, ContextType } from "~/context";
 import TransportControls from "./TransportControls";
@@ -9,15 +8,9 @@ import { useRouter } from "next/router";
 
 const Header = () => {
   const [loaded, setLoaded] = useState(false);
-  const {
-    instruments,
-    scenes,
-    loop,
-    currentScene,
-    nextScene,
-    newScene,
-    newInstrument,
-  } = useContext(AppContext) as ContextType;
+  const { instruments, scenes, loop, currentScene, nextScene } = useContext(
+    AppContext,
+  ) as ContextType;
 
   const router = useRouter();
 
