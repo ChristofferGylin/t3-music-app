@@ -44,7 +44,7 @@ const TransportControls = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="col-start-2 flex justify-self-center">
       <TransportButton
         Icon={AiFillStepBackward}
         state={false}

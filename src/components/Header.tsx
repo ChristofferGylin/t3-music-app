@@ -4,6 +4,8 @@ import drums from "~/instruments/drums/drums";
 import { Time } from "tone/build/esm/core/type/Units";
 import { AppContext, ContextType } from "~/context";
 import TransportControls from "./TransportControls";
+import BackButton from "./BackButton";
+import { useRouter } from "next/router";
 
 const Header = () => {
   const [loaded, setLoaded] = useState(false);
@@ -16,6 +18,8 @@ const Header = () => {
     newScene,
     newInstrument,
   } = useContext(AppContext) as ContextType;
+
+  const router = useRouter();
 
   const repeatFunction = (time: Time) => {
     if (instruments.current !== null && instruments.current !== undefined) {
@@ -92,13 +96,14 @@ const Header = () => {
   };
 
   return (
-    <nav className="fixed right-0 top-0 flex h-14 w-full items-center justify-center bg-slate-800 p-1">
+    <nav className="fixed right-0 top-0 grid h-14 w-full grid-cols-3 items-center bg-slate-800 p-1">
+      {router.pathname !== "/" && <BackButton />}
       {loaded ? (
         <TransportControls />
       ) : (
         <button
           onClick={loadApp}
-          className="rounded border border-slate-500 bg-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-600"
+          className="col-start-2 rounded border border-slate-500 bg-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-600"
         >
           START APP
         </button>
