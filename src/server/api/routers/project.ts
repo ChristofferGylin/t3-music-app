@@ -27,4 +27,12 @@ export const projectRouter = createTRPCRouter({
       where: { userId: ctx.session.user.id },
     });
   }),
+
+  getProjectById: protectedProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .query(({ ctx, input }) => {
+      return ctx.db.project.findUnique({
+        where: { id: input.id, userId: ctx.session.user.id },
+      });
+    }),
 });
