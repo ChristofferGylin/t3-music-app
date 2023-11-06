@@ -10,16 +10,16 @@ import drums, { DrumsType } from "~/instruments/drums/drums";
 import { Scene } from "~/types/Scene";
 import { v4 as uuid } from "uuid";
 import createPattern from "./functions/createPattern";
-import { kits } from "./instruments/drums/kits";
 import { InstrumentStateDrumsType } from "./types/InstrumentStateType";
 import { EditNote } from "./types/EditNote";
+import { DrumsKit } from "@prisma/client";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
   scenesState: Scene[];
   instruments: MutableRefObject<InstrumentsType>;
   instrumentsState: InstrumentStateDrumsType[];
-  newInstrument: (instrumentType: string) => void;
+  newInstrumentDrums: (kit: DrumsKit) => void;
   loop: MutableRefObject<boolean>;
   loopState: boolean;
   toggleLoop: () => void;
@@ -49,36 +49,63 @@ const Context = ({ children }: { children: ReactNode }) => {
   const loop = useRef(true);
   const [currentSceneState, setCurrentSceneState] = useState(0);
 
-  const newInstrument = (instrumentType: string) => {
-    switch (instrumentType) {
-      case "drums":
-        const newDrums = drums();
-        instruments.current.push(newDrums);
+  const newInstrumentDrums = async (kit: DrumsKit) => {
+    const newDrums = drums(kit);
+    instruments.current.push(newDrums);
 
-        const channelVolumes = newDrums.channels.map((channel) => {
-          return channel.sampler.volume.value;
-        });
+    const channelVolumes = newDrums.channels.map((channel) => {
+      return channel.sampler.volume.value;
+    });
 
-        const newDrumsState: InstrumentStateDrumsType = {
-          type: "drums",
-          currentKit: kits[0]!,
-          masterVolume: newDrums.masterVolume.volume.value,
-          channelVolumes,
-          modelName: "Drums",
-        };
+    const newDrumsState: InstrumentStateDrumsType = {
+      type: "drums",
+      currentKit: kit,
+      masterVolume: newDrums.masterVolume.volume.value,
+      channelVolumes,
+      modelName: "Drums",
+    };
 
-        setInstrumentsState((old) => {
-          return [...old, newDrumsState];
-        });
-        scenes.current.forEach((scene) => {
-          scene.patterns.push(createPattern("drums"));
-        });
+    setInstrumentsState((old) => {
+      return [...old, newDrumsState];
+    });
+    scenes.current.forEach((scene) => {
+      scene.patterns.push(createPattern("drums"));
+    });
 
-        setScenesState([...scenes.current]);
-
-        break;
-    }
+    setScenesState([...scenes.current]);
   };
+
+  // const newInstrument = (instrumentType: string) => {
+  //   switch (instrumentType) {
+  //     case "drums":
+  //       const newDrums = drums();
+  //       instruments.current.push(newDrums);
+
+  //       const channelVolumes = newDrums.channels.map((channel) => {
+  //         return channel.sampler.volume.value;
+  //       });
+
+  //       const newDrumsState: InstrumentStateDrumsType = {
+  //         type: "drums",
+  //         currentKit: [...defaultKit],
+  //         kitName: "default kit",
+  //         masterVolume: newDrums.masterVolume.volume.value,
+  //         channelVolumes,
+  //         modelName: "Drums",
+  //       };
+
+  //       setInstrumentsState((old) => {
+  //         return [...old, newDrumsState];
+  //       });
+  //       scenes.current.forEach((scene) => {
+  //         scene.patterns.push(createPattern("drums"));
+  //       });
+
+  //       setScenesState([...scenes.current]);
+
+  //       break;
+  //   }
+  // };
 
   const newScene = () => {
     const newScene: Scene = { id: uuid(), patterns: [] };
@@ -187,7 +214,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         scenesState,
         instruments,
         instrumentsState,
-        newInstrument,
+        newInstrumentDrums,
         loop,
         toggleLoop,
         currentScene,

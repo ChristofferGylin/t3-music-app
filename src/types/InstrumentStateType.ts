@@ -1,8 +1,8 @@
-import { KitsType } from "./KitsType";
+import { DrumsKit } from "@prisma/client";
 
 export type InstrumentStateDrumsType = {
   type: "drums";
-  currentKit: { url: string; title: string }[];
+  currentKit: DrumsKit;
   masterVolume: number;
   channelVolumes: number[];
   modelName: string;
