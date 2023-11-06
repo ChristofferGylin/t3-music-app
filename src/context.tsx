@@ -12,7 +12,7 @@ import { v4 as uuid } from "uuid";
 import createPattern from "./functions/createPattern";
 import { InstrumentStateDrumsType } from "./types/InstrumentStateType";
 import { EditNote } from "./types/EditNote";
-import { DrumsKit } from "@prisma/client";
+import { DrumsKit, Project } from "@prisma/client";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -31,6 +31,10 @@ export type ContextType = {
   rewind: () => void;
   addNote: (data: EditNote) => void;
   deleteNote: (data: EditNote) => void;
+  projectLoaded: boolean;
+  setLoaded: (state: boolean) => void;
+  project: { id: string; name: string };
+  loadProject: (dbProject: Project) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -48,6 +52,11 @@ const Context = ({ children }: { children: ReactNode }) => {
   const [loopState, setLoopState] = useState(true);
   const loop = useRef(true);
   const [currentSceneState, setCurrentSceneState] = useState(0);
+  const [projectLoaded, setProjectLoaded] = useState(false);
+  const [project, setProject] = useState<{ id: string; name: string }>({
+    id: "",
+    name: "",
+  });
 
   const newInstrumentDrums = async (kit: DrumsKit) => {
     const newDrums = drums(kit);
@@ -207,6 +216,33 @@ const Context = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const setLoaded = (state: boolean) => {
+    setProjectLoaded(state);
+  };
+
+  const loadProject = (dbProject: Project) => {
+    setProject({ id: dbProject.id, name: dbProject.name });
+    const dbInstruments = JSON.parse(
+      dbProject.instruments,
+    ) as InstrumentStateDrumsType[];
+    const dbScenes = JSON.parse(dbProject.scenes) as Scene[];
+
+    setScenesState([...dbScenes]);
+    scenes.current = [...dbScenes];
+
+    dbInstruments.forEach((instrument) => {
+      switch (instrument.modelName) {
+        case "Drums":
+          newInstrumentDrums(instrument.currentKit);
+          break;
+      }
+    });
+
+    setCurrentSceneState(0);
+    currentScene.current = 0;
+    setProjectLoaded(true);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -226,6 +262,10 @@ const Context = ({ children }: { children: ReactNode }) => {
         rewind,
         addNote,
         deleteNote,
+        projectLoaded,
+        setLoaded,
+        project,
+        loadProject,
       }}
     >
       {children}
