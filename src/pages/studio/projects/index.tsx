@@ -7,10 +7,24 @@ import { useState } from "react";
 import DialogBox from "~/components/UI/DialogBox";
 import DialogButton from "~/components/UI/DialogButton";
 import TextInput from "~/components/UI/TextInput";
+import { api } from "~/utils/api";
 
 const Projects = () => {
   const [showModal, setShowModal] = useState(false);
+  const [newProjectName, setNewProjectName] = useState<string>("");
   const router = useRouter();
+  const createProject = api.project.create.useMutation();
+
+  const userProjects = api.project.getUserProjects.useQuery().data;
+
+  const handleCreate = async () => {
+    const newProject = await createProject.mutateAsync({
+      name: newProjectName,
+    });
+    console.log(newProject);
+    setShowModal(false);
+  };
+
   return (
     <main className="w-full pt-14">
       {showModal && (
@@ -22,12 +36,16 @@ const Projects = () => {
           <DialogBox>
             <div className="flex flex-col gap-6">
               <h1 className="text-xl">NEW PROJECT</h1>
-              <TextInput name="name" placeholder="Name" />
+              <TextInput
+                name="name"
+                placeholder="Name"
+                value={newProjectName}
+                change={(e) => {
+                  setNewProjectName(e.target.value);
+                }}
+              />
               <div className="flex justify-center gap-4">
-                <DialogButton
-                  title="Create"
-                  callback={() => setShowModal(false)}
-                />
+                <DialogButton title="Create" callback={handleCreate} />
                 <DialogButton
                   title="Cancel"
                   callback={() => setShowModal(false)}
@@ -47,7 +65,7 @@ const Projects = () => {
           }}
         />
       </div>
-      <ProjectsContainer />
+      <ProjectsContainer projects={userProjects} />
     </main>
   );
 };

@@ -51,6 +51,8 @@ model User {
   sessions      Session[]
   role          String    @default("user")
   projects      Project[]
+  created DateTime @default(now())
+  updated DateTime @default(now()) @updatedAt()
 }
 
 model Project {
@@ -60,7 +62,10 @@ model Project {
   scenes      String
   user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
+  created DateTime @default(now())
+  updated DateTime @default(now()) @updatedAt()
 }
+
 
 model VerificationToken {
   identifier String
