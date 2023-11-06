@@ -11,6 +11,7 @@ import { BsFillPlayFill } from "react-icons/bs";
 const TransportControls = () => {
   const {
     loopState,
+    loop,
     toggleLoop,
     rewind,
     instruments,
@@ -65,6 +66,8 @@ const TransportControls = () => {
           console.log("scenesState:", scenesState);
           console.log("instruments:", instruments);
           console.log("instrumentsState:", instrumentsState);
+          console.log("loopState:", loopState);
+          console.log("loop:", loop);
         }}
       />
     </div>
