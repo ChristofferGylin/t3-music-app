@@ -175,18 +175,23 @@ const Context = ({ children }: { children: ReactNode }) => {
 
     if (pattern) {
       if (pattern.pattern.length < 1024) {
-        for (let i = 0; i < 64; i++) {
-          const step: PatternSteps = {
-            start: [] as (number | string)[],
-            stop: [] as (number | string)[],
-          };
+        if (pattern.length < pattern.pattern.length) {
+          pattern.length += 64;
+        } else {
+          for (let i = 0; i < 64; i++) {
+            const step: PatternSteps = {
+              start: [] as (number | string)[],
+              stop: [] as (number | string)[],
+            };
 
-          pattern.pattern.push(step);
+            pattern.pattern.push(step);
+          }
+
+          if (pattern.pattern.length > 1024) pattern.pattern.length = 1024;
+
+          pattern.length = pattern.pattern.length;
         }
 
-        if (pattern.pattern.length > 1024) pattern.pattern.length = 1024;
-
-        pattern.length = pattern.pattern.length;
         const scene = scenes.current[data.scene];
 
         if (scene) {
