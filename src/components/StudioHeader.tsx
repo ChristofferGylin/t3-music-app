@@ -11,9 +11,15 @@ import SaveButton from "./UI/SaveButton";
 
 const StudioHeader = () => {
   const [loaded, setLoaded] = useState(false);
-  const { instruments, scenes, loop, currentScene, nextScene } = useContext(
-    AppContext,
-  ) as ContextType;
+  const {
+    instruments,
+    scenes,
+    loop,
+    currentScene,
+    nextScene,
+    currentStep,
+    setCurrentStep,
+  } = useContext(AppContext) as ContextType;
 
   const router = useRouter();
   const { data: session } = useSession();
@@ -56,8 +62,7 @@ const StudioHeader = () => {
         )
           return;
 
-        const pattern =
-          scenes.current[currentScene.current]?.patterns[i]?.pattern;
+        const pattern = scenes.current[currentScene.current]?.patterns[i];
         const instrumentsArray = scenes.current[currentScene.current]?.patterns;
 
         if (
@@ -73,22 +78,16 @@ const StudioHeader = () => {
           instruments.current[i]!.currentStep = 0;
           if (i === instrumentsArray?.length - 1) {
             if (!loop.current) {
-              let changeScene = true;
+              const scene = scenes.current[currentScene.current];
 
-              for (let j = 0; j < instruments.current.length; j++) {
-                if (instruments.current[j]?.currentStep !== 0) {
-                  changeScene = false;
-                  break;
-                }
-              }
-
-              if (changeScene) {
+              if (scene && currentStep.current >= scene.longestPattern) {
                 nextScene();
               }
             }
           }
         } else {
           instruments.current[i]!.currentStep++;
+          setCurrentStep({ next: true });
         }
       }
     }

@@ -15,6 +15,7 @@ import { EditNote } from "./types/EditNote";
 import { DrumsKit, Project } from "@prisma/client";
 import ProjectWithKits from "./types/ProjectWithKits";
 import { PatternSteps } from "./types/Pattern";
+import { number } from "zod";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -39,6 +40,8 @@ export type ContextType = {
   loadProject: (dbProject: ProjectWithKits) => void;
   longerPattern: (data: { scene: number; instrument: number }) => void;
   shorterPattern: (data: { scene: number; instrument: number }) => void;
+  setCurrentStep: (data: { index?: number; next?: boolean }) => void;
+  currentStep: MutableRefObject<number>;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -53,6 +56,7 @@ const Context = ({ children }: { children: ReactNode }) => {
     InstrumentStateDrumsType[]
   >([]);
   const currentScene = useRef(0);
+  const currentStep = useRef(0);
   const [loopState, setLoopState] = useState(true);
   const loop = useRef(true);
   const [currentSceneState, setCurrentSceneState] = useState(0);
@@ -61,6 +65,16 @@ const Context = ({ children }: { children: ReactNode }) => {
     id: "",
     name: "",
   });
+
+  const setCurrentStep = (data: { index?: number; next?: boolean }) => {
+    if (data.next) {
+      currentStep.current++;
+    }
+
+    if (data.index) {
+      currentStep.current = data.index;
+    }
+  };
 
   const newInstrumentDrums = async (
     kit: DrumsKit,
@@ -279,6 +293,8 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const nextScene = () => {
+    currentStep.current = 0;
+
     if (currentScene.current >= scenes.current.length - 1) {
       currentScene.current = 0;
       setCurrentSceneState(0);
@@ -347,6 +363,8 @@ const Context = ({ children }: { children: ReactNode }) => {
         loadProject,
         longerPattern,
         shorterPattern,
+        setCurrentStep,
+        currentStep,
       }}
     >
       {children}
