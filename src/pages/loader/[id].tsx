@@ -19,7 +19,7 @@ const Loader = () => {
   const router = useRouter();
   const { loadProject, projectLoaded } = useContext(AppContext) as ContextType;
 
-  if (typeof router.query.id !== "string") return <Loading />;
+  if (!router || typeof router.query.id !== "string") return <Loading />;
 
   const project = api.project.getProjectById.useQuery({
     id: router.query.id,

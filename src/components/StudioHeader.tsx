@@ -7,6 +7,7 @@ import BackButton from "./BackButton";
 import { useRouter } from "next/router";
 import HamburgerMenu from "./UI/HamburgerMenu/HamburgerMenu";
 import { useSession } from "next-auth/react";
+import SaveButton from "./UI/SaveButton";
 
 const StudioHeader = () => {
   const [loaded, setLoaded] = useState(false);
@@ -112,7 +113,10 @@ const StudioHeader = () => {
           START APP
         </button>
       )}
-      <HamburgerMenu />
+      <div className="flex justify-self-end">
+        <SaveButton />
+        <HamburgerMenu />
+      </div>
     </nav>
   );
 };

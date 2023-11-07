@@ -37,7 +37,7 @@ const IconButton = ({
   }
 
   return (
-    <button className={`px-4 py-2 ${aligntment}`} onClick={callback}>
+    <button className={`p-2 ${aligntment}`} onClick={callback}>
       <Icon className={`text-2xl ${iconColor}`} />
     </button>
   );
