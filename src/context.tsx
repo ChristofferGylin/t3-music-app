@@ -14,6 +14,8 @@ import { InstrumentStateDrumsType } from "./types/InstrumentStateType";
 import { EditNote } from "./types/EditNote";
 import { DrumsKit, Project } from "@prisma/client";
 import ProjectWithKits from "./types/ProjectWithKits";
+import { PatternSteps } from "./types/Pattern";
+import { number } from "zod";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -36,6 +38,10 @@ export type ContextType = {
   setLoaded: (state: boolean) => void;
   project: { id: string; name: string };
   loadProject: (dbProject: ProjectWithKits) => void;
+  longerPattern: (data: { scene: number; instrument: number }) => void;
+  shorterPattern: (data: { scene: number; instrument: number }) => void;
+  setCurrentStep: (data: { index?: number; next?: boolean }) => void;
+  currentStep: MutableRefObject<number>;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -50,6 +56,7 @@ const Context = ({ children }: { children: ReactNode }) => {
     InstrumentStateDrumsType[]
   >([]);
   const currentScene = useRef(0);
+  const currentStep = useRef(0);
   const [loopState, setLoopState] = useState(true);
   const loop = useRef(true);
   const [currentSceneState, setCurrentSceneState] = useState(0);
@@ -58,6 +65,16 @@ const Context = ({ children }: { children: ReactNode }) => {
     id: "",
     name: "",
   });
+
+  const setCurrentStep = (data: { index?: number; next?: boolean }) => {
+    if (data.next) {
+      currentStep.current++;
+    }
+
+    if (data.index) {
+      currentStep.current = data.index;
+    }
+  };
 
   const newInstrumentDrums = async (
     kit: DrumsKit,
@@ -125,7 +142,7 @@ const Context = ({ children }: { children: ReactNode }) => {
   // };
 
   const newScene = () => {
-    const newScene: Scene = { id: uuid(), patterns: [] };
+    const newScene: Scene = { id: uuid(), patterns: [], longestPattern: 64 };
 
     for (let i = 0; i < instruments.current.length; i++) {
       if (instruments.current[i]?.type === "drums") {
@@ -167,6 +184,89 @@ const Context = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const longerPattern = (data: { scene: number; instrument: number }) => {
+    const pattern = scenes.current[data.scene]?.patterns[data.instrument];
+
+    if (pattern) {
+      if (pattern.pattern.length < 1024) {
+        if (pattern.length < pattern.pattern.length) {
+          pattern.length += 64;
+        } else {
+          for (let i = 0; i < 64; i++) {
+            const step: PatternSteps = {
+              start: [] as (number | string)[],
+              stop: [] as (number | string)[],
+            };
+
+            pattern.pattern.push(step);
+          }
+
+          if (pattern.pattern.length > 1024) pattern.pattern.length = 1024;
+
+          pattern.length = pattern.pattern.length;
+        }
+
+        const scene = scenes.current[data.scene];
+
+        if (scene) {
+          let longest = 0;
+
+          scene.patterns.forEach((pat) => {
+            if (pat.length > longest) longest = pat.length;
+          });
+
+          scene.longestPattern = longest;
+        }
+      }
+    }
+
+    setScenesState([...scenes.current]);
+  };
+
+  const shorterPattern = (data: { scene: number; instrument: number }) => {
+    const pattern = scenes.current[data.scene]?.patterns[data.instrument];
+
+    if (pattern) {
+      if (pattern.pattern.length > 64) {
+        let notesExist = false;
+
+        for (
+          let i = pattern.pattern.length - 64;
+          i < pattern.pattern.length;
+          i++
+        ) {
+          if (pattern.pattern[i]?.start.length) {
+            notesExist = true;
+            break;
+          }
+        }
+
+        console.log("notesExist:", notesExist);
+
+        if (notesExist) {
+          pattern.length = pattern.length - 64;
+        } else {
+          pattern.pattern.length -= 64;
+          pattern.length = pattern.pattern.length;
+        }
+
+        const scene = scenes.current[data.scene];
+
+        if (scene) {
+          let longest = 0;
+
+          scene.patterns.forEach((pat) => {
+            if (pat.length > longest) longest = pat.length;
+          });
+
+          scene.longestPattern = longest;
+        }
+      }
+    }
+
+    setScenesState([...scenes.current]);
+  };
+
   const rewind = () => {
     for (let i = 0; i < instruments.current.length; i++) {
       instruments.current[i]!.currentStep = 0;
@@ -193,6 +293,8 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const nextScene = () => {
+    currentStep.current = 0;
+
     if (currentScene.current >= scenes.current.length - 1) {
       currentScene.current = 0;
       setCurrentSceneState(0);
@@ -212,8 +314,6 @@ const Context = ({ children }: { children: ReactNode }) => {
       dbProject.instruments,
     ) as InstrumentStateDrumsType[];
     const dbScenes = JSON.parse(dbProject.scenes) as Scene[];
-
-    console.log("dbScenes:", dbScenes);
 
     setScenesState([...dbScenes]);
     scenes.current = [...dbScenes];
@@ -261,6 +361,10 @@ const Context = ({ children }: { children: ReactNode }) => {
         setLoaded,
         project,
         loadProject,
+        longerPattern,
+        shorterPattern,
+        setCurrentStep,
+        currentStep,
       }}
     >
       {children}
