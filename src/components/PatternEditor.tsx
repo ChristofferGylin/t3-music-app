@@ -20,7 +20,9 @@ const PatternEditor = ({
   sceneIndex,
   instrumentIndex,
 }: PatternEditorProps) => {
-  const { addNote, deleteNote } = useContext(AppContext) as ContextType;
+  const { addNote, deleteNote, longerPattern, shorterPattern } = useContext(
+    AppContext,
+  ) as ContextType;
 
   const colorActive = "bg-green-400";
   const colorInactive = "bg-slate-700";
@@ -40,7 +42,10 @@ const PatternEditor = ({
               <PatternButton
                 Icon={AiOutlineMinus}
                 callback={() => {
-                  console.log("minus");
+                  shorterPattern({
+                    scene: sceneIndex,
+                    instrument: instrumentIndex,
+                  });
                 }}
               />
               <div className="flex aspect-[2/1] h-7 items-center justify-center rounded border border-slate-700 bg-slate-900/50 p-1 text-sm font-light">
@@ -53,7 +58,10 @@ const PatternEditor = ({
               <PatternButton
                 Icon={AiOutlinePlus}
                 callback={() => {
-                  console.log("plus");
+                  longerPattern({
+                    scene: sceneIndex,
+                    instrument: instrumentIndex,
+                  });
                 }}
               />
               <PatternButton
@@ -84,55 +92,57 @@ const PatternEditor = ({
           </ul>
           <ul className="grid grid-flow-col grid-rows-11 justify-start gap-0 bg-blue-950">
             {pattern.pattern.map((step, stepIndex) => {
-              if (
-                pattern.resolution === 16 &&
-                stepIndex % 4 !== 0 &&
-                stepIndex !== 0
-              )
-                return;
-              if (
-                pattern.resolution === 32 &&
-                stepIndex % 2 !== 0 &&
-                stepIndex !== 0
-              )
-                return;
+              if (stepIndex < pattern.length) {
+                if (
+                  pattern.resolution === 16 &&
+                  stepIndex % 4 !== 0 &&
+                  stepIndex !== 0
+                )
+                  return;
+                if (
+                  pattern.resolution === 32 &&
+                  stepIndex % 2 !== 0 &&
+                  stepIndex !== 0
+                )
+                  return;
 
-              let bgColor;
-              let callback: () => void;
-              const elements: JSX.Element[] = [];
+                let bgColor;
+                let callback: () => void;
+                const elements: JSX.Element[] = [];
 
-              instrument.channels.forEach((channel, i) => {
-                const editNoteArgs: EditNote = {
-                  instrument: instrumentIndex,
-                  type: "drums",
-                  step: stepIndex,
-                  note: i,
-                  scene: sceneIndex,
-                };
-
-                if (step.start.filter((trig) => trig === i).length > 0) {
-                  bgColor = colorActive;
-                  callback = () => {
-                    deleteNote(editNoteArgs);
+                instrument.channels.forEach((channel, i) => {
+                  const editNoteArgs: EditNote = {
+                    instrument: instrumentIndex,
+                    type: "drums",
+                    step: stepIndex,
+                    note: i,
+                    scene: sceneIndex,
                   };
-                } else {
-                  bgColor = colorInactive;
-                  callback = () => {
-                    channel.play();
-                    addNote(editNoteArgs);
-                  };
-                }
 
-                elements.push(
-                  <li
-                    onClick={callback}
-                    key={`step#${stepIndex}sample${i}`}
-                    className={`flex h-8 w-12 items-center justify-center border-b border-r border-slate-600 ${bgColor}`}
-                  ></li>,
-                );
-              });
+                  if (step.start.filter((trig) => trig === i).length > 0) {
+                    bgColor = colorActive;
+                    callback = () => {
+                      deleteNote(editNoteArgs);
+                    };
+                  } else {
+                    bgColor = colorInactive;
+                    callback = () => {
+                      channel.play();
+                      addNote(editNoteArgs);
+                    };
+                  }
 
-              return elements;
+                  elements.push(
+                    <li
+                      onClick={callback}
+                      key={`step#${stepIndex}sample${i}`}
+                      className={`flex h-8 w-12 items-center justify-center border-b border-r border-slate-600 ${bgColor}`}
+                    ></li>,
+                  );
+                });
+
+                return elements;
+              }
             })}
           </ul>
         </div>
