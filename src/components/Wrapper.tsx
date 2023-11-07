@@ -1,9 +1,14 @@
 import { PropsWithChildren } from "react";
-import Header from "./Header";
+import Head from "next/head";
 
 const Wrapper = ({ children }: PropsWithChildren) => {
   return (
-    <div className="h-[calc(100vh)] w-full bg-slate-700 pt-14">{children}</div>
+    <div className="h-[calc(100vh)] w-full bg-slate-700">
+      <Head>
+        <title>PlinkPlonk - Make music in your browser!</title>
+      </Head>
+      {children}
+    </div>
   );
 };
 

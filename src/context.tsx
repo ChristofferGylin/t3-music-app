@@ -10,16 +10,17 @@ import drums, { DrumsType } from "~/instruments/drums/drums";
 import { Scene } from "~/types/Scene";
 import { v4 as uuid } from "uuid";
 import createPattern from "./functions/createPattern";
-import { kits } from "./instruments/drums/kits";
 import { InstrumentStateDrumsType } from "./types/InstrumentStateType";
 import { EditNote } from "./types/EditNote";
+import { DrumsKit, Project } from "@prisma/client";
+import ProjectWithKits from "./types/ProjectWithKits";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
   scenesState: Scene[];
   instruments: MutableRefObject<InstrumentsType>;
   instrumentsState: InstrumentStateDrumsType[];
-  newInstrument: (instrumentType: string) => void;
+  newInstrumentDrums: (kit: DrumsKit) => void;
   loop: MutableRefObject<boolean>;
   loopState: boolean;
   toggleLoop: () => void;
@@ -31,6 +32,10 @@ export type ContextType = {
   rewind: () => void;
   addNote: (data: EditNote) => void;
   deleteNote: (data: EditNote) => void;
+  projectLoaded: boolean;
+  setLoaded: (state: boolean) => void;
+  project: { id: string; name: string };
+  loadProject: (dbProject: ProjectWithKits) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -48,37 +53,76 @@ const Context = ({ children }: { children: ReactNode }) => {
   const [loopState, setLoopState] = useState(true);
   const loop = useRef(true);
   const [currentSceneState, setCurrentSceneState] = useState(0);
+  const [projectLoaded, setProjectLoaded] = useState(false);
+  const [project, setProject] = useState<{ id: string; name: string }>({
+    id: "",
+    name: "",
+  });
 
-  const newInstrument = (instrumentType: string) => {
-    switch (instrumentType) {
-      case "drums":
-        const newDrums = drums();
-        instruments.current.push(newDrums);
+  const newInstrumentDrums = async (
+    kit: DrumsKit,
+    loadingProject?: boolean,
+  ) => {
+    const newDrums = drums(kit);
+    instruments.current.push(newDrums);
 
-        const channelVolumes = newDrums.channels.map((channel) => {
-          return channel.sampler.volume.value;
-        });
+    const channelVolumes = newDrums.channels.map((channel) => {
+      return channel.sampler.volume.value;
+    });
 
-        const newDrumsState: InstrumentStateDrumsType = {
-          type: "drums",
-          currentKit: kits[0]!,
-          masterVolume: newDrums.masterVolume.volume.value,
-          channelVolumes,
-          modelName: "Drums",
-        };
+    const newDrumsState: InstrumentStateDrumsType = {
+      type: "drums",
+      currentKit: kit.id,
+      masterVolume: newDrums.masterVolume.volume.value,
+      channelVolumes,
+      modelName: "Drums",
+      name: "Drums,",
+    };
 
-        setInstrumentsState((old) => {
-          return [...old, newDrumsState];
-        });
-        scenes.current.forEach((scene) => {
-          scene.patterns.push(createPattern("drums"));
-        });
+    setInstrumentsState((old) => {
+      return [...old, newDrumsState];
+    });
 
-        setScenesState([...scenes.current]);
+    if (!loadingProject) {
+      scenes.current.forEach((scene) => {
+        scene.patterns.push(createPattern("drums"));
+      });
 
-        break;
+      setScenesState([...scenes.current]);
     }
   };
+
+  // const newInstrument = (instrumentType: string) => {
+  //   switch (instrumentType) {
+  //     case "drums":
+  //       const newDrums = drums();
+  //       instruments.current.push(newDrums);
+
+  //       const channelVolumes = newDrums.channels.map((channel) => {
+  //         return channel.sampler.volume.value;
+  //       });
+
+  //       const newDrumsState: InstrumentStateDrumsType = {
+  //         type: "drums",
+  //         currentKit: [...defaultKit],
+  //         kitName: "default kit",
+  //         masterVolume: newDrums.masterVolume.volume.value,
+  //         channelVolumes,
+  //         modelName: "Drums",
+  //       };
+
+  //       setInstrumentsState((old) => {
+  //         return [...old, newDrumsState];
+  //       });
+  //       scenes.current.forEach((scene) => {
+  //         scene.patterns.push(createPattern("drums"));
+  //       });
+
+  //       setScenesState([...scenes.current]);
+
+  //       break;
+  //   }
+  // };
 
   const newScene = () => {
     const newScene: Scene = { id: uuid(), patterns: [] };
@@ -103,15 +147,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         data.step
       ]?.start.push(data.note);
 
-      setScenesState((old) => {
-        const newState = [...old];
-
-        newState[data.scene]?.patterns[data.instrument]?.pattern[
-          data.step
-        ]?.start.push(data.note);
-
-        return newState;
-      });
+      setScenesState([...scenes.current]);
     }
   };
 
@@ -127,21 +163,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         }
       });
 
-      setScenesState((old) => {
-        const newState = [...old];
-
-        newState[data.scene]?.patterns[data.instrument]?.pattern[
-          data.step
-        ]?.start.forEach((note, index) => {
-          if (note === data.note) {
-            newState[data.scene]?.patterns[data.instrument]?.pattern[
-              data.step
-            ]?.start.splice(index, 1);
-          }
-        });
-
-        return newState;
-      });
+      setScenesState([...scenes.current]);
     }
   };
 
@@ -180,6 +202,42 @@ const Context = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const setLoaded = (state: boolean) => {
+    setProjectLoaded(state);
+  };
+
+  const loadProject = (dbProject: ProjectWithKits) => {
+    setProject({ id: dbProject.id, name: dbProject.name });
+    const dbInstruments = JSON.parse(
+      dbProject.instruments,
+    ) as InstrumentStateDrumsType[];
+    const dbScenes = JSON.parse(dbProject.scenes) as Scene[];
+
+    console.log("dbScenes:", dbScenes);
+
+    setScenesState([...dbScenes]);
+    scenes.current = [...dbScenes];
+
+    dbInstruments.forEach((instrument) => {
+      switch (instrument.modelName) {
+        case "Drums":
+          const selectedKit = dbProject.drumsKits.filter(
+            (dbKit) => instrument.currentKit === dbKit.id,
+          );
+
+          if (selectedKit[0]) {
+            newInstrumentDrums(selectedKit[0], true);
+          }
+
+          break;
+      }
+    });
+
+    setCurrentSceneState(0);
+    currentScene.current = 0;
+    setProjectLoaded(true);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -187,7 +245,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         scenesState,
         instruments,
         instrumentsState,
-        newInstrument,
+        newInstrumentDrums,
         loop,
         toggleLoop,
         currentScene,
@@ -199,6 +257,10 @@ const Context = ({ children }: { children: ReactNode }) => {
         rewind,
         addNote,
         deleteNote,
+        projectLoaded,
+        setLoaded,
+        project,
+        loadProject,
       }}
     >
       {children}

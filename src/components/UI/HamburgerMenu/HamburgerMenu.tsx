@@ -13,7 +13,7 @@ const HamburgerMenu = () => {
   };
 
   return (
-    <div className="relative justify-self-end">
+    <div className="relative">
       {menuOpen ? (
         <IconButton Icon={AiOutlineClose} callback={toggleMenu} />
       ) : (

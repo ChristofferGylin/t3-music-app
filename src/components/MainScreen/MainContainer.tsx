@@ -10,13 +10,13 @@ import SceneControls from "./SceneControls";
 import Link from "next/link";
 import ChannelContainer from "./ChannelContainer";
 import MasterComponent from "./MasterComponent";
+import { api } from "~/utils/api";
 
 const MainContainer = () => {
   const scrollRefScenes = useRef<HTMLDivElement | null>(null);
   const scrollRefChannels = useRef<HTMLDivElement | null>(null);
-  const { scenesState, newScene, newInstrument, instrumentsState } = useContext(
-    AppContext,
-  ) as ContextType;
+  const { scenesState, newScene, newInstrumentDrums, instrumentsState } =
+    useContext(AppContext) as ContextType;
 
   const handleScroll = (event: SyntheticEvent, target: HTMLDivElement) => {
     if (target !== null) {
@@ -25,8 +25,12 @@ const MainContainer = () => {
     }
   };
 
+  const defKit = api.instruments.getDrumsKitById.useQuery({
+    id: "cloobtmk60000nvxoncyrom50",
+  }).data;
+
   return (
-    <main className="grid h-full w-full grid-rows-main-horizontal">
+    <main className="grid h-full w-full grid-rows-main-horizontal pt-14">
       <div className="grid h-full w-full grid-cols-main-vertical overflow-auto">
         <SideContainerScene>
           {scenesState.map((scene, index) => {
@@ -111,7 +115,9 @@ const MainContainer = () => {
             <li key={`newInstrument`} className="h-full">
               <button
                 onClick={() => {
-                  newInstrument("drums");
+                  if (defKit) {
+                    newInstrumentDrums(defKit);
+                  }
                 }}
                 className="group flex h-full w-24 items-center justify-center rounded-lg border-2 border-dashed border-slate-500 p-2  hover:border-slate-400"
               >
