@@ -125,7 +125,7 @@ const Context = ({ children }: { children: ReactNode }) => {
   // };
 
   const newScene = () => {
-    const newScene: Scene = { id: uuid(), patterns: [] };
+    const newScene: Scene = { id: uuid(), patterns: [], longestPattern: 64 };
 
     for (let i = 0; i < instruments.current.length; i++) {
       if (instruments.current[i]?.type === "drums") {
@@ -212,8 +212,6 @@ const Context = ({ children }: { children: ReactNode }) => {
       dbProject.instruments,
     ) as InstrumentStateDrumsType[];
     const dbScenes = JSON.parse(dbProject.scenes) as Scene[];
-
-    console.log("dbScenes:", dbScenes);
 
     setScenesState([...dbScenes]);
     scenes.current = [...dbScenes];
