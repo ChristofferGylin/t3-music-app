@@ -75,7 +75,13 @@ const Context = ({ children }: { children: ReactNode }) => {
 
   const setCurrentStep = (data: { index?: number; next?: boolean }) => {
     if (data.next) {
-      currentStep.current++;
+      const longest = scenes.current[currentScene.current]?.longestPattern;
+
+      if (longest && currentStep.current === longest - 1) {
+        currentStep.current = 0;
+      } else {
+        currentStep.current++;
+      }
     }
 
     if (data.index) {
@@ -88,6 +94,24 @@ const Context = ({ children }: { children: ReactNode }) => {
     loadingProject?: boolean,
   ) => {
     const newDrums = drums(kit);
+
+    // if (playing) {
+    //   console.log("playing");
+    //   const calcStep = (step: number) => {
+    //     console.log("step:", step);
+    //     if (step <= 64) {
+    //       return step;
+    //     } else {
+    //       calcStep(step - 64);
+    //     }
+    //   };
+
+    //   const instrumentStep = calcStep(currentStep.current);
+
+    //   if (instrumentStep) newDrums.currentStep = instrumentStep;
+    // }
+    // console.log("newDrums:", newDrums);
+
     instruments.current.push(newDrums);
 
     const channelVolumes = newDrums.channels.map((channel) => {
@@ -278,6 +302,8 @@ const Context = ({ children }: { children: ReactNode }) => {
     for (let i = 0; i < instruments.current.length; i++) {
       instruments.current[i]!.currentStep = 0;
     }
+
+    currentStep.current = 0;
 
     if (!loop.current) {
       currentScene.current = 0;

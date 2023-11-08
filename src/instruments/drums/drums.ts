@@ -10,6 +10,7 @@ export type DrumsType = {
   channels: ChannelType[];
   type: "drums";
   modelName: string;
+  new: boolean;
 };
 
 type KitChannelsType = [{ title: string; url: string }];
@@ -46,6 +47,7 @@ const drums = function (kit: DrumsKit): DrumsType {
     channels: channels || [],
     type: "drums",
     modelName: "Drums",
+    new: true,
   };
 };
 
