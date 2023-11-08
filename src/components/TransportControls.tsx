@@ -18,8 +18,9 @@ const TransportControls = () => {
     instrumentsState,
     scenes,
     scenesState,
+    playing,
+    setPlayState,
   } = useContext(AppContext) as ContextType;
-  const [started, setStarted] = useState(false);
 
   const handleStart = () => {
     if (Tone.context.state !== "running") {
@@ -28,20 +29,20 @@ const TransportControls = () => {
 
     if (Tone.Transport.state === "paused") {
       Tone.Transport.start();
-      setStarted(true);
+      setPlayState(true);
     } else if (Tone.Transport.state === "stopped") {
       rewind();
       Tone.Transport.start();
-      setStarted(true);
+      setPlayState(true);
     } else {
       Tone.Transport.pause();
-      setStarted(false);
+      setPlayState(false);
     }
   };
 
   const handleStop = () => {
     Tone.Transport.stop();
-    setStarted(false);
+    setPlayState(false);
   };
 
   return (
@@ -54,7 +55,7 @@ const TransportControls = () => {
       <TransportButton Icon={BsStopFill} state={false} callback={handleStop} />
       <TransportButton
         Icon={BsFillPlayFill}
-        state={started}
+        state={playing}
         callback={handleStart}
       />
       <TransportButton Icon={TfiLoop} state={loopState} callback={toggleLoop} />

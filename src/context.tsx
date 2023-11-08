@@ -42,6 +42,8 @@ export type ContextType = {
   shorterPattern: (data: { scene: number; instrument: number }) => void;
   setCurrentStep: (data: { index?: number; next?: boolean }) => void;
   currentStep: MutableRefObject<number>;
+  playing: boolean;
+  setPlayState: (state: boolean) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -65,6 +67,11 @@ const Context = ({ children }: { children: ReactNode }) => {
     id: "",
     name: "",
   });
+  const [playing, setPlaying] = useState(false);
+
+  const setPlayState = (state: boolean) => {
+    setPlaying(state);
+  };
 
   const setCurrentStep = (data: { index?: number; next?: boolean }) => {
     if (data.next) {
@@ -290,6 +297,7 @@ const Context = ({ children }: { children: ReactNode }) => {
     rewind();
     if (Tone.Transport.state === "paused" || Tone.Transport.state === "stopped")
       Tone.Transport.start();
+    setPlayState(true);
   };
 
   const nextScene = () => {
@@ -365,6 +373,8 @@ const Context = ({ children }: { children: ReactNode }) => {
         shorterPattern,
         setCurrentStep,
         currentStep,
+        playing,
+        setPlayState,
       }}
     >
       {children}
