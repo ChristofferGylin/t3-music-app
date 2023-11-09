@@ -34,6 +34,7 @@ const StudioHeader = () => {
 
   const repeatFunction = (time: Time) => {
     if (instruments.current !== null && instruments.current !== undefined) {
+      let goToNext = false;
       for (let i = 0; i < instruments.current.length; i++) {
         const currentInstrument = instruments.current[i];
 
@@ -57,6 +58,10 @@ const StudioHeader = () => {
         let step = instruments.current[i]?.currentStep;
 
         if (step === undefined) return;
+
+        console.log("instrument index:", i);
+        console.log("instrument step:", step);
+        console.log("global step:", currentStep.current);
 
         if (instruments.current[i]?.type === "drums") {
           const start =
@@ -95,12 +100,16 @@ const StudioHeader = () => {
         if (step >= pattern.length - 1) {
           if (instruments.current === null) return;
           instruments.current[i]!.currentStep = 0;
+
           if (i === instrumentsArray?.length - 1) {
+            console.log("hej");
             if (!loop.current) {
               const scene = scenes.current[currentScene.current];
+              console.log("currentStep.current:", currentStep.current);
+              console.log("scene.longestPattern:", scene?.longestPattern);
 
-              if (scene && currentStep.current >= scene.longestPattern) {
-                nextScene();
+              if (scene && currentStep.current >= scene.longestPattern - 1) {
+                goToNext = true;
               }
             }
           }
@@ -108,7 +117,12 @@ const StudioHeader = () => {
           instruments.current[i]!.currentStep++;
         }
       }
-      setCurrentStep({ next: true });
+
+      if (goToNext) {
+        nextScene();
+      } else {
+        setCurrentStep({ next: true });
+      }
     }
   };
 

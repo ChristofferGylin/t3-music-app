@@ -79,6 +79,14 @@ const Context = ({ children }: { children: ReactNode }) => {
 
       if (longest && currentStep.current === longest - 1) {
         currentStep.current = 0;
+
+        // if (currentScene.current >= scenes.current.length - 1) {
+        //   currentScene.current = 0;
+        //   setCurrentSceneState(0);
+        // } else {
+        //   currentScene.current++;
+        //   setCurrentSceneState(currentScene.current);
+        // }
       } else {
         currentStep.current++;
       }
@@ -312,6 +320,7 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const nextScene = () => {
+    console.log("next scene");
     currentStep.current = 0;
     instruments.current.forEach((inst) => {
       inst.currentStep = 0;
