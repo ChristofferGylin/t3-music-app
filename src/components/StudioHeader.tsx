@@ -37,17 +37,21 @@ const StudioHeader = () => {
       for (let i = 0; i < instruments.current.length; i++) {
         const currentInstrument = instruments.current[i];
 
-        console.log("Instrument i:", i);
-        console.log("currentStep global", currentStep.current);
-        console.log("currentStep instrument", currentInstrument?.currentStep);
-
         if (currentInstrument && currentInstrument.new) {
-          console.log("new instrument");
+          const calcStep = (step: number) => {
+            if (step <= 63) {
+              return step;
+            } else {
+              calcStep(step - 64);
+            }
+          };
 
-          if (currentStep.current !== 0) continue;
+          const instrumentStep = calcStep(currentStep.current);
 
-          currentInstrument.new = false;
-          console.log("not new anymore");
+          if (instrumentStep) {
+            currentInstrument.currentStep = instrumentStep;
+            currentInstrument.new = false;
+          }
         }
 
         let step = instruments.current[i]?.currentStep;
