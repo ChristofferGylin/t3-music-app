@@ -35,6 +35,25 @@ const StudioHeader = () => {
   const repeatFunction = (time: Time) => {
     if (instruments.current !== null && instruments.current !== undefined) {
       for (let i = 0; i < instruments.current.length; i++) {
+        const currentInstrument = instruments.current[i];
+
+        if (currentInstrument && currentInstrument.new) {
+          const calcStep = (step: number) => {
+            if (step <= 63) {
+              return step;
+            } else {
+              calcStep(step - 64);
+            }
+          };
+
+          const instrumentStep = calcStep(currentStep.current);
+
+          if (instrumentStep) {
+            currentInstrument.currentStep = instrumentStep;
+            currentInstrument.new = false;
+          }
+        }
+
         let step = instruments.current[i]?.currentStep;
 
         if (step === undefined) return;
@@ -87,9 +106,9 @@ const StudioHeader = () => {
           }
         } else {
           instruments.current[i]!.currentStep++;
-          setCurrentStep({ next: true });
         }
       }
+      setCurrentStep({ next: true });
     }
   };
 

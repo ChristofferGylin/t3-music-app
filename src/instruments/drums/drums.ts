@@ -10,6 +10,7 @@ export type DrumsType = {
   channels: ChannelType[];
   type: "drums";
   modelName: string;
+  new: boolean;
 };
 
 type KitChannelsType = [{ title: string; url: string }];
@@ -18,8 +19,6 @@ const drums = function (kit: DrumsKit): DrumsType {
   const masterVolume = new Volume(-10).toDestination();
 
   const kitChannels = JSON.parse(kit.channels) as KitChannelsType;
-
-  console.log("kitChannels:", kitChannels);
 
   const channels = kitChannels.map((kit) => {
     return {
@@ -46,6 +45,7 @@ const drums = function (kit: DrumsKit): DrumsType {
     channels: channels || [],
     type: "drums",
     modelName: "Drums",
+    new: true,
   };
 };
 

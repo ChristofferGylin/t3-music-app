@@ -42,6 +42,8 @@ export type ContextType = {
   shorterPattern: (data: { scene: number; instrument: number }) => void;
   setCurrentStep: (data: { index?: number; next?: boolean }) => void;
   currentStep: MutableRefObject<number>;
+  playing: boolean;
+  setPlayState: (state: boolean) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -65,10 +67,21 @@ const Context = ({ children }: { children: ReactNode }) => {
     id: "",
     name: "",
   });
+  const [playing, setPlaying] = useState(false);
+
+  const setPlayState = (state: boolean) => {
+    setPlaying(state);
+  };
 
   const setCurrentStep = (data: { index?: number; next?: boolean }) => {
     if (data.next) {
-      currentStep.current++;
+      const longest = scenes.current[currentScene.current]?.longestPattern;
+
+      if (longest && currentStep.current === longest - 1) {
+        currentStep.current = 0;
+      } else {
+        currentStep.current++;
+      }
     }
 
     if (data.index) {
@@ -81,6 +94,7 @@ const Context = ({ children }: { children: ReactNode }) => {
     loadingProject?: boolean,
   ) => {
     const newDrums = drums(kit);
+
     instruments.current.push(newDrums);
 
     const channelVolumes = newDrums.channels.map((channel) => {
@@ -158,7 +172,6 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const addNote = (data: EditNote) => {
-    console.log("add note data:", data);
     if (data.type === "drums") {
       scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
         data.step
@@ -225,8 +238,9 @@ const Context = ({ children }: { children: ReactNode }) => {
 
   const shorterPattern = (data: { scene: number; instrument: number }) => {
     const pattern = scenes.current[data.scene]?.patterns[data.instrument];
+    const instrument = instruments.current[data.instrument];
 
-    if (pattern) {
+    if (pattern && instrument) {
       if (pattern.pattern.length > 64) {
         let notesExist = false;
 
@@ -240,8 +254,6 @@ const Context = ({ children }: { children: ReactNode }) => {
             break;
           }
         }
-
-        console.log("notesExist:", notesExist);
 
         if (notesExist) {
           pattern.length = pattern.length - 64;
@@ -260,6 +272,10 @@ const Context = ({ children }: { children: ReactNode }) => {
           });
 
           scene.longestPattern = longest;
+
+          if (instrument.currentStep > pattern.length - 1) {
+            instrument.currentStep -= 64;
+          }
         }
       }
     }
@@ -271,6 +287,8 @@ const Context = ({ children }: { children: ReactNode }) => {
     for (let i = 0; i < instruments.current.length; i++) {
       instruments.current[i]!.currentStep = 0;
     }
+
+    currentStep.current = 0;
 
     if (!loop.current) {
       currentScene.current = 0;
@@ -290,6 +308,7 @@ const Context = ({ children }: { children: ReactNode }) => {
     rewind();
     if (Tone.Transport.state === "paused" || Tone.Transport.state === "stopped")
       Tone.Transport.start();
+    setPlayState(true);
   };
 
   const nextScene = () => {
@@ -365,6 +384,8 @@ const Context = ({ children }: { children: ReactNode }) => {
         shorterPattern,
         setCurrentStep,
         currentStep,
+        playing,
+        setPlayState,
       }}
     >
       {children}
