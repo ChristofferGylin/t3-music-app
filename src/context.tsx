@@ -313,6 +313,9 @@ const Context = ({ children }: { children: ReactNode }) => {
 
   const nextScene = () => {
     currentStep.current = 0;
+    instruments.current.forEach((inst) => {
+      inst.currentStep = 0;
+    });
 
     if (currentScene.current >= scenes.current.length - 1) {
       currentScene.current = 0;
