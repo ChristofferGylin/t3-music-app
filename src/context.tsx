@@ -95,23 +95,6 @@ const Context = ({ children }: { children: ReactNode }) => {
   ) => {
     const newDrums = drums(kit);
 
-    // if (playing) {
-    //   console.log("playing");
-    //   const calcStep = (step: number) => {
-    //     console.log("step:", step);
-    //     if (step <= 64) {
-    //       return step;
-    //     } else {
-    //       calcStep(step - 64);
-    //     }
-    //   };
-
-    //   const instrumentStep = calcStep(currentStep.current);
-
-    //   if (instrumentStep) newDrums.currentStep = instrumentStep;
-    // }
-    // console.log("newDrums:", newDrums);
-
     instruments.current.push(newDrums);
 
     const channelVolumes = newDrums.channels.map((channel) => {
@@ -189,7 +172,6 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const addNote = (data: EditNote) => {
-    console.log("add note data:", data);
     if (data.type === "drums") {
       scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
         data.step
@@ -256,8 +238,9 @@ const Context = ({ children }: { children: ReactNode }) => {
 
   const shorterPattern = (data: { scene: number; instrument: number }) => {
     const pattern = scenes.current[data.scene]?.patterns[data.instrument];
+    const instrument = instruments.current[data.instrument];
 
-    if (pattern) {
+    if (pattern && instrument) {
       if (pattern.pattern.length > 64) {
         let notesExist = false;
 
@@ -271,8 +254,6 @@ const Context = ({ children }: { children: ReactNode }) => {
             break;
           }
         }
-
-        console.log("notesExist:", notesExist);
 
         if (notesExist) {
           pattern.length = pattern.length - 64;
@@ -291,6 +272,10 @@ const Context = ({ children }: { children: ReactNode }) => {
           });
 
           scene.longestPattern = longest;
+
+          if (instrument.currentStep > pattern.length - 1) {
+            instrument.currentStep -= 64;
+          }
         }
       }
     }
