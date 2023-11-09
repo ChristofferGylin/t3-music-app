@@ -59,10 +59,6 @@ const StudioHeader = () => {
 
         if (step === undefined) return;
 
-        console.log("instrument index:", i);
-        console.log("instrument step:", step);
-        console.log("global step:", currentStep.current);
-
         if (instruments.current[i]?.type === "drums") {
           const start =
             scenes.current[currentScene.current]?.patterns[i]?.pattern[step]
@@ -102,11 +98,8 @@ const StudioHeader = () => {
           instruments.current[i]!.currentStep = 0;
 
           if (i === instrumentsArray?.length - 1) {
-            console.log("hej");
             if (!loop.current) {
               const scene = scenes.current[currentScene.current];
-              console.log("currentStep.current:", currentStep.current);
-              console.log("scene.longestPattern:", scene?.longestPattern);
 
               if (scene && currentStep.current >= scene.longestPattern - 1) {
                 goToNext = true;

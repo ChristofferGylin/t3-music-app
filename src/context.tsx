@@ -320,7 +320,6 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const nextScene = () => {
-    console.log("next scene");
     currentStep.current = 0;
     instruments.current.forEach((inst) => {
       inst.currentStep = 0;
@@ -340,6 +339,7 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const loadProject = (dbProject: ProjectWithKits) => {
+    instruments.current = [];
     setProject({ id: dbProject.id, name: dbProject.name });
     const dbInstruments = JSON.parse(
       dbProject.instruments,
