@@ -34,6 +34,7 @@ const StudioHeader = () => {
 
   const repeatFunction = (time: Time) => {
     if (instruments.current !== null && instruments.current !== undefined) {
+      let goToNext = false;
       for (let i = 0; i < instruments.current.length; i++) {
         const currentInstrument = instruments.current[i];
 
@@ -95,12 +96,13 @@ const StudioHeader = () => {
         if (step >= pattern.length - 1) {
           if (instruments.current === null) return;
           instruments.current[i]!.currentStep = 0;
+
           if (i === instrumentsArray?.length - 1) {
             if (!loop.current) {
               const scene = scenes.current[currentScene.current];
 
-              if (scene && currentStep.current >= scene.longestPattern) {
-                nextScene();
+              if (scene && currentStep.current >= scene.longestPattern - 1) {
+                goToNext = true;
               }
             }
           }
@@ -108,7 +110,12 @@ const StudioHeader = () => {
           instruments.current[i]!.currentStep++;
         }
       }
-      setCurrentStep({ next: true });
+
+      if (goToNext) {
+        nextScene();
+      } else {
+        setCurrentStep({ next: true });
+      }
     }
   };
 

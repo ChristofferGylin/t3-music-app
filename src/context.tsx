@@ -79,6 +79,14 @@ const Context = ({ children }: { children: ReactNode }) => {
 
       if (longest && currentStep.current === longest - 1) {
         currentStep.current = 0;
+
+        // if (currentScene.current >= scenes.current.length - 1) {
+        //   currentScene.current = 0;
+        //   setCurrentSceneState(0);
+        // } else {
+        //   currentScene.current++;
+        //   setCurrentSceneState(currentScene.current);
+        // }
       } else {
         currentStep.current++;
       }
@@ -313,6 +321,9 @@ const Context = ({ children }: { children: ReactNode }) => {
 
   const nextScene = () => {
     currentStep.current = 0;
+    instruments.current.forEach((inst) => {
+      inst.currentStep = 0;
+    });
 
     if (currentScene.current >= scenes.current.length - 1) {
       currentScene.current = 0;
@@ -328,6 +339,7 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const loadProject = (dbProject: ProjectWithKits) => {
+    instruments.current = [];
     setProject({ id: dbProject.id, name: dbProject.name });
     const dbInstruments = JSON.parse(
       dbProject.instruments,
