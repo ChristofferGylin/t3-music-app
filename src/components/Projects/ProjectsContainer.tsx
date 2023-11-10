@@ -1,6 +1,5 @@
-import { Project } from "@prisma/client";
-import Link from "next/link";
-import { AppContext, ContextType } from "~/context";
+import { type Project } from "@prisma/client";
+import { type ContextType, AppContext } from "~/context";
 import { useContext } from "react";
 import { useRouter } from "next/router";
 

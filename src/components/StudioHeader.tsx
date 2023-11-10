@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import * as Tone from "tone";
 import { Time } from "tone/build/esm/core/type/Units";
-import { AppContext, ContextType } from "~/context";
+import { type ContextType, AppContext } from "~/context";
 import TransportControls from "./TransportControls";
 import BackButton from "./BackButton";
 import { useRouter } from "next/router";

@@ -1,12 +1,6 @@
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
-import { kits } from "~/instruments/drums/kits";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const projectRouter = createTRPCRouter({
   create: protectedProcedure

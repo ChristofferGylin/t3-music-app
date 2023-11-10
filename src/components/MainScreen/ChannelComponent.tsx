@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { AppContext, ContextType } from "~/context";
+import { type ContextType, AppContext } from "~/context";
 import { useContext } from "react";
-import { InstrumentStateDrumsType } from "~/types/InstrumentStateType";
+import { type InstrumentStateDrumsType } from "~/types/InstrumentStateType";
 type SceneComponentProps = {
   instrumentIndex: number;
   instrument: InstrumentStateDrumsType;

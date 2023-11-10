@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useContext } from "react";
 import PatternEditor from "~/components/PatternEditor";
 import Drums from "~/components/drums/Drums";
-import { AppContext, ContextType } from "~/context";
+import { type ContextType, AppContext } from "~/context";
 
 const Editor = () => {
   const { instruments, scenesState } = useContext(AppContext) as ContextType;

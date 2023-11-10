@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { AiOutlineLoading } from "react-icons/ai";
 import { useContext, useEffect } from "react";
 import { api } from "~/utils/api";
-import { AppContext, ContextType } from "~/context";
+import { type ContextType, AppContext } from "~/context";
 
 const Loading = () => {
   return (

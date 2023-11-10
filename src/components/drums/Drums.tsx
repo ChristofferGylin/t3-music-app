@@ -1,4 +1,4 @@
-import { DrumsType } from "~/instruments/drums/drums";
+import { type DrumsType } from "~/instruments/drums/drums";
 import Channel from "./Channel";
 
 const Drums = ({ drummachine }: { drummachine: DrumsType }) => {

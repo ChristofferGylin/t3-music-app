@@ -1,5 +1,5 @@
-import { Sampler } from "tone";
-import { Time } from "tone/build/esm/core/type/Units";
+import { type Sampler } from "tone";
+import { type Time } from "tone/build/esm/core/type/Units";
 
 type ChannelType = {
   name: string;

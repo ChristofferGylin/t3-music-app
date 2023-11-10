@@ -1,4 +1,4 @@
-import ChannelType from "~/types/ChannelType";
+import type ChannelType from "~/types/ChannelType";
 
 const Channel = ({ drumChannel }: { drumChannel: ChannelType }) => {
   return (

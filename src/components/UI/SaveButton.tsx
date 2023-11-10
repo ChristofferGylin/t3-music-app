@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import IconButton from "../IconButton";
 import { TfiSave } from "react-icons/tfi";
-import { AppContext, ContextType } from "~/context";
+import { type ContextType, AppContext } from "~/context";
 import { api } from "~/utils/api";
 
 const SaveButton = () => {
