@@ -1,8 +1,7 @@
 import SceneContainer from "./SceneContainer";
 import SideContainerScene from "./SideContainerScene";
-import { useRef, SyntheticEvent } from "react";
-import { useContext } from "react";
-import { AppContext, ContextType } from "~/context";
+import { useRef, SyntheticEvent, useContext } from "react";
+import { type ContextType, AppContext } from "~/context";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import IconButton from "../IconButton";
 import ChannelComponent from "./ChannelComponent";

@@ -3,8 +3,8 @@ import { AiFillStepBackward } from "react-icons/ai";
 import { BsStopFill } from "react-icons/bs";
 import { GiBrainDump } from "react-icons/gi";
 import TransportButton from "./TransportButton";
-import { AppContext, ContextType } from "~/context";
-import { useContext, useState } from "react";
+import { type ContextType, AppContext } from "~/context";
+import { useContext } from "react";
 import * as Tone from "tone";
 import { BsFillPlayFill } from "react-icons/bs";
 

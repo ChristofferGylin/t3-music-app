@@ -1,8 +1,8 @@
-import { DrumsType } from "~/instruments/drums/drums";
-import { PatternType } from "~/types/Pattern";
+import { type DrumsType } from "~/instruments/drums/drums";
+import { type PatternType } from "~/types/Pattern";
 import { useContext } from "react";
-import { AppContext, ContextType } from "~/context";
-import { EditNote } from "~/types/EditNote";
+import { type ContextType, AppContext } from "~/context";
+import { type EditNote } from "~/types/EditNote";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { TbMultiplier2X } from "react-icons/tb";
 import PatternButton from "./PatternButton";

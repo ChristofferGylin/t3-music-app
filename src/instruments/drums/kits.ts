@@ -1,4 +1,4 @@
-import { KitsType } from "~/types/KitsType";
+import { type KitsType } from "~/types/KitsType";
 
 export const kits: KitsType = [
   [

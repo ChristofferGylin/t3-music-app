@@ -1,4 +1,4 @@
-import { PatternType, PatternSteps } from "~/types/Pattern";
+import { type PatternType, type PatternSteps } from "~/types/Pattern";
 
 const createPattern = (type: "drums" | "keys"): PatternType => {
   const pattern: PatternType = {

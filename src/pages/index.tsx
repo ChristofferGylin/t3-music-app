@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/react";
 import WelcomeScreen from "~/components/LandingPage/WelcomeScreen";
 import { getServerAuthSession } from "~/server/auth";
 import { type GetServerSideProps } from "next";

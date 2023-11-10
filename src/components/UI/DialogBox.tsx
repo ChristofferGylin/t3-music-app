@@ -1,9 +1,4 @@
-import { PropsWithChildren } from "react";
-
-type ModalScreenProps = PropsWithChildren & {
-  close: () => void;
-  callback: () => void;
-};
+import { type PropsWithChildren } from "react";
 
 const DialogBox = ({ children }: PropsWithChildren) => {
   return (

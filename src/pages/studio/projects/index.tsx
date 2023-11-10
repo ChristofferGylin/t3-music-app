@@ -8,7 +8,7 @@ import DialogBox from "~/components/UI/DialogBox";
 import DialogButton from "~/components/UI/DialogButton";
 import TextInput from "~/components/UI/TextInput";
 import { api } from "~/utils/api";
-import { AppContext, ContextType } from "~/context";
+import { type ContextType, AppContext } from "~/context";
 
 const Projects = () => {
   const [showModal, setShowModal] = useState(false);

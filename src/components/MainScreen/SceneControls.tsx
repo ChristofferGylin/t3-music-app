@@ -1,7 +1,7 @@
 import * as Tone from "tone";
 import IconButton from "../IconButton";
 import { BsFillPlayFill } from "react-icons/bs";
-import { AppContext, ContextType } from "~/context";
+import { type ContextType, AppContext } from "~/context";
 import { useContext } from "react";
 
 type SceneComponentProps = {

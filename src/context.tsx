@@ -6,16 +6,15 @@ import React, {
   useRef,
   useState,
 } from "react";
-import drums, { DrumsType } from "~/instruments/drums/drums";
-import { Scene } from "~/types/Scene";
+import drums, { type DrumsType } from "~/instruments/drums/drums";
+import { type Scene } from "~/types/Scene";
 import { v4 as uuid } from "uuid";
 import createPattern from "./functions/createPattern";
-import { InstrumentStateDrumsType } from "./types/InstrumentStateType";
-import { EditNote } from "./types/EditNote";
-import { DrumsKit, Project } from "@prisma/client";
-import ProjectWithKits from "./types/ProjectWithKits";
-import { PatternSteps } from "./types/Pattern";
-import { number } from "zod";
+import { type InstrumentStateDrumsType } from "./types/InstrumentStateType";
+import { type EditNote } from "./types/EditNote";
+import { type DrumsKit } from "@prisma/client";
+import type ProjectWithKits from "./types/ProjectWithKits";
+import { type PatternSteps } from "./types/Pattern";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -79,14 +78,6 @@ const Context = ({ children }: { children: ReactNode }) => {
 
       if (longest && currentStep.current === longest - 1) {
         currentStep.current = 0;
-
-        // if (currentScene.current >= scenes.current.length - 1) {
-        //   currentScene.current = 0;
-        //   setCurrentSceneState(0);
-        // } else {
-        //   currentScene.current++;
-        //   setCurrentSceneState(currentScene.current);
-        // }
       } else {
         currentStep.current++;
       }
@@ -130,38 +121,6 @@ const Context = ({ children }: { children: ReactNode }) => {
       setScenesState([...scenes.current]);
     }
   };
-
-  // const newInstrument = (instrumentType: string) => {
-  //   switch (instrumentType) {
-  //     case "drums":
-  //       const newDrums = drums();
-  //       instruments.current.push(newDrums);
-
-  //       const channelVolumes = newDrums.channels.map((channel) => {
-  //         return channel.sampler.volume.value;
-  //       });
-
-  //       const newDrumsState: InstrumentStateDrumsType = {
-  //         type: "drums",
-  //         currentKit: [...defaultKit],
-  //         kitName: "default kit",
-  //         masterVolume: newDrums.masterVolume.volume.value,
-  //         channelVolumes,
-  //         modelName: "Drums",
-  //       };
-
-  //       setInstrumentsState((old) => {
-  //         return [...old, newDrumsState];
-  //       });
-  //       scenes.current.forEach((scene) => {
-  //         scene.patterns.push(createPattern("drums"));
-  //       });
-
-  //       setScenesState([...scenes.current]);
-
-  //       break;
-  //   }
-  // };
 
   const newScene = () => {
     const newScene: Scene = { id: uuid(), patterns: [], longestPattern: 64 };

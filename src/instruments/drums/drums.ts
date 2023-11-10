@@ -1,7 +1,7 @@
-import { DrumsKit } from "@prisma/client";
+import { type DrumsKit } from "@prisma/client";
 import { Volume, Sampler, Player } from "tone";
-import { Time } from "tone/build/esm/core/type/Units";
-import ChannelType from "~/types/ChannelType";
+import { type Time } from "tone/build/esm/core/type/Units";
+import type ChannelType from "~/types/ChannelType";
 
 export type DrumsType = {
   currentStep: number;
