@@ -20,11 +20,11 @@ const TransportControls = () => {
     scenesState,
     playing,
     setPlayState,
-  } = useContext(AppContext) as ContextType;
+  } = useContext(AppContext)! as ContextType;
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (Tone.context.state !== "running") {
-      Tone.context.resume();
+      await Tone.context.resume();
     }
 
     if (Tone.Transport.state === "paused") {

@@ -16,7 +16,7 @@ const Projects = () => {
   const router = useRouter();
   const createProject = api.project.create.useMutation();
 
-  const { setLoaded, loadProject } = useContext(AppContext) as ContextType;
+  const { setLoaded, loadProject } = useContext(AppContext)! as ContextType;
 
   const userProjects = api.project.getUserProjects.useQuery().data;
 
@@ -27,7 +27,7 @@ const Projects = () => {
     });
     loadProject(newProject);
     setShowModal(false);
-    router.push("/studio");
+    void router.push("/studio");
   };
 
   return (

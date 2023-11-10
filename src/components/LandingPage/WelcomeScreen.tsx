@@ -11,13 +11,13 @@ const WelcomeScreen = () => {
         height={400}
         alt="The PlinkPlonk logo"
         onClick={() => {
-          signIn();
+          void signIn();
         }}
       />
       <p className="text-2xl tracking-wide  text-slate-300">
         <button
           onClick={() => {
-            signIn();
+            void signIn();
           }}
           className="font-bold text-blue-500 hover:text-blue-400"
         >

@@ -1,6 +1,6 @@
 import SceneContainer from "./SceneContainer";
 import SideContainerScene from "./SideContainerScene";
-import { useRef, SyntheticEvent, useContext } from "react";
+import { type SyntheticEvent, useRef, useContext } from "react";
 import { type ContextType, AppContext } from "~/context";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import IconButton from "../IconButton";
@@ -15,7 +15,7 @@ const MainContainer = () => {
   const scrollRefScenes = useRef<HTMLDivElement | null>(null);
   const scrollRefChannels = useRef<HTMLDivElement | null>(null);
   const { scenesState, newScene, newInstrumentDrums, instrumentsState } =
-    useContext(AppContext) as ContextType;
+    useContext(AppContext)! as ContextType;
 
   const handleScroll = (event: SyntheticEvent, target: HTMLDivElement) => {
     if (target !== null) {
