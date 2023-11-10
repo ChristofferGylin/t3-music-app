@@ -11,7 +11,7 @@ const ChannelComponent = ({
   instrumentIndex,
   instrument,
 }: SceneComponentProps) => {
-  const { currentSceneState } = useContext(AppContext) as ContextType;
+  const { currentSceneState } = useContext(AppContext)! as ContextType;
 
   return (
     <li key={`instrument#${instrumentIndex}`} className="h-full">

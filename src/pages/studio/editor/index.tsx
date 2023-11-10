@@ -5,11 +5,11 @@ import Drums from "~/components/drums/Drums";
 import { type ContextType, AppContext } from "~/context";
 
 const Editor = () => {
-  const { instruments, scenesState } = useContext(AppContext) as ContextType;
+  const { instruments, scenesState } = useContext(AppContext)! as ContextType;
   const router = useRouter();
 
   if (!router.query.instrument || !router.query.scene) {
-    router.push("/");
+    void router.push("/");
     return;
   }
 
@@ -20,7 +20,7 @@ const Editor = () => {
   const pattern = scenesState[sceneIndex]?.patterns[instrumentIndex];
 
   if (!instrument || !pattern) {
-    router.push("/");
+    void router.push("/");
     return;
   }
 

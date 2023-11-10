@@ -22,7 +22,7 @@ const PatternEditor = ({
 }: PatternEditorProps) => {
   const { addNote, deleteNote, longerPattern, shorterPattern } = useContext(
     AppContext,
-  ) as ContextType;
+  )! as ContextType;
 
   const colorActive = "bg-green-400";
   const colorInactive = "bg-slate-700";

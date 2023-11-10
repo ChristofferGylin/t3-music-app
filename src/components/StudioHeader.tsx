@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import * as Tone from "tone";
-import { Time } from "tone/build/esm/core/type/Units";
+import { type Time } from "tone/build/esm/core/type/Units";
 import { type ContextType, AppContext } from "~/context";
 import TransportControls from "./TransportControls";
 import BackButton from "./BackButton";
@@ -19,7 +19,7 @@ const StudioHeader = () => {
     nextScene,
     currentStep,
     setCurrentStep,
-  } = useContext(AppContext) as ContextType;
+  } = useContext(AppContext)! as ContextType;
 
   const router = useRouter();
   const { data: session } = useSession();
@@ -27,7 +27,7 @@ const StudioHeader = () => {
   useEffect(() => {
     if (!session || !session.user) {
       if (typeof window !== "undefined") {
-        router.push("/");
+        void router.push("/");
       }
     }
   }, [session, router]);
@@ -55,7 +55,7 @@ const StudioHeader = () => {
           }
         }
 
-        let step = instruments.current[i]?.currentStep;
+        const step = instruments.current[i]?.currentStep;
 
         if (step === undefined) return;
 
@@ -66,12 +66,10 @@ const StudioHeader = () => {
 
           if (start === undefined) return;
 
-          for (let j = 0; j < start.length; j++) {
-            const playIndex = start[j];
-
-            if (playIndex === undefined || typeof playIndex !== "number")
+          for (const playIndex of start) {
+            if (playIndex === undefined || typeof playIndex !== "number") {
               return;
-
+            }
             instruments.current[i]?.channels[playIndex]?.play(time);
           }
         }
@@ -85,13 +83,7 @@ const StudioHeader = () => {
         const pattern = scenes.current[currentScene.current]?.patterns[i];
         const instrumentsArray = scenes.current[currentScene.current]?.patterns;
 
-        if (
-          pattern === undefined ||
-          pattern === null ||
-          instrumentsArray === undefined ||
-          instrumentsArray === null
-        )
-          return;
+        if (!pattern || !instrumentsArray) return;
 
         if (step >= pattern.length - 1) {
           if (instruments.current === null) return;

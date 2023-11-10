@@ -11,7 +11,7 @@ type SceneComponentProps = {
 const SceneControls = ({ sceneIndex }: SceneComponentProps) => {
   const { setSceneAndPlay, currentSceneState } = useContext(
     AppContext,
-  ) as ContextType;
+  )! as ContextType;
   return (
     <li className="flex h-16 bg-slate-700/60 odd:bg-slate-700/80">
       <div className="sticky left-0 top-0 flex h-full w-24 flex-col">

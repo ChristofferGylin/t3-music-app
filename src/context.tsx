@@ -1,7 +1,7 @@
 import * as Tone from "tone";
 import React, {
-  MutableRefObject,
-  ReactNode,
+  type MutableRefObject,
+  type ReactNode,
   createContext,
   useRef,
   useState,
@@ -88,10 +88,7 @@ const Context = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const newInstrumentDrums = async (
-    kit: DrumsKit,
-    loadingProject?: boolean,
-  ) => {
+  const newInstrumentDrums = (kit: DrumsKit, loadingProject?: boolean) => {
     const newDrums = drums(kit);
 
     instruments.current.push(newDrums);
@@ -125,8 +122,14 @@ const Context = ({ children }: { children: ReactNode }) => {
   const newScene = () => {
     const newScene: Scene = { id: uuid(), patterns: [], longestPattern: 64 };
 
-    for (let i = 0; i < instruments.current.length; i++) {
-      if (instruments.current[i]?.type === "drums") {
+    // for (let i = 0; i < instruments.current.length; i++) {
+    //   if (instruments.current[i]?.type === "drums") {
+    //     newScene.patterns.push(createPattern("drums"));
+    //   }
+    // }
+
+    for (const inst of instruments.current) {
+      if (inst.type === "drums") {
         newScene.patterns.push(createPattern("drums"));
       }
     }
@@ -251,8 +254,12 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const rewind = () => {
-    for (let i = 0; i < instruments.current.length; i++) {
-      instruments.current[i]!.currentStep = 0;
+    // for (let i = 0; i < instruments.current.length; i++) {
+    //   instruments.current[i]!.currentStep = 0;
+    // }
+
+    for (const inst of instruments.current) {
+      inst.currentStep = 0;
     }
 
     currentStep.current = 0;
@@ -316,7 +323,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           );
 
           if (selectedKit[0]) {
-            newInstrumentDrums(selectedKit[0], true);
+            void newInstrumentDrums(selectedKit[0], true);
           }
 
           break;

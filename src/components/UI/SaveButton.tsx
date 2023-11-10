@@ -7,7 +7,7 @@ import { api } from "~/utils/api";
 const SaveButton = () => {
   const { instrumentsState, scenesState, project } = useContext(
     AppContext,
-  ) as ContextType;
+  )! as ContextType;
 
   const saveToDb = api.project.save.useMutation();
 
