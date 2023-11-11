@@ -7,10 +7,10 @@ const Header = () => {
   const [studioHeader, setStudioHeader] = useState(false);
 
   useEffect(() => {
-    if (router.pathname === "/") {
-      setStudioHeader(false);
-    } else {
+    if (router.pathname.startsWith("/studio")) {
       setStudioHeader(true);
+    } else {
+      setStudioHeader(false);
     }
   }, [router]);
 
