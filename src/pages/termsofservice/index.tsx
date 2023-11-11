@@ -12,9 +12,9 @@ export default function Privacy() {
             <span className="font-bold">Last Updated:</span> 2023-11-11
           </p>
           <p>
-            Welcome to PlinkPlonk! These Terms of Service ("Terms") outline the
-            rules and regulations for using our web application. By accessing or
-            using PlinkPlonk, you agree to comply with these Terms.
+            Welcome to PlinkPlonk! These Terms of Service (&quot;Terms&quot;)
+            outline the rules and regulations for using our web application. By
+            accessing or using PlinkPlonk, you agree to comply with these Terms.
           </p>
         </TextBlock>
         <TextBlock>

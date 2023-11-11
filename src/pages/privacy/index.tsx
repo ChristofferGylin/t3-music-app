@@ -63,7 +63,7 @@ export default function Privacy() {
           <h3>Analytics</h3>
           <p>
             We use aggregated and anonymized data for analytical purposes to
-            improve PlinkPlonk's features, functionality, and overall user
+            improve PlinkPlonk&apos;s features, functionality, and overall user
             experience.
           </p>
           <h3>Data Security</h3>
