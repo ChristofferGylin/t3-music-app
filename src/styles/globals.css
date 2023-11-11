@@ -13,6 +13,12 @@
       scrollbar-width: none;
     }
   }
+  body {
+    @apply bg-slate-900 text-slate-300;
+  }
+  a {
+    @apply text-blue-600 visited:text-purple-600;
+  }
   h1 {
     @apply text-4xl;
   }

@@ -1,14 +1,11 @@
-import { type PropsWithChildren } from "react";
-
-const Block = ({ children }: PropsWithChildren) => {
-  return <div className="flex flex-col gap-4">{children}</div>;
-};
+import TextBlock from "~/components/TextComponents/TextBlock";
+import TextContainer from "~/components/TextComponents/TextContainer";
 
 export default function Privacy() {
   return (
-    <main className="flex w-full items-center justify-center bg-slate-900 text-slate-300">
-      <div className="m-8 flex w-5/6 max-w-[800px] flex-col gap-12 md:w-4/5 lg:w-3/4 xl:w-2/3">
-        <Block>
+    <main className="flex w-full items-center justify-center">
+      <TextContainer>
+        <TextBlock>
           <h1>Privacy Policy for PlinkPlonk</h1>
           <p>
             <span className="font-bold">Last Updated:</span> 2023-11-11
@@ -19,8 +16,8 @@ export default function Privacy() {
             By using PlinkPlonk, you agree to the terms outlined in this Privacy
             Policy.
           </p>
-        </Block>
-        <Block>
+        </TextBlock>
+        <TextBlock>
           <h2>Information We Collect</h2>
           <h3>Personal Information</h3>
           <p>
@@ -44,9 +41,9 @@ export default function Privacy() {
             small data files stored on your device that help us analyze web
             traffic, remember your preferences, and optimize our services.
           </p>
-        </Block>
+        </TextBlock>
 
-        <Block>
+        <TextBlock>
           <h2>How We Use Your Information</h2>
           <h3>Personalization</h3>
           <p>
@@ -82,9 +79,9 @@ export default function Privacy() {
             by their respective privacy policies. We recommend reviewing the
             privacy policies of these third-party services.
           </p>
-        </Block>
+        </TextBlock>
 
-        <Block>
+        <TextBlock>
           <h3>Changes to this Privacy Policy</h3>
           <p>
             We may update this Privacy Policy from time to time. We will notify
@@ -94,15 +91,16 @@ export default function Privacy() {
           <h3>Contact Us</h3>
           <p>
             If you have any questions, concerns, or requests regarding your
-            privacy, please contact us at [contact@plinkplonk.com].
+            privacy, please contact us at{" "}
+            <a href="mailto:contact@plinkplonk.com">contact@plinkplonk.com</a>.
           </p>
           <p>
             <span className="text-lg font-bold">
               Thank you for using PlinkPlonk!
             </span>
           </p>
-        </Block>
-      </div>
+        </TextBlock>
+      </TextContainer>
     </main>
   );
 }
