@@ -128,10 +128,10 @@ const StudioHeader = () => {
 
   return (
     <>
-      <BackButton />
-      {router.pathname !== "/projects" && <TransportControls />}
+      <BackButton root={["/studio", "/studio/projects"]} />
+      {router.pathname !== "/studio/projects" && <TransportControls />}
 
-      <div className="flex justify-self-end">
+      <div className="col-start-3 flex justify-self-end">
         <SaveButton />
         <HamburgerMenu />
       </div>
