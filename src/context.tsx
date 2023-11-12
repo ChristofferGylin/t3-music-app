@@ -43,6 +43,10 @@ export type ContextType = {
   currentStep: MutableRefObject<number>;
   playing: boolean;
   setPlayState: (state: boolean) => void;
+  appLoaded: MutableRefObject<boolean>;
+  loadAppNow: boolean;
+  loadApp: () => void;
+  appIsLoaded: () => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -50,6 +54,8 @@ export const AppContext = createContext<ContextType | null>(null);
 type InstrumentsType = Array<DrumsType>;
 
 const Context = ({ children }: { children: ReactNode }) => {
+  const appLoaded = useRef(false);
+  const [loadAppNow, setLoadAppNow] = useState(false);
   const [scenesState, setScenesState] = useState<Scene[]>([]);
   const scenes = useRef<Scene[]>([]);
   const instruments = useRef<InstrumentsType>([]);
@@ -67,6 +73,15 @@ const Context = ({ children }: { children: ReactNode }) => {
     name: "",
   });
   const [playing, setPlaying] = useState(false);
+
+  const loadApp = () => {
+    if (!appLoaded.current) {
+      setLoadAppNow(true);
+    }
+  };
+  const appIsLoaded = () => {
+    setLoadAppNow(false);
+  };
 
   const setPlayState = (state: boolean) => {
     setPlaying(state);
@@ -364,6 +379,10 @@ const Context = ({ children }: { children: ReactNode }) => {
         currentStep,
         playing,
         setPlayState,
+        appLoaded,
+        loadAppNow,
+        loadApp,
+        appIsLoaded,
       }}
     >
       {children}

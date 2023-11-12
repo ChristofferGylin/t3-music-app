@@ -19,6 +19,10 @@ const StudioHeader = () => {
     nextScene,
     currentStep,
     setCurrentStep,
+    appLoaded,
+    loadAppNow,
+    loadApp,
+    appIsLoaded,
   } = useContext(AppContext)! as ContextType;
 
   const router = useRouter();
@@ -111,25 +115,22 @@ const StudioHeader = () => {
     }
   };
 
-  const loadApp = async () => {
+  const appLoader = async () => {
     await Tone.start();
     Tone.Transport.scheduleRepeat(repeatFunction, "64n");
-    setLoaded(true);
+    appIsLoaded();
   };
+
+  if (loadAppNow && !appLoaded.current) {
+    appLoaded.current = true;
+    void appLoader();
+  }
 
   return (
     <>
       <BackButton />
-      {loaded ? (
-        <TransportControls />
-      ) : (
-        <button
-          onClick={loadApp}
-          className="col-start-2 rounded border border-slate-500 bg-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-600"
-        >
-          START APP
-        </button>
-      )}
+      {router.pathname !== "/projects" && <TransportControls />}
+
       <div className="flex justify-self-end">
         <SaveButton />
         <HamburgerMenu />

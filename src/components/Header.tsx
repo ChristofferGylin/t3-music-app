@@ -6,17 +6,14 @@ import LandingHeader from "./LandingHeader";
 const Header = () => {
   const router = useRouter();
   const [useHeader, setUseHeader] = useState("none");
-  const [studioHeader, setStudioHeader] = useState(false);
   let HeaderComponent = () => {
     return <></>;
   };
 
   useEffect(() => {
     if (router.pathname.startsWith("/studio")) {
-      setStudioHeader(true);
       setUseHeader("studio");
     } else {
-      setStudioHeader(false);
       setUseHeader("landing");
     }
   }, [router]);
