@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import * as Tone from "tone";
 import { type Time } from "tone/build/esm/core/type/Units";
 import { type ContextType, AppContext } from "~/context";
@@ -10,7 +10,6 @@ import { useSession } from "next-auth/react";
 import SaveButton from "./UI/SaveButton";
 
 const StudioHeader = () => {
-  const [loaded, setLoaded] = useState(false);
   const {
     instruments,
     scenes,
@@ -21,7 +20,6 @@ const StudioHeader = () => {
     setCurrentStep,
     appLoaded,
     loadAppNow,
-    loadApp,
     appIsLoaded,
   } = useContext(AppContext)! as ContextType;
 

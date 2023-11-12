@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import StudioHeader from "./StudioHeader";
 import LandingHeader from "./LandingHeader";
 
+const Empty = () => <></>;
+
 const Header = () => {
   const router = useRouter();
   const [useHeader, setUseHeader] = useState("none");
@@ -26,7 +28,7 @@ const Header = () => {
       HeaderComponent = LandingHeader;
       break;
     default:
-      HeaderComponent = () => <></>;
+      HeaderComponent = Empty;
   }
 
   return (
