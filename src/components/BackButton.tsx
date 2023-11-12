@@ -2,7 +2,7 @@ import { BiArrowBack } from "react-icons/bi";
 import IconButton from "./IconButton";
 import { useRouter } from "next/router";
 
-const BackButton = () => {
+const BackButton = ({ root = "/" }: { root?: string }) => {
   const router = useRouter();
 
   const handleBack = () => {
@@ -10,12 +10,16 @@ const BackButton = () => {
   };
 
   return (
-    <IconButton
-      callback={handleBack}
-      Icon={BiArrowBack}
-      align="left"
-      size="text-lg sm:text-2xl"
-    />
+    <>
+      {router.pathname !== root && (
+        <IconButton
+          callback={handleBack}
+          Icon={BiArrowBack}
+          align="left"
+          size="text-lg sm:text-2xl"
+        />
+      )}
+    </>
   );
 };
 
