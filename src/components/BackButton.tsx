@@ -9,7 +9,14 @@ const BackButton = () => {
     router.back();
   };
 
-  return <IconButton callback={handleBack} Icon={BiArrowBack} align="left" />;
+  return (
+    <IconButton
+      callback={handleBack}
+      Icon={BiArrowBack}
+      align="left"
+      size="text-lg sm:text-2xl"
+    />
+  );
 };
 
 export default BackButton;
