@@ -11,6 +11,8 @@ import { FiSettings } from "react-icons/fi";
 import { HiOutlineDocumentAdd } from "react-icons/hi";
 import { AiOutlineFolderOpen } from "react-icons/ai";
 import { TfiSave } from "react-icons/tfi";
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
+import { useSession } from "next-auth/react";
 
 const HamburgerMenu = () => {
   const {
@@ -22,6 +24,12 @@ const HamburgerMenu = () => {
     loopState,
   } = useContext(AppContext) as ContextType;
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const { data: session } = useSession();
+
+  let renderAdmin = false;
+
+  if (session?.user && session.user.role === "admin") renderAdmin = true;
 
   const toggleMenu = () => {
     setMenuOpen((old) => !old);
@@ -69,18 +77,27 @@ const HamburgerMenu = () => {
             Icon={FiSettings}
             callback={() => console.log("settings")}
           />
-          <MenuItem
-            title="Console Dump"
-            Icon={GiBrainDump}
-            callback={() => {
-              console.log("scenes:", scenes);
-              console.log("scenesState:", scenesState);
-              console.log("instruments:", instruments);
-              console.log("instrumentsState:", instrumentsState);
-              console.log("loopState:", loopState);
-              console.log("loop:", loop);
-            }}
-          />
+          {renderAdmin && (
+            <>
+              <MenuItem
+                title="Console Dump"
+                Icon={GiBrainDump}
+                callback={() => {
+                  console.log("scenes:", scenes);
+                  console.log("scenesState:", scenesState);
+                  console.log("instruments:", instruments);
+                  console.log("instrumentsState:", instrumentsState);
+                  console.log("loopState:", loopState);
+                  console.log("loop:", loop);
+                }}
+              />
+              <MenuItem
+                title="Admin"
+                Icon={MdOutlineAdminPanelSettings}
+                link="/admin"
+              />
+            </>
+          )}
           <MenuItem title="Sign out" Icon={VscSignOut} callback={signOut} />
         </ul>
       )}
