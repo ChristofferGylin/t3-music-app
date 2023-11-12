@@ -22,7 +22,7 @@ const HamburgerMenu = () => {
     instrumentsState,
     loop,
     loopState,
-  } = useContext(AppContext) as ContextType;
+  } = useContext(AppContext)! as ContextType;
   const [menuOpen, setMenuOpen] = useState(false);
 
   const { data: session } = useSession();
