@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import * as Tone from "tone";
 import { type Time } from "tone/build/esm/core/type/Units";
 import { type ContextType, AppContext } from "~/context";
@@ -10,7 +10,6 @@ import { useSession } from "next-auth/react";
 import SaveButton from "./UI/SaveButton";
 
 const StudioHeader = () => {
-  const [loaded, setLoaded] = useState(false);
   const {
     instruments,
     scenes,
@@ -19,6 +18,9 @@ const StudioHeader = () => {
     nextScene,
     currentStep,
     setCurrentStep,
+    appLoaded,
+    loadAppNow,
+    appIsLoaded,
   } = useContext(AppContext)! as ContextType;
 
   const router = useRouter();
@@ -111,30 +113,27 @@ const StudioHeader = () => {
     }
   };
 
-  const loadApp = async () => {
+  const appLoader = async () => {
     await Tone.start();
     Tone.Transport.scheduleRepeat(repeatFunction, "64n");
-    setLoaded(true);
+    appIsLoaded();
   };
 
+  if (loadAppNow && !appLoaded.current) {
+    appLoaded.current = true;
+    void appLoader();
+  }
+
   return (
-    <nav className="fixed right-0 top-0 grid h-11 w-full grid-cols-3 items-center bg-slate-900 p-1 sm:h-12 md:h-14">
-      {router.pathname !== "/" && <BackButton />}
-      {loaded ? (
-        <TransportControls />
-      ) : (
-        <button
-          onClick={loadApp}
-          className="col-start-2 rounded border border-slate-500 bg-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-600"
-        >
-          START APP
-        </button>
-      )}
-      <div className="flex justify-self-end">
+    <>
+      <BackButton root={["/studio", "/studio/projects"]} />
+      {router.pathname !== "/studio/projects" && <TransportControls />}
+
+      <div className="col-start-3 flex justify-self-end">
         <SaveButton />
         <HamburgerMenu />
       </div>
-    </nav>
+    </>
   );
 };
 

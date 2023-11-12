@@ -16,12 +16,15 @@ const Projects = () => {
   const router = useRouter();
   const createProject = api.project.create.useMutation();
 
-  const { setLoaded, loadProject } = useContext(AppContext)! as ContextType;
+  const { setLoaded, loadProject, loadApp } = useContext(
+    AppContext,
+  )! as ContextType;
 
   const userProjects = api.project.getUserProjects.useQuery().data;
 
   const handleCreate = async () => {
     setLoaded(false);
+    loadApp();
     const newProject = await createProject.mutateAsync({
       name: newProjectName,
     });

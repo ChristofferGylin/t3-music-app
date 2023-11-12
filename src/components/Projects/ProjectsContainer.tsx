@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 const ProjectsContainer = ({ projects }: { projects?: Project[] }) => {
   const router = useRouter();
-  const { setLoaded } = useContext(AppContext)! as ContextType;
+  const { setLoaded, loadApp } = useContext(AppContext)! as ContextType;
 
   return (
     <div>
@@ -16,6 +16,7 @@ const ProjectsContainer = ({ projects }: { projects?: Project[] }) => {
               <button
                 onClick={() => {
                   setLoaded(false);
+                  loadApp();
                   void router.push(`/loader/${project.id}`);
                 }}
               >
