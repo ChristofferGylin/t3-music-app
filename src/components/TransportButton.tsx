@@ -18,7 +18,7 @@ const TransportButton = ({ Icon, callback, state }: TransportButtonProps) => {
       className="rounded border border-slate-500 bg-slate-700 px-4 py-2 hover:bg-slate-700/60"
       onClick={callback}
     >
-      <Icon className={`text-2xl ${iconColor}`} />
+      <Icon className={`text-lg sm:text-xl md:text-2xl ${iconColor}`} />
     </button>
   );
 };

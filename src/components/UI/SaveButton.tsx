@@ -27,7 +27,13 @@ const SaveButton = () => {
     });
   };
 
-  return <IconButton Icon={TfiSave} callback={handleSave} />;
+  return (
+    <IconButton
+      Icon={TfiSave}
+      callback={handleSave}
+      size="text-md sm:text-lg"
+    />
+  );
 };
 
 export default SaveButton;

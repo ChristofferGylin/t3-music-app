@@ -118,7 +118,7 @@ const StudioHeader = () => {
   };
 
   return (
-    <nav className="fixed right-0 top-0 grid h-14 w-full grid-cols-3 items-center bg-slate-900 p-1">
+    <nav className="fixed right-0 top-0 grid h-11 w-full grid-cols-3 items-center bg-slate-900 p-1 sm:h-12 md:h-14">
       {router.pathname !== "/" && <BackButton />}
       {loaded ? (
         <TransportControls />

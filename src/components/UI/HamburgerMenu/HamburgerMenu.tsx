@@ -15,12 +15,20 @@ const HamburgerMenu = () => {
   return (
     <div className="relative">
       {menuOpen ? (
-        <IconButton Icon={AiOutlineClose} callback={toggleMenu} />
+        <IconButton
+          Icon={AiOutlineClose}
+          callback={toggleMenu}
+          size="text-lg sm:text-2xl"
+        />
       ) : (
-        <IconButton Icon={RxHamburgerMenu} callback={toggleMenu} />
+        <IconButton
+          Icon={RxHamburgerMenu}
+          callback={toggleMenu}
+          size="text-lg sm:text-2xl"
+        />
       )}
       {menuOpen && (
-        <ul className="absolute -right-1 top-12  w-48 rounded-b border-x border-b border-slate-600 bg-slate-800/50 drop-shadow-lg">
+        <ul className="absolute -right-1 top-10 w-48 rounded-bl  border-x border-b border-slate-600 bg-slate-800/50 drop-shadow-lg sm:top-11 md:top-12">
           <MenuItem
             title="Save"
             callback={() => {

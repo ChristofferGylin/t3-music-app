@@ -5,6 +5,7 @@ type IconButtonProps = {
   callback: () => void;
   state?: boolean;
   align?: "left" | "right" | "center";
+  size?: string;
 };
 
 const IconButton = ({
@@ -12,6 +13,7 @@ const IconButton = ({
   callback,
   state = false,
   align,
+  size = "text-2xl",
 }: IconButtonProps) => {
   let iconColor =
     "fill-slate-300 hover:fill-slate-200 stroke-slate-300 hover:stroke-slate-200 text-slate-300 hover:text-slate-200";
@@ -38,7 +40,7 @@ const IconButton = ({
 
   return (
     <button className={`p-2 ${aligntment}`} onClick={callback}>
-      <Icon className={`text-2xl ${iconColor}`} />
+      <Icon className={`${size} ${iconColor}`} />
     </button>
   );
 };
