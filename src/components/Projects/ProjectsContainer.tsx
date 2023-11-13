@@ -80,10 +80,10 @@ const ProjectsContainer = ({ projects, children }: ProjectsContainerType) => {
 
   return (
     <div className="h-full overflow-hidden">
-      <ul className="relative mb-4 h-full w-full overflow-auto">
+      <ul className="relative z-0 mb-4 h-full w-full overflow-auto">
         <li
           key="projectsTitlesKey"
-          className="grid-cols-projects sticky left-0 top-0 z-0 grid h-12 w-full border-b border-slate-500 bg-slate-700 py-2 text-slate-300 shadow"
+          className="grid-cols-projects sticky left-0 top-0 grid h-12 w-full border-b border-slate-500 bg-slate-700 py-2 text-slate-300 shadow"
         >
           <div className="xs:grid-cols-[2fr_1fr] grid h-full w-full grid-cols-1 items-center justify-start gap-4 text-lg sm:grid-cols-3">
             {titles.map((title) => {
