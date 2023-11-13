@@ -1,6 +1,6 @@
 import { type Project } from "@prisma/client";
 import { type ContextType, AppContext } from "~/context";
-import { type PropsWithChildren, useContext } from "react";
+import { type PropsWithChildren, useContext, useState, useEffect } from "react";
 import ProjectItem from "./ProjectsItem";
 import Ptag from "./Ptag";
 import IconButton from "../IconButton";
@@ -11,8 +11,72 @@ type ProjectsContainerType = PropsWithChildren & {
   projects?: Project[];
 };
 
+const titles = ["Name", "Updated", "Created"];
+
 const ProjectsContainer = ({ projects, children }: ProjectsContainerType) => {
   const {} = useContext(AppContext)! as ContextType;
+  const [order, setOrder] = useState("desc");
+  const [sortOn, setSortOn] = useState("updated");
+  const [sorted, setSorted] = useState<Project[]>([]);
+
+  useEffect(() => {
+    let projs: Project[];
+
+    setSorted((old) => {
+      if (projects) {
+        projs = projects;
+      } else projs = [...old];
+
+      return projs.sort((a, b) => {
+        let sorterA;
+        let sorterB;
+
+        switch (sortOn) {
+          case "updated":
+            sorterA = a.updated;
+            sorterB = b.updated;
+            break;
+          case "created":
+            sorterA = a.created;
+            sorterB = b.created;
+            break;
+          case "name":
+            sorterA = a.name;
+            sorterB = b.name;
+            break;
+          default:
+            sorterA = a.updated;
+            sorterB = b.updated;
+        }
+
+        if (order === "desc") {
+          if (sorterA < sorterB) return -1;
+          if (sorterA > sorterB) return 1;
+          return 0;
+        } else {
+          if (sorterA > sorterB) return -1;
+          if (sorterA < sorterB) return 1;
+          return 0;
+        }
+      });
+    });
+  }, [projects, sortOn, order]);
+
+  const handleOrder = (name: string) => {
+    const lowerCaseName = name.toLowerCase();
+
+    if (sortOn !== lowerCaseName) {
+      setSortOn(lowerCaseName);
+    } else {
+      setOrder((old) => {
+        if (old === "desc") {
+          return "asc";
+        } else {
+          return "desc";
+        }
+      });
+    }
+  };
 
   return (
     <div className="h-full overflow-hidden">
@@ -22,22 +86,41 @@ const ProjectsContainer = ({ projects, children }: ProjectsContainerType) => {
           className="grid-cols-projects sticky left-0 top-0 grid h-12 w-full border-b border-slate-500 bg-slate-700 py-2 text-slate-300 shadow"
         >
           <div className="grid h-full w-full grid-cols-3 items-center justify-start text-lg">
-            <Ptag>Name</Ptag>
-            <Ptag>Updated</Ptag>
-            <Ptag>Created</Ptag>
+            {titles.map((title) => {
+              let selected = false;
+
+              if (title.toLowerCase() === sortOn) {
+                selected = true;
+              }
+
+              return (
+                <Ptag selected={selected} key={`title-${title}-Key`}>
+                  <button
+                    onClick={() => {
+                      handleOrder(title);
+                    }}
+                  >
+                    {title}
+                  </button>
+                </Ptag>
+              );
+            })}
           </div>
           <div className="flex w-full items-center justify-center">
             {children}
           </div>
         </li>
         {projects ? (
-          projects.map((project) => {
+          sorted.map((project) => {
             return <ProjectItem key={project.id} project={project} />;
           })
         ) : (
-          <div className="mt-48">
+          <li
+            key="loadingSpinnerKey"
+            className="flex h-3/4 w-full items-center justify-center"
+          >
             <Loading />
-          </div>
+          </li>
         )}
       </ul>
     </div>
