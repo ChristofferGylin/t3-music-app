@@ -10,7 +10,7 @@ const ProjectItem = ({ project }: { project: Project }) => {
   const router = useRouter();
   const { setLoaded, loadApp } = useContext(AppContext)! as ContextType;
   return (
-    <li className="grid-cols-projects grid w-full text-slate-300 odd:bg-slate-800/20 hover:bg-slate-800/50 hover:text-slate-200">
+    <li className="grid-cols-projects grid h-10 w-full text-slate-300 odd:bg-slate-800/20 hover:bg-slate-800/50 hover:text-slate-200">
       <button
         className="grid h-full w-full grid-cols-3 items-center justify-start"
         onClick={() => {

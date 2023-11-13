@@ -34,7 +34,7 @@ const Projects = () => {
   };
 
   return (
-    <main className="min-h-screen w-full bg-slate-700 pt-14">
+    <main className="h-full w-full bg-slate-700 pt-14">
       {showModal && (
         <ModalScreen
           close={() => {
@@ -63,7 +63,7 @@ const Projects = () => {
           </DialogBox>
         </ModalScreen>
       )}
-      <div className="p-8">
+      <div className="mb-24 h-full w-full overflow-hidden p-8 pb-24">
         <div className="flex items-center justify-between py-2">
           <h1>My projects</h1>
         </div>
