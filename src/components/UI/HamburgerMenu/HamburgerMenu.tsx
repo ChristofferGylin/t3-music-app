@@ -36,7 +36,7 @@ const HamburgerMenu = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative z-10">
       {menuOpen ? (
         <IconButton
           Icon={AiOutlineClose}
@@ -51,7 +51,7 @@ const HamburgerMenu = () => {
         />
       )}
       {menuOpen && (
-        <ul className="absolute -right-1 top-10 w-48 rounded-bl  border-x border-b border-slate-600 bg-slate-800/50 drop-shadow-lg sm:top-11 md:top-12">
+        <ul className="absolute -right-1 top-10 w-48 rounded-bl  border-x border-b border-slate-600 bg-slate-800/50 drop-shadow-lg backdrop-blur-md sm:top-11 md:top-12">
           <MenuItem
             title="New"
             Icon={HiOutlineDocumentAdd}

@@ -19,7 +19,8 @@ const MenuItem = ({
   const innerStyling =
     "flex justify-start items-center w-full text-slate-300 hover:text-slate-200 p-2 visited:text-slate-300";
 
-  const outerStyling = "w-full border-b border-slate-500 last:border-b-0";
+  const outerStyling =
+    "w-full border-b border-slate-500 last:border-b-0 z-10 hover:bg-slate-300/10";
 
   if (callback) {
     return (
