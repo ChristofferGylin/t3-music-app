@@ -14,6 +14,7 @@ export default {
       },
       gridTemplateColumns: {
         "main-vertical": "6rem auto",
+        projects: "auto 2.5rem",
       },
     },
   },

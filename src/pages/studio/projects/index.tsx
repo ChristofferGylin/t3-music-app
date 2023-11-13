@@ -34,7 +34,7 @@ const Projects = () => {
   };
 
   return (
-    <main className="w-full pt-14">
+    <main className="min-h-screen w-full bg-slate-700 pt-14">
       {showModal && (
         <ModalScreen
           close={() => {
@@ -63,17 +63,20 @@ const Projects = () => {
           </DialogBox>
         </ModalScreen>
       )}
-
-      <div>
-        <IconButton
-          state={false}
-          Icon={AiOutlinePlusCircle}
-          callback={() => {
-            setShowModal(true);
-          }}
-        />
+      <div className="p-8">
+        <div className="flex items-center justify-between py-2">
+          <h1>My projects</h1>
+        </div>
+        <ProjectsContainer projects={userProjects}>
+          <IconButton
+            state={false}
+            Icon={AiOutlinePlusCircle}
+            callback={() => {
+              setShowModal(true);
+            }}
+          />
+        </ProjectsContainer>
       </div>
-      <ProjectsContainer projects={userProjects} />
     </main>
   );
 };
