@@ -63,7 +63,7 @@ const Projects = () => {
           </DialogBox>
         </ModalScreen>
       )}
-      <div className="mb-24 h-full w-full overflow-hidden p-8 pb-24">
+      <div className="xs:p-4 grid h-full w-full grid-rows-[3rem_auto] overflow-hidden p-2 sm:p-8">
         <div className="flex items-center justify-between py-2">
           <h1>My projects</h1>
         </div>

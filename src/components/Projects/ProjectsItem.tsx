@@ -12,7 +12,7 @@ const ProjectItem = ({ project }: { project: Project }) => {
   return (
     <li className="grid-cols-projects grid h-10 w-full text-slate-300 odd:bg-slate-800/20 hover:bg-slate-800/50 hover:text-slate-200">
       <button
-        className="grid h-full w-full grid-cols-3 items-center justify-start"
+        className="xs:grid-cols-[2fr_1fr] grid h-full w-full grid-cols-1 items-center justify-start gap-4 sm:grid-cols-3"
         onClick={() => {
           setLoaded(false);
           loadApp();
@@ -20,11 +20,11 @@ const ProjectItem = ({ project }: { project: Project }) => {
         }}
       >
         <Ptag>{project.name}</Ptag>
-        <Ptag>
+        <Ptag twClasses="hidden xs:flex">
           {new Date(project.updated).toLocaleDateString()},{" "}
           {new Date(project.updated).toLocaleTimeString()}
         </Ptag>
-        <Ptag>
+        <Ptag twClasses={"hidden sm:flex"}>
           {new Date(project.created).toLocaleDateString()},{" "}
           {new Date(project.created).toLocaleTimeString()}
         </Ptag>

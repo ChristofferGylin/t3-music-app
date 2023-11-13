@@ -85,16 +85,29 @@ const ProjectsContainer = ({ projects, children }: ProjectsContainerType) => {
           key="projectsTitlesKey"
           className="grid-cols-projects sticky left-0 top-0 grid h-12 w-full border-b border-slate-500 bg-slate-700 py-2 text-slate-300 shadow"
         >
-          <div className="grid h-full w-full grid-cols-3 items-center justify-start text-lg">
+          <div className="xs:grid-cols-[2fr_1fr] grid h-full w-full grid-cols-1 items-center justify-start gap-4 text-lg sm:grid-cols-3">
             {titles.map((title) => {
               let selected = false;
+              let twClasses = "flex";
 
               if (title.toLowerCase() === sortOn) {
                 selected = true;
               }
 
+              if (title === "Created") {
+                twClasses = "hidden sm:flex";
+              }
+
+              if (title === "Updated") {
+                twClasses = "hidden xs:flex";
+              }
+
               return (
-                <Ptag selected={selected} key={`title-${title}-Key`}>
+                <Ptag
+                  selected={selected}
+                  twClasses={twClasses}
+                  key={`title-${title}-Key`}
+                >
                   <button
                     onClick={() => {
                       handleOrder(title);
