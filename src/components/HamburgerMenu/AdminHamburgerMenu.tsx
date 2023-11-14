@@ -58,7 +58,7 @@ const AdminHamburgerMenu = () => {
           <MenuItem
             title="Projects"
             Icon={AiOutlineFolderOpen}
-            link="/studio/projects"
+            link="/admin/projects"
             toggle={toggleMenu}
           />
           <MenuItem
