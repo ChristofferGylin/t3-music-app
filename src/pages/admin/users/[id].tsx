@@ -9,7 +9,7 @@ const Users = () => {
   const queryClient = useQueryClient();
   const users = api.admin.getAllUsers.useQuery().data;
   const projectQKey = getQueryKey(api.admin.getAllUsers, undefined, "query");
-  const deleteUser = api.admin.deleteUser.useMutation({
+  const deleteProject = api.admin.deleteProject.useMutation({
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: projectQKey,
@@ -18,7 +18,7 @@ const Users = () => {
   });
 
   const handleDelete = async (id: string) => {
-    await deleteUser.mutateAsync({ id });
+    await deleteProject.mutateAsync({ id });
   };
 
   return (
