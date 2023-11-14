@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import IconButton from "../IconButton";
 import { TfiSave } from "react-icons/tfi";
-import { AiOutlineLoading } from "react-icons/ai";
 import { type ContextType, AppContext } from "~/context";
 import { api } from "~/utils/api";
 import MenuItem from "./HamburgerMenu/MenuItem";
