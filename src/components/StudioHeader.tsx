@@ -129,7 +129,7 @@ const StudioHeader = () => {
       <BackButton root={["/studio", "/studio/projects"]} />
       {router.pathname !== "/studio/projects" && <TransportControls />}
 
-      <div className="col-start-3 flex justify-self-end">
+      <div className="col-start-3 flex flex w-full justify-end justify-self-end">
         <SaveButton />
         <HamburgerMenu />
       </div>
