@@ -1,5 +1,5 @@
 import * as Tone from "tone";
-import IconButton from "../IconButton";
+import IconButton from "../UI/IconButton";
 import { BsFillPlayFill } from "react-icons/bs";
 import { type ContextType, AppContext } from "~/context";
 import { useContext } from "react";

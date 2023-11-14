@@ -1,6 +1,7 @@
 import { projectRouter } from "~/server/api/routers/project";
 import { createTRPCRouter } from "~/server/api/trpc";
 import { instrumentsRouter } from "./routers/instruments";
+import { adminRouter } from "./routers/admin";
 
 /**
  * This is the primary router for your server.
@@ -9,6 +10,7 @@ import { instrumentsRouter } from "./routers/instruments";
  */
 export const appRouter = createTRPCRouter({
   project: projectRouter,
+  admin: adminRouter,
   instruments: instrumentsRouter,
 });
 

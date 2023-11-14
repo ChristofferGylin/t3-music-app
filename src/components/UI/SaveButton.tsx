@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import IconButton from "../IconButton";
+import IconButton from "./IconButton";
 import { TfiSave } from "react-icons/tfi";
 import { type ContextType, AppContext } from "~/context";
 import { api } from "~/utils/api";
-import MenuItem from "./HamburgerMenu/MenuItem";
+import MenuItem from "../HamburgerMenu/MenuItem";
 
 const SaveButton = ({
   hamburger,
@@ -12,13 +12,24 @@ const SaveButton = ({
   hamburger?: boolean;
   toggle?: () => void;
 }) => {
-  const { instrumentsState, scenesState, project } = useContext(
-    AppContext,
-  )! as ContextType;
+  const { instrumentsState, scenesState, project, setSavingState, saving } =
+    useContext(AppContext)! as ContextType;
 
-  const saveToDb = api.project.save.useMutation();
+  let disabled = false;
+
+  if (saving) {
+    disabled = true;
+  }
+
+  const saveToDb = api.project.save.useMutation({
+    onSuccess: () => {
+      setSavingState(false);
+    },
+  });
 
   const handleSave = async () => {
+    console.log("saving");
+    setSavingState(true);
     const instrumentsJSON = JSON.stringify(instrumentsState);
     const scenesJSON = JSON.stringify(scenesState);
 
@@ -42,6 +53,20 @@ const SaveButton = ({
         iconSize="text-sm"
         callback={handleSave}
         toggle={toggle}
+        disabled={disabled}
+      />
+    );
+  }
+
+  if (saving) {
+    return (
+      <IconButton
+        Icon={TfiSave}
+        callback={handleSave}
+        size="text-md sm:text-lg"
+        disabled
+        state
+        loading
       />
     );
   }

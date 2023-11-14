@@ -25,6 +25,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
+        poppins: ['"Poppins"', "cursive"],
       },
       gridTemplateRows: {
         "11": "repeat(11, minmax(0, 1fr))",

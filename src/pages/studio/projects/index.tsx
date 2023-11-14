@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import IconButton from "~/components/IconButton";
+import IconButton from "~/components/UI/IconButton";
 import ProjectsContainer from "~/components/Projects/ProjectsContainer";
 import ModalScreen from "~/components/UI/ModalScreen";
 import { useState, useContext } from "react";

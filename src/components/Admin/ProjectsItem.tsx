@@ -1,4 +1,3 @@
-import { type Project } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import { type ContextType, AppContext } from "~/context";
@@ -8,12 +7,13 @@ import Ptag from "./Ptag";
 import ModalScreen from "../UI/ModalScreen";
 import DialogBox from "../UI/DialogBox";
 import DialogButton from "../UI/DialogButton";
+import type ProjectWithUserEmail from "~/types/ProjectWithUser";
 
 const ProjectItem = ({
   project,
   deleteCallback,
 }: {
-  project: Project;
+  project: ProjectWithUserEmail;
   deleteCallback: (id: string) => void;
 }) => {
   const router = useRouter();
@@ -32,7 +32,7 @@ const ProjectItem = ({
             <div className="flex flex-col gap-6">
               <h1 className="text-xl">DELETE PROJECT</h1>
               <p>
-                Are you sure you want to delete your project? This can not be
+                Are you sure you want to delete this project? This can not be
                 undone.
               </p>
               <div className="flex justify-center gap-4">
@@ -52,9 +52,9 @@ const ProjectItem = ({
           </DialogBox>
         </ModalScreen>
       )}
-      <li className="grid h-10 w-full grid-cols-projects text-slate-300 odd:bg-slate-800/20 hover:bg-slate-800/50 hover:text-slate-200">
+      <li className="grid h-10 w-full grid-cols-projects  text-slate-300 odd:bg-slate-800/20 hover:bg-slate-800/50 hover:text-slate-200">
         <button
-          className="grid h-full w-full grid-cols-1 items-center justify-start gap-4 xs:grid-cols-[2fr_1fr] sm:grid-cols-3"
+          className="grid h-full w-full grid-cols-1 items-center justify-start gap-4 xs:grid-cols-[1fr_11.5rem] sm:grid-cols-[1fr_9rem_9rem] md:grid-cols-4 lg:grid-cols-[1fr_1fr_9rem_9rem]"
           onClick={() => {
             setLoaded(false);
             loadApp();
@@ -62,6 +62,7 @@ const ProjectItem = ({
           }}
         >
           <Ptag>{project.name}</Ptag>
+          <Ptag twClasses={"hidden md:flex"}>{project.user.email}</Ptag>
           <Ptag twClasses="hidden xs:flex">
             {new Date(project.updated).toLocaleDateString()},{" "}
             {new Date(project.updated).toLocaleTimeString()}

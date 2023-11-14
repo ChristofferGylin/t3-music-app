@@ -64,7 +64,7 @@ const Editor = () => {
   }
 
   return (
-    <div className="flex h-full flex-col justify-between pt-14">
+    <div className="flex h-full flex-col justify-between pt-11 sm:pt-12 md:pt-14">
       <PatternEditor
         instrument={instrument}
         sceneIndex={sceneIndex}

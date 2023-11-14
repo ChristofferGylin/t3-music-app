@@ -2,12 +2,12 @@ import { useContext, useEffect } from "react";
 import * as Tone from "tone";
 import { type Time } from "tone/build/esm/core/type/Units";
 import { type ContextType, AppContext } from "~/context";
-import TransportControls from "./TransportControls";
-import BackButton from "./BackButton";
+import TransportControls from "../TransportControls";
+import BackButton from "../UI/BackButton";
 import { useRouter } from "next/router";
-import HamburgerMenu from "./UI/HamburgerMenu/HamburgerMenu";
+import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
 import { useSession } from "next-auth/react";
-import SaveButton from "./UI/SaveButton";
+import SaveButton from "../UI/SaveButton";
 
 const StudioHeader = () => {
   const {
@@ -129,7 +129,7 @@ const StudioHeader = () => {
       <BackButton root={["/studio", "/studio/projects"]} />
       {router.pathname !== "/studio/projects" && <TransportControls />}
 
-      <div className="col-start-3 flex justify-self-end">
+      <div className="col-start-3 flex w-full justify-end justify-self-end">
         <SaveButton />
         <HamburgerMenu />
       </div>

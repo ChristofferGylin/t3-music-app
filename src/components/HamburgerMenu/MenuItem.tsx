@@ -8,6 +8,7 @@ type MenuItemProps = {
   Icon: IconType;
   iconSize?: string;
   toggle: () => void;
+  disabled?: boolean;
 };
 
 const MenuItem = ({
@@ -17,6 +18,7 @@ const MenuItem = ({
   Icon,
   iconSize = "text-lg",
   toggle,
+  disabled = false,
 }: MenuItemProps) => {
   const innerStyling =
     "flex justify-start items-center w-full text-slate-300 hover:text-slate-200 p-2 visited:text-slate-300";
@@ -28,6 +30,7 @@ const MenuItem = ({
     return (
       <li className={outerStyling}>
         <button
+          disabled={disabled}
           className={innerStyling}
           onClick={() => {
             toggle();

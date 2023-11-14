@@ -47,6 +47,8 @@ export type ContextType = {
   loadAppNow: boolean;
   loadApp: () => void;
   appIsLoaded: () => void;
+  saving: boolean;
+  setSavingState: (state: boolean) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -73,6 +75,11 @@ const Context = ({ children }: { children: ReactNode }) => {
     name: "",
   });
   const [playing, setPlaying] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const setSavingState = (state: boolean) => {
+    setSaving(state);
+  };
 
   const loadApp = () => {
     if (!appLoaded.current) {
@@ -384,6 +391,8 @@ const Context = ({ children }: { children: ReactNode }) => {
         loadAppNow,
         loadApp,
         appIsLoaded,
+        saving,
+        setSavingState,
       }}
     >
       {children}

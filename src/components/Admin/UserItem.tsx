@@ -1,23 +1,20 @@
-import { type Project } from "@prisma/client";
-import { useRouter } from "next/router";
-import { useContext, useState } from "react";
-import { type ContextType, AppContext } from "~/context";
+import { useState } from "react";
 import IconButton from "../UI/IconButton";
 import { AiOutlineDelete } from "react-icons/ai";
 import Ptag from "./Ptag";
 import ModalScreen from "../UI/ModalScreen";
 import DialogBox from "../UI/DialogBox";
 import DialogButton from "../UI/DialogButton";
+import { type User } from "@prisma/client";
+import Link from "next/link";
 
-const ProjectItem = ({
-  project,
+const UserItem = ({
+  user,
   deleteCallback,
 }: {
-  project: Project;
+  user: User;
   deleteCallback: (id: string) => void;
 }) => {
-  const router = useRouter();
-  const { setLoaded, loadApp } = useContext(AppContext)! as ContextType;
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -30,16 +27,16 @@ const ProjectItem = ({
         >
           <DialogBox>
             <div className="flex flex-col gap-6">
-              <h1 className="text-xl">DELETE PROJECT</h1>
+              <h1 className="text-xl">DELETE USER</h1>
               <p>
-                Are you sure you want to delete your project? This can not be
+                Are you sure you want to delete this user? This can not be
                 undone.
               </p>
               <div className="flex justify-center gap-4">
                 <DialogButton
                   title="Delete"
                   callback={() => {
-                    deleteCallback(project.id);
+                    deleteCallback(user.id);
                     setShowModal(false);
                   }}
                 />
@@ -53,24 +50,22 @@ const ProjectItem = ({
         </ModalScreen>
       )}
       <li className="grid h-10 w-full grid-cols-projects text-slate-300 odd:bg-slate-800/20 hover:bg-slate-800/50 hover:text-slate-200">
-        <button
-          className="grid h-full w-full grid-cols-1 items-center justify-start gap-4 xs:grid-cols-[2fr_1fr] sm:grid-cols-3"
-          onClick={() => {
-            setLoaded(false);
-            loadApp();
-            void router.push(`/loader/${project.id}`);
-          }}
+        <Link
+          className="grid h-full w-full grid-cols-2 items-center justify-start gap-4 text-slate-300 visited:text-slate-300 sm:grid-cols-[1fr_1fr_3rem] md:grid-cols-[1fr_1fr_1fr_3rem] lg:grid-cols-[1fr_1fr_1fr_1fr_3rem]"
+          href={`/admin/users/${user.id}`}
         >
-          <Ptag>{project.name}</Ptag>
-          <Ptag twClasses="hidden xs:flex">
-            {new Date(project.updated).toLocaleDateString()},{" "}
-            {new Date(project.updated).toLocaleTimeString()}
+          <Ptag>{user.name}</Ptag>
+          <Ptag>{user.email}</Ptag>
+          <Ptag twClasses="hidden lg:flex">
+            {new Date(user.updated).toLocaleDateString()},{" "}
+            {new Date(user.updated).toLocaleTimeString()}
           </Ptag>
-          <Ptag twClasses={"hidden sm:flex"}>
-            {new Date(project.created).toLocaleDateString()},{" "}
-            {new Date(project.created).toLocaleTimeString()}
+          <Ptag twClasses={"hidden md:flex"}>
+            {new Date(user.created).toLocaleDateString()},{" "}
+            {new Date(user.created).toLocaleTimeString()}
           </Ptag>
-        </button>
+          <Ptag twClasses={"hidden sm:flex"}>{user.role}</Ptag>
+        </Link>
         <div className="flex w-full items-center justify-center">
           <IconButton
             Icon={AiOutlineDelete}
@@ -84,4 +79,4 @@ const ProjectItem = ({
   );
 };
 
-export default ProjectItem;
+export default UserItem;

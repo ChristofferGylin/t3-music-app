@@ -1,4 +1,4 @@
-import BackButton from "./BackButton";
+import BackButton from "../UI/BackButton";
 
 const LandingHeader = () => {
   return (

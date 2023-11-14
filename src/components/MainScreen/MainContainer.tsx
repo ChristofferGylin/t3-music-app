@@ -3,7 +3,7 @@ import SideContainerScene from "./SideContainerScene";
 import { type SyntheticEvent, useRef, useContext } from "react";
 import { type ContextType, AppContext } from "~/context";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import IconButton from "../IconButton";
+import IconButton from "../UI/IconButton";
 import ChannelComponent from "./ChannelComponent";
 import SceneControls from "./SceneControls";
 import Link from "next/link";
@@ -29,7 +29,7 @@ const MainContainer = () => {
   }).data;
 
   return (
-    <main className="grid h-full w-full grid-rows-main-horizontal pt-14">
+    <main className="grid h-full w-full grid-rows-main-horizontal bg-slate-700 pt-11 sm:pt-12 md:pt-14">
       <div className="grid h-full w-full grid-cols-main-vertical overflow-auto">
         <SideContainerScene>
           {scenesState.map((scene, index) => {
