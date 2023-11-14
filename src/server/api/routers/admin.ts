@@ -19,6 +19,14 @@ export const adminRouter = createTRPCRouter({
       },
     });
   }),
+  getAllUsers: protectedProcedure.query(({ ctx }) => {
+    if (ctx.session.user.role !== "admin") {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return ctx.db.user.findMany({
+      orderBy: { created: "asc" },
+    });
+  }),
 
   getProjectById: protectedProcedure
     .input(z.object({ id: z.string().min(1) }))
