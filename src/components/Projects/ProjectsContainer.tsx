@@ -108,6 +108,8 @@ const ProjectsContainer = ({
                 twClasses = "hidden xs:flex";
               }
 
+              twClasses += " sm:text-base";
+
               return (
                 <Ptag
                   selected={selected}

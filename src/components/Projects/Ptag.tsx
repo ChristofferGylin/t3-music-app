@@ -12,7 +12,7 @@ const Ptag = ({ children, selected, twClasses = "flex" }: PtagPropsType) => {
 
   return (
     <p
-      className={`h-10 w-full items-center justify-start overflow-hidden truncate text-ellipsis whitespace-nowrap ${twClasses}`}
+      className={` h-10 w-full items-center justify-start overflow-hidden truncate text-ellipsis whitespace-nowrap sm:text-sm ${twClasses}`}
     >
       {children}
     </p>
