@@ -1,6 +1,7 @@
-import BackButton from "./BackButton";
-import HamburgerMenu from "./UI/HamburgerMenu/HamburgerMenu";
+import BackButton from "../UI/BackButton";
+import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
 import Link from "next/link";
+import AdminHamburgerMenu from "../HamburgerMenu/AdminHamburgerMenu";
 
 const AdminHeader = () => {
   const linkClasses =
@@ -31,7 +32,7 @@ const AdminHeader = () => {
         </li>
       </ul>
       <div className="col-start-3 flex w-full justify-end justify-self-end">
-        <HamburgerMenu />
+        <AdminHamburgerMenu />
       </div>
     </>
   );

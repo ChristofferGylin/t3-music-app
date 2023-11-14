@@ -1,5 +1,5 @@
 import { useState } from "react";
-import IconButton from "../IconButton";
+import IconButton from "../UI/IconButton";
 import { AiOutlineDelete } from "react-icons/ai";
 import Ptag from "./Ptag";
 import ModalScreen from "../UI/ModalScreen";

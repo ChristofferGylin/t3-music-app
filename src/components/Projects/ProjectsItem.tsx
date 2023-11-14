@@ -2,7 +2,7 @@ import { type Project } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import { type ContextType, AppContext } from "~/context";
-import IconButton from "../IconButton";
+import IconButton from "../UI/IconButton";
 import { AiOutlineDelete } from "react-icons/ai";
 import Ptag from "./Ptag";
 import ModalScreen from "../UI/ModalScreen";

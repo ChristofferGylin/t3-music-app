@@ -5,7 +5,7 @@ import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
-import Header from "~/components/Header";
+import Header from "~/components/Header/Header";
 import Context from "~/context";
 import Wrapper from "~/components/Wrapper";
 

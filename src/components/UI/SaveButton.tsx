@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import IconButton from "../IconButton";
+import IconButton from "./IconButton";
 import { TfiSave } from "react-icons/tfi";
 import { type ContextType, AppContext } from "~/context";
 import { api } from "~/utils/api";
-import MenuItem from "./HamburgerMenu/MenuItem";
+import MenuItem from "../HamburgerMenu/MenuItem";
 
 const SaveButton = ({
   hamburger,
