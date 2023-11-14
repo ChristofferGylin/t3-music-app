@@ -8,7 +8,6 @@ import Ptag from "./Ptag";
 import ModalScreen from "../UI/ModalScreen";
 import DialogBox from "../UI/DialogBox";
 import DialogButton from "../UI/DialogButton";
-import { api } from "~/utils/api";
 
 const ProjectItem = ({
   project,

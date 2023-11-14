@@ -10,7 +10,6 @@ import { VscSignOut } from "react-icons/vsc";
 import { FiSettings } from "react-icons/fi";
 import { HiOutlineDocumentAdd } from "react-icons/hi";
 import { AiOutlineFolderOpen } from "react-icons/ai";
-import { TfiSave } from "react-icons/tfi";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import SaveButton from "../SaveButton";
