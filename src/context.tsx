@@ -321,6 +321,7 @@ const Context = ({ children }: { children: ReactNode }) => {
 
   const loadProject = (dbProject: ProjectWithKits) => {
     instruments.current = [];
+    setInstrumentsState([]);
     setProject({ id: dbProject.id, name: dbProject.name });
     const dbInstruments = JSON.parse(
       dbProject.instruments,
