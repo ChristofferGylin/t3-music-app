@@ -14,7 +14,7 @@ const ModalScreen = ({ children, close }: ModalScreenProps) => {
   return (
     <div
       onClick={handleClose}
-      className="fixed left-0 top-0 flex h-screen w-full items-center justify-center bg-slate-900/10 backdrop-blur-sm"
+      className="fixed left-0 top-0 z-50 flex h-screen w-full items-center justify-center bg-slate-900/10 backdrop-blur-sm"
     >
       {children}
     </div>

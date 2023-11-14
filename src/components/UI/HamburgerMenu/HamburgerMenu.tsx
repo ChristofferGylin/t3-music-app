@@ -10,9 +10,9 @@ import { VscSignOut } from "react-icons/vsc";
 import { FiSettings } from "react-icons/fi";
 import { HiOutlineDocumentAdd } from "react-icons/hi";
 import { AiOutlineFolderOpen } from "react-icons/ai";
-import { TfiSave } from "react-icons/tfi";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { useSession } from "next-auth/react";
+import SaveButton from "../SaveButton";
 
 const HamburgerMenu = () => {
   const {
@@ -51,31 +51,27 @@ const HamburgerMenu = () => {
         />
       )}
       {menuOpen && (
-        <ul className="absolute -right-1 top-10 w-48 rounded-bl  border-x border-b border-slate-600 bg-slate-800/50 drop-shadow-lg sm:top-11 md:top-12">
+        <ul className="absolute -right-1 top-10 w-48 rounded-bl  border-x border-b border-slate-600 bg-slate-800/50 drop-shadow-lg backdrop-blur-md sm:top-11 md:top-12">
           <MenuItem
             title="New"
             Icon={HiOutlineDocumentAdd}
             callback={() => {
               console.log("New project");
             }}
+            toggle={toggleMenu}
           />
           <MenuItem
-            title="Open"
+            title="My projects"
             Icon={AiOutlineFolderOpen}
-            callback={signOut}
+            link="/studio/projects"
+            toggle={toggleMenu}
           />
-          <MenuItem
-            title="Save"
-            Icon={TfiSave}
-            iconSize="text-sm"
-            callback={() => {
-              console.log("save");
-            }}
-          />
+          <SaveButton toggle={toggleMenu} hamburger />
           <MenuItem
             title="Settings"
             Icon={FiSettings}
             callback={() => console.log("settings")}
+            toggle={toggleMenu}
           />
           {renderAdmin && (
             <>
@@ -90,15 +86,22 @@ const HamburgerMenu = () => {
                   console.log("loopState:", loopState);
                   console.log("loop:", loop);
                 }}
+                toggle={toggleMenu}
               />
               <MenuItem
                 title="Admin"
                 Icon={MdOutlineAdminPanelSettings}
                 link="/admin"
+                toggle={toggleMenu}
               />
             </>
           )}
-          <MenuItem title="Sign out" Icon={VscSignOut} callback={signOut} />
+          <MenuItem
+            title="Sign out"
+            Icon={VscSignOut}
+            toggle={toggleMenu}
+            callback={signOut}
+          />
         </ul>
       )}
     </div>

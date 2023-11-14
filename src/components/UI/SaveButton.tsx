@@ -3,8 +3,15 @@ import IconButton from "../IconButton";
 import { TfiSave } from "react-icons/tfi";
 import { type ContextType, AppContext } from "~/context";
 import { api } from "~/utils/api";
+import MenuItem from "./HamburgerMenu/MenuItem";
 
-const SaveButton = () => {
+const SaveButton = ({
+  hamburger,
+  toggle,
+}: {
+  hamburger?: boolean;
+  toggle?: () => void;
+}) => {
   const { instrumentsState, scenesState, project } = useContext(
     AppContext,
   )! as ContextType;
@@ -26,6 +33,18 @@ const SaveButton = () => {
       kits: kitIds,
     });
   };
+
+  if (hamburger && toggle) {
+    return (
+      <MenuItem
+        title="Save"
+        Icon={TfiSave}
+        iconSize="text-sm"
+        callback={handleSave}
+        toggle={toggle}
+      />
+    );
+  }
 
   return (
     <IconButton
