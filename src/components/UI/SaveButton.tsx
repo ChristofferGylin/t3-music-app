@@ -5,7 +5,13 @@ import { type ContextType, AppContext } from "~/context";
 import { api } from "~/utils/api";
 import MenuItem from "./HamburgerMenu/MenuItem";
 
-const SaveButton = ({ hamburger }: { hamburger?: boolean }) => {
+const SaveButton = ({
+  hamburger,
+  toggle,
+}: {
+  hamburger?: boolean;
+  toggle: () => void;
+}) => {
   const { instrumentsState, scenesState, project } = useContext(
     AppContext,
   )! as ContextType;
@@ -35,6 +41,7 @@ const SaveButton = ({ hamburger }: { hamburger?: boolean }) => {
         Icon={TfiSave}
         iconSize="text-sm"
         callback={handleSave}
+        toggle={toggle}
       />
     );
   }

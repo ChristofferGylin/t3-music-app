@@ -7,6 +7,7 @@ type MenuItemProps = {
   link?: string;
   Icon: IconType;
   iconSize?: string;
+  toggle: () => void;
 };
 
 const MenuItem = ({
@@ -15,6 +16,7 @@ const MenuItem = ({
   link,
   Icon,
   iconSize = "text-lg",
+  toggle,
 }: MenuItemProps) => {
   const innerStyling =
     "flex justify-start items-center w-full text-slate-300 hover:text-slate-200 p-2 visited:text-slate-300";
@@ -25,7 +27,13 @@ const MenuItem = ({
   if (callback) {
     return (
       <li className={outerStyling}>
-        <button className={innerStyling} onClick={callback}>
+        <button
+          className={innerStyling}
+          onClick={() => {
+            toggle();
+            callback();
+          }}
+        >
           <div className="w-7">
             <Icon className={`${iconSize}`} />
           </div>
@@ -38,7 +46,7 @@ const MenuItem = ({
   if (link) {
     return (
       <li className={outerStyling}>
-        <Link className={innerStyling} href={link}>
+        <Link onClick={toggle} className={innerStyling} href={link}>
           <div className="w-7">
             <Icon className={`${iconSize}`} />
           </div>

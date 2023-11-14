@@ -59,17 +59,20 @@ const HamburgerMenu = () => {
             callback={() => {
               console.log("New project");
             }}
+            toggle={toggleMenu}
           />
           <MenuItem
             title="My projects"
             Icon={AiOutlineFolderOpen}
             link="/studio/projects"
+            toggle={toggleMenu}
           />
-          <SaveButton hamburger />
+          <SaveButton toggle={toggleMenu} hamburger />
           <MenuItem
             title="Settings"
             Icon={FiSettings}
             callback={() => console.log("settings")}
+            toggle={toggleMenu}
           />
           {renderAdmin && (
             <>
@@ -84,15 +87,22 @@ const HamburgerMenu = () => {
                   console.log("loopState:", loopState);
                   console.log("loop:", loop);
                 }}
+                toggle={toggleMenu}
               />
               <MenuItem
                 title="Admin"
                 Icon={MdOutlineAdminPanelSettings}
                 link="/admin"
+                toggle={toggleMenu}
               />
             </>
           )}
-          <MenuItem title="Sign out" Icon={VscSignOut} callback={signOut} />
+          <MenuItem
+            title="Sign out"
+            Icon={VscSignOut}
+            toggle={toggleMenu}
+            callback={signOut}
+          />
         </ul>
       )}
     </div>
