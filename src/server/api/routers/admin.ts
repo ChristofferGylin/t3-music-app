@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { tree } from "next/dist/build/templates/app-page";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -52,6 +53,27 @@ export const adminRouter = createTRPCRouter({
       orderBy: { created: "asc" },
     });
   }),
+
+  getUserById: protectedProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .query(({ ctx, input }) => {
+      if (ctx.session.user.role !== "admin") {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      return ctx.db.user.findUnique({
+        where: { id: input.id },
+        include: {
+          projects: {
+            select: {
+              id: true,
+              name: true,
+              created: true,
+              updated: true,
+            },
+          },
+        },
+      });
+    }),
 
   deleteUser: protectedProcedure
     .input(z.object({ id: z.string().min(1) }))

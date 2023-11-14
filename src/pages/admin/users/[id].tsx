@@ -1,14 +1,26 @@
 import { api } from "~/utils/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
-import UsersContainer from "~/components/Admin/UsersContainer";
 import { getServerAuthSession } from "~/server/auth";
 import { type GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import Loading from "~/components/LoadingPage/Loading";
+
+const LoadingScreen = () => {
+  return (
+    <main className="flex h-full w-full items-center justify-center bg-slate-700 pt-14">
+      <Loading />
+    </main>
+  );
+};
 
 const Users = () => {
+  const router = useRouter();
   const queryClient = useQueryClient();
-  const users = api.admin.getAllUsers.useQuery().data;
-  const projectQKey = getQueryKey(api.admin.getAllUsers, undefined, "query");
+  if (typeof router?.query?.id !== "string") return <LoadingScreen />;
+
+  const user = api.admin.getUserById.useQuery({ id: router?.query?.id }).data;
+  const projectQKey = getQueryKey(api.admin.getUserById, undefined, "query");
   const deleteProject = api.admin.deleteProject.useMutation({
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -21,17 +33,14 @@ const Users = () => {
     await deleteProject.mutateAsync({ id });
   };
 
+  if (!user) return <LoadingScreen />;
+
   return (
     <main className="h-full w-full bg-slate-700 pt-14">
-      <div className="grid h-full w-full grid-rows-[3rem_auto] overflow-hidden p-2 xs:p-4 sm:p-8">
-        <div className="flex items-center justify-between py-2">
-          <h1>Users</h1>
-        </div>
-
-        <UsersContainer
-          users={users}
-          deleteCallback={handleDelete}
-        ></UsersContainer>
+      <div className="flex h-full w-full flex-col overflow-hidden p-2 xs:p-4 sm:p-8">
+        <h1>{user.name}</h1>
+        <p>{user.email}</p>
+        <p>{user.role}</p>
       </div>
     </main>
   );
