@@ -9,18 +9,36 @@ import DialogButton from "~/components/UI/DialogButton";
 import TextInput from "~/components/UI/TextInput";
 import { api } from "~/utils/api";
 import { type ContextType, AppContext } from "~/context";
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 
 const Projects = () => {
   const [showModal, setShowModal] = useState(false);
   const [newProjectName, setNewProjectName] = useState<string>("");
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const userProjects = api.project.getUserProjects.useQuery().data;
+  const projectQKey = getQueryKey(
+    api.project.getUserProjects,
+    undefined,
+    "query",
+  );
   const createProject = api.project.create.useMutation();
+  const deleteProject = api.project.deleteProject.useMutation({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: projectQKey,
+      });
+    },
+  });
+
+  const handleDelete = async (id: string) => {
+    await deleteProject.mutateAsync({ id });
+  };
 
   const { setLoaded, loadProject, loadApp } = useContext(
     AppContext,
   )! as ContextType;
-
-  const userProjects = api.project.getUserProjects.useQuery().data;
 
   const handleCreate = async () => {
     setLoaded(false);
@@ -63,11 +81,14 @@ const Projects = () => {
           </DialogBox>
         </ModalScreen>
       )}
-      <div className="xs:p-4 grid h-full w-full grid-rows-[3rem_auto] overflow-hidden p-2 sm:p-8">
+      <div className="grid h-full w-full grid-rows-[3rem_auto] overflow-hidden p-2 xs:p-4 sm:p-8">
         <div className="flex items-center justify-between py-2">
           <h1>My projects</h1>
         </div>
-        <ProjectsContainer projects={userProjects}>
+        <ProjectsContainer
+          projects={userProjects}
+          deleteCallback={handleDelete}
+        >
           <IconButton
             state={false}
             Icon={AiOutlinePlusCircle}

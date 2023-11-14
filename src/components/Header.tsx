@@ -32,7 +32,7 @@ const Header = () => {
   }
 
   return (
-    <nav className="fixed right-0 top-0 z-50 grid h-11 w-full grid-cols-3 items-center bg-slate-900 p-1 sm:h-12 md:h-14">
+    <nav className="fixed right-0 top-0 z-40 grid h-11 w-full grid-cols-3 items-center bg-slate-900 p-1 sm:h-12 md:h-14">
       <HeaderComponent />
     </nav>
   );

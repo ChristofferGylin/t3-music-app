@@ -3,23 +3,29 @@ import { type ContextType, AppContext } from "~/context";
 import { type PropsWithChildren, useContext, useState, useEffect } from "react";
 import ProjectItem from "./ProjectsItem";
 import Ptag from "./Ptag";
-import IconButton from "../IconButton";
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import Loading from "../LoadingPage/Loading";
 
 type ProjectsContainerType = PropsWithChildren & {
   projects?: Project[];
+  deleteCallback: (id: string) => void;
 };
 
 const titles = ["Name", "Updated", "Created"];
 
-const ProjectsContainer = ({ projects, children }: ProjectsContainerType) => {
+const ProjectsContainer = ({
+  projects,
+  deleteCallback,
+  children,
+}: ProjectsContainerType) => {
   const {} = useContext(AppContext)! as ContextType;
   const [order, setOrder] = useState("desc");
   const [sortOn, setSortOn] = useState("updated");
   const [sorted, setSorted] = useState<Project[]>([]);
+  const [updateTime, setUpdateTime] = useState(false);
 
   useEffect(() => {
+    setUpdateTime(false);
+
     let projs: Project[];
 
     setSorted((old) => {
@@ -60,7 +66,7 @@ const ProjectsContainer = ({ projects, children }: ProjectsContainerType) => {
         }
       });
     });
-  }, [projects, sortOn, order]);
+  }, [projects, sortOn, order, updateTime]);
 
   const handleOrder = (name: string) => {
     const lowerCaseName = name.toLowerCase();
@@ -83,9 +89,9 @@ const ProjectsContainer = ({ projects, children }: ProjectsContainerType) => {
       <ul className="relative z-0 mb-4 h-full w-full overflow-auto">
         <li
           key="projectsTitlesKey"
-          className="grid-cols-projects sticky left-0 top-0 grid h-12 w-full border-b border-slate-500 bg-slate-700 py-2 text-slate-300 shadow"
+          className="sticky left-0 top-0 grid h-12 w-full grid-cols-projects border-b border-slate-500 bg-slate-700 py-2 text-slate-300 shadow"
         >
-          <div className="xs:grid-cols-[2fr_1fr] grid h-full w-full grid-cols-1 items-center justify-start gap-4 text-lg sm:grid-cols-3">
+          <div className="grid h-full w-full grid-cols-1 items-center justify-start gap-4 text-lg xs:grid-cols-[2fr_1fr] sm:grid-cols-3">
             {titles.map((title) => {
               let selected = false;
               let twClasses = "flex";
@@ -125,7 +131,13 @@ const ProjectsContainer = ({ projects, children }: ProjectsContainerType) => {
         </li>
         {projects ? (
           sorted.map((project) => {
-            return <ProjectItem key={project.id} project={project} />;
+            return (
+              <ProjectItem
+                key={project.id}
+                project={project}
+                deleteCallback={deleteCallback}
+              />
+            );
           })
         ) : (
           <li
