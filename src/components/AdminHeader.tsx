@@ -24,8 +24,13 @@ const AdminHeader = () => {
             PROJECTS
           </Link>
         </li>
+        <li key={"topMenuLinkInstrumentsKey"}>
+          <Link className={linkClasses} href={"/admin/instruments"}>
+            INSTRUMENTS
+          </Link>
+        </li>
       </ul>
-      <div className="col-start-3 flex flex w-full justify-end justify-self-end">
+      <div className="col-start-3 flex w-full justify-end justify-self-end">
         <HamburgerMenu />
       </div>
     </>
