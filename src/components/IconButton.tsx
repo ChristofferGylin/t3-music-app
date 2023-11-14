@@ -6,6 +6,8 @@ type IconButtonProps = {
   state?: boolean;
   align?: "left" | "right" | "center";
   size?: string;
+  disabled?: boolean;
+  loading?: boolean;
 };
 
 const IconButton = ({
@@ -14,6 +16,8 @@ const IconButton = ({
   state = false,
   align,
   size = "text-2xl",
+  disabled = false,
+  loading = false,
 }: IconButtonProps) => {
   let iconColor =
     "fill-slate-300 hover:fill-slate-200 stroke-slate-300 hover:stroke-slate-200 text-slate-300 hover:text-slate-200";
@@ -38,9 +42,18 @@ const IconButton = ({
     iconColor = "fill-green-400 stroke-green-400 text-green-400";
   }
 
+  let animation = "";
+
+  if (loading) {
+    animation = "animate-pulse";
+  }
   return (
-    <button className={`p-2 ${aligntment}`} onClick={callback}>
-      <Icon className={`${size} ${iconColor}`} />
+    <button
+      disabled={disabled}
+      className={`relative p-2 ${aligntment}`}
+      onClick={callback}
+    >
+      <Icon className={`${size} ${iconColor} ${animation}`} />
     </button>
   );
 };
