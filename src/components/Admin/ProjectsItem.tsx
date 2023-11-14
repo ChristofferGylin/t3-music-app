@@ -52,9 +52,9 @@ const ProjectItem = ({
           </DialogBox>
         </ModalScreen>
       )}
-      <li className="grid h-10 w-full grid-cols-projects text-slate-300 odd:bg-slate-800/20 hover:bg-slate-800/50 hover:text-slate-200">
+      <li className="grid h-10 w-full grid-cols-projects  text-slate-300 odd:bg-slate-800/20 hover:bg-slate-800/50 hover:text-slate-200">
         <button
-          className="grid h-full w-full grid-cols-1 items-center justify-start gap-4 xs:grid-cols-[2fr_1fr] sm:grid-cols-3 md:grid-cols-4"
+          className="grid h-full w-full grid-cols-1 items-center justify-start gap-4 xs:grid-cols-[1fr_11.5rem] sm:grid-cols-[1fr_9rem_9rem] md:grid-cols-4 lg:grid-cols-[1fr_1fr_9rem_9rem]"
           onClick={() => {
             setLoaded(false);
             loadApp();
@@ -62,6 +62,7 @@ const ProjectItem = ({
           }}
         >
           <Ptag>{project.name}</Ptag>
+          <Ptag twClasses={"hidden md:flex"}>{project.user.email}</Ptag>
           <Ptag twClasses="hidden xs:flex">
             {new Date(project.updated).toLocaleDateString()},{" "}
             {new Date(project.updated).toLocaleTimeString()}
@@ -70,7 +71,6 @@ const ProjectItem = ({
             {new Date(project.created).toLocaleDateString()},{" "}
             {new Date(project.created).toLocaleTimeString()}
           </Ptag>
-          <Ptag twClasses={"hidden md:flex"}>{project.user.email}</Ptag>
         </button>
         <div className="flex w-full items-center justify-center">
           <IconButton

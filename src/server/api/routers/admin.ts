@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import { tree } from "next/dist/build/templates/app-page";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -10,6 +9,22 @@ export const adminRouter = createTRPCRouter({
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return ctx.db.project.findMany({
+      orderBy: { created: "asc" },
+      include: {
+        user: {
+          select: {
+            email: true,
+          },
+        },
+      },
+    });
+  }),
+  getLatestProjects: protectedProcedure.query(({ ctx }) => {
+    if (ctx.session.user.role !== "admin") {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return ctx.db.project.findMany({
+      take: 5,
       orderBy: { created: "asc" },
       include: {
         user: {
@@ -50,6 +65,15 @@ export const adminRouter = createTRPCRouter({
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return ctx.db.user.findMany({
+      orderBy: { created: "asc" },
+    });
+  }),
+  getLatestUsers: protectedProcedure.query(({ ctx }) => {
+    if (ctx.session.user.role !== "admin") {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return ctx.db.user.findMany({
+      take: 5,
       orderBy: { created: "asc" },
     });
   }),

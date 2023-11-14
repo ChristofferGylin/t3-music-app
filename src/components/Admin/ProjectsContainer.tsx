@@ -91,7 +91,7 @@ const ProjectsContainer = ({
           key="projectsTitlesKey"
           className="sticky left-0 top-0 grid h-12 w-full grid-cols-projects border-b border-slate-500 bg-slate-700 py-2 text-slate-300 shadow"
         >
-          <div className="grid h-full w-full grid-cols-1 items-center justify-start gap-4 text-lg xs:grid-cols-[2fr_1fr] sm:grid-cols-4">
+          <div className="grid h-full w-full grid-cols-1 items-center justify-start gap-4 xs:grid-cols-[1fr_11.5rem] sm:grid-cols-[1fr_9rem_9rem] md:grid-cols-4 lg:grid-cols-[1fr_1fr_9rem_9rem]">
             {titles.map((title) => {
               let selected = false;
               let twClasses = "flex";
@@ -106,6 +106,10 @@ const ProjectsContainer = ({
 
               if (title === "Updated") {
                 twClasses = "hidden xs:flex";
+              }
+
+              if (title === "User") {
+                twClasses = "hidden md:flex";
               }
 
               twClasses += " sm:text-base";
