@@ -10,7 +10,7 @@ const SaveButton = ({
   toggle,
 }: {
   hamburger?: boolean;
-  toggle: () => void;
+  toggle?: () => void;
 }) => {
   const { instrumentsState, scenesState, project } = useContext(
     AppContext,
@@ -34,7 +34,7 @@ const SaveButton = ({
     });
   };
 
-  if (hamburger) {
+  if (hamburger && toggle) {
     return (
       <MenuItem
         title="Save"
