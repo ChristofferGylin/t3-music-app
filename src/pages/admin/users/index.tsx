@@ -2,6 +2,8 @@ import { api } from "~/utils/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
 import UsersContainer from "~/components/Admin/UsersContainer";
+import { getServerAuthSession } from "~/server/auth";
+import { type GetServerSideProps } from "next";
 
 const Users = () => {
   const queryClient = useQueryClient();
@@ -33,6 +35,32 @@ const Users = () => {
       </div>
     </main>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  if (session.user.role !== "admin") {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { session },
+  };
 };
 
 export default Users;

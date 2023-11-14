@@ -19,14 +19,6 @@ export const adminRouter = createTRPCRouter({
       },
     });
   }),
-  getAllUsers: protectedProcedure.query(({ ctx }) => {
-    if (ctx.session.user.role !== "admin") {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return ctx.db.user.findMany({
-      orderBy: { created: "asc" },
-    });
-  }),
 
   getProjectById: protectedProcedure
     .input(z.object({ id: z.string().min(1) }))
@@ -48,6 +40,26 @@ export const adminRouter = createTRPCRouter({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       return ctx.db.project.delete({
+        where: { id: input.id },
+      });
+    }),
+
+  getAllUsers: protectedProcedure.query(({ ctx }) => {
+    if (ctx.session.user.role !== "admin") {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return ctx.db.user.findMany({
+      orderBy: { created: "asc" },
+    });
+  }),
+
+  deleteUser: protectedProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .mutation(({ ctx, input }) => {
+      if (ctx.session.user.role !== "admin") {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      return ctx.db.user.delete({
         where: { id: input.id },
       });
     }),

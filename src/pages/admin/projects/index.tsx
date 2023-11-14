@@ -2,6 +2,8 @@ import ProjectsContainer from "~/components/Admin/ProjectsContainer";
 import { api } from "~/utils/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
+import { getServerAuthSession } from "~/server/auth";
+import { type GetServerSideProps } from "next";
 
 const Projects = () => {
   const queryClient = useQueryClient();
@@ -36,6 +38,32 @@ const Projects = () => {
       </div>
     </main>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  if (session.user.role !== "admin") {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { session },
+  };
 };
 
 export default Projects;
