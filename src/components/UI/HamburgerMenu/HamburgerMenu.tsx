@@ -13,6 +13,7 @@ import { AiOutlineFolderOpen } from "react-icons/ai";
 import { TfiSave } from "react-icons/tfi";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { useSession } from "next-auth/react";
+import SaveButton from "../SaveButton";
 
 const HamburgerMenu = () => {
   const {
@@ -60,18 +61,11 @@ const HamburgerMenu = () => {
             }}
           />
           <MenuItem
-            title="Open"
+            title="My projects"
             Icon={AiOutlineFolderOpen}
-            callback={signOut}
+            link="/studio/projects"
           />
-          <MenuItem
-            title="Save"
-            Icon={TfiSave}
-            iconSize="text-sm"
-            callback={() => {
-              console.log("save");
-            }}
-          />
+          <SaveButton hamburger />
           <MenuItem
             title="Settings"
             Icon={FiSettings}
