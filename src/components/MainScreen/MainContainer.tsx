@@ -14,8 +14,13 @@ import { api } from "~/utils/api";
 const MainContainer = () => {
   const scrollRefScenes = useRef<HTMLDivElement | null>(null);
   const scrollRefChannels = useRef<HTMLDivElement | null>(null);
-  const { scenesState, newScene, newInstrumentDrums, instrumentsState } =
-    useContext(AppContext)! as ContextType;
+  const {
+    scenesState,
+    newScene,
+    newInstrumentDrums,
+    instrumentsState,
+    instruments,
+  } = useContext(AppContext)! as ContextType;
 
   const handleScroll = (event: SyntheticEvent, target: HTMLDivElement) => {
     if (target !== null) {
@@ -102,11 +107,16 @@ const MainContainer = () => {
           ref={scrollRefChannels}
         >
           <ChannelContainer>
-            {instrumentsState.map((instrument, index) => {
+            {instrumentsState.map((instrumentState, index) => {
+              const instrument = instruments.current[index];
+
+              if (!instrument) return;
+
               return (
                 <ChannelComponent
                   key={`instrument#${index}`}
                   instrument={instrument}
+                  instrumentState={instrumentState}
                   instrumentIndex={index}
                 />
               );

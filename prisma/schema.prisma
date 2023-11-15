@@ -70,6 +70,7 @@ model Project {
   created     DateTime   @default(now())
   updated     DateTime   @default(now()) @updatedAt()
   drumsKits   DrumsKit[]
+  masterVolume Float @default(79.014)
 
   @@index([userId])
 }
