@@ -64,14 +64,18 @@ const Editor = () => {
   }
 
   return (
-    <div className="flex h-full flex-col justify-between pt-11 sm:pt-12 md:pt-14">
-      <PatternEditor
-        instrument={instrument}
-        sceneIndex={sceneIndex}
-        pattern={pattern}
-        instrumentIndex={instrumentIndex}
-      />
-      {<InstrumentComponent drummachine={instrument} />}
+    <div className="grid h-full w-full grid-rows-main-horizontal bg-slate-700 pt-11 sm:pt-12 md:pt-14">
+      <div className="h-full w-full overflow-auto">
+        <PatternEditor
+          instrument={instrument}
+          sceneIndex={sceneIndex}
+          pattern={pattern}
+          instrumentIndex={instrumentIndex}
+        />
+      </div>
+      <div className="flex items-center justify-center overflow-auto bg-slate-800 p-2">
+        {<InstrumentComponent drummachine={instrument} />}
+      </div>
     </div>
   );
 };

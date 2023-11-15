@@ -35,7 +35,7 @@ const PatternEditor = ({
 
   if (pattern.type === "drums") {
     return (
-      <div className="flex w-full flex-col">
+      <div className="flex h-full w-full flex-col">
         <div className="flex w-full items-center justify-end bg-slate-800 p-2 text-slate-200">
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center justify-center gap-0.5">

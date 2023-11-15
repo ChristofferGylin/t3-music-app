@@ -3,7 +3,7 @@ import Channel from "./Channel";
 
 const Drums = ({ drummachine }: { drummachine: DrumsType }) => {
   return (
-    <ul className="flex w-full justify-center gap-4 overflow-hidden rounded-xl bg-slate-800 p-12">
+    <ul className="flex h-full w-fit justify-center gap-4 rounded-xl border border-slate-700/70 bg-slate-700/50 p-12 shadow-lg">
       {drummachine.channels.map((channel, index) => {
         return (
           <li key={`drumChannel#${index}`}>
