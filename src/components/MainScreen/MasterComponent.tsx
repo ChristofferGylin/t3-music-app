@@ -1,7 +1,7 @@
 import VolumeSlider from "../UI/VolumeSlider";
 
 const handleVolume = (val: number) => {
-  console.log("volume");
+  console.log("volume:", val);
 };
 
 const MasterComponent = () => {

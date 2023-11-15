@@ -10,7 +10,6 @@ import Link from "next/link";
 import ChannelContainer from "./ChannelContainer";
 import MasterComponent from "./MasterComponent";
 import { api } from "~/utils/api";
-import { DrumsType } from "~/instruments/drums/drums";
 
 const MainContainer = () => {
   const scrollRefScenes = useRef<HTMLDivElement | null>(null);
