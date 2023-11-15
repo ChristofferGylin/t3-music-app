@@ -1,6 +1,5 @@
 import { type DrumsType } from "~/instruments/drums/drums";
 import Channel from "./Channel";
-import { InstrumentStateDrumsType } from "~/types/InstrumentStateType";
 
 const Drums = ({
   drummachine,

@@ -1,7 +1,6 @@
 import { type DrumsKit } from "@prisma/client";
 import { Volume, Sampler, Player } from "tone";
 import { type Time } from "tone/build/esm/core/type/Units";
-import { db } from "~/server/db";
 import type ChannelType from "~/types/ChannelType";
 import { logCurve } from "~/utils/math/logCurve";
 import { scaleValue } from "~/utils/math/scaleValue";
@@ -44,12 +43,7 @@ const drums = function (kit: DrumsKit): DrumsType {
           fromScale: { start: 0, end: 1 },
           toScale: { start: -60, end: +6 },
         });
-        const testValue = scaleValue({
-          value: logCurve(79.014),
-          fromScale: { start: 0, end: 1 },
-          toScale: { start: -60, end: +6 },
-        });
-        console.log("testValue", testValue);
+
         this.sampler.volume.value = dBValue;
       },
     };
