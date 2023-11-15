@@ -53,6 +53,7 @@ export type ContextType = {
     val: number;
     instrumentIndex?: number;
     channelIndex?: number;
+    master?: boolean;
     type: string;
   }) => void;
 };
@@ -87,11 +88,24 @@ const Context = ({ children }: { children: ReactNode }) => {
     val: number;
     instrumentIndex?: number;
     channelIndex?: number;
+    master?: boolean;
     type: string;
   }) => {
     if (options.type === "drums") {
+      console.log("type: drums");
       setInstrumentsState((old) => {
         const newState = [...old];
+
+        if (options.master && options.instrumentIndex !== undefined) {
+          const instrument = newState[options.instrumentIndex];
+          console.log("nuuu");
+          if (instrument) {
+            console.log("instrument");
+            instrument.masterVolume = options.val;
+          }
+
+          return newState;
+        }
 
         if (
           options.instrumentIndex !== undefined &&
@@ -144,20 +158,25 @@ const Context = ({ children }: { children: ReactNode }) => {
     kit: DrumsKit,
     loadingProject?: boolean,
     chanVols?: number[],
+    masterVol?: number,
   ) => {
     const newDrums = drums(kit);
 
     instruments.current.push(newDrums);
 
     let channelVolumes;
+    let masterVolume;
 
-    if (loadingProject && chanVols) {
+    if (loadingProject && chanVols && masterVol) {
       channelVolumes = chanVols;
+      masterVolume = masterVol;
+      newDrums.setMasterVolume(masterVolume);
       newDrums.channels.forEach((channel, index) => {
         const vol = chanVols[index];
         if (vol !== undefined) channel.setVolume(vol);
       });
     } else {
+      masterVolume = 79.014;
       channelVolumes = newDrums.channels.map(() => {
         return 79.014;
       });
@@ -166,7 +185,7 @@ const Context = ({ children }: { children: ReactNode }) => {
     const newDrumsState: InstrumentStateDrumsType = {
       type: "drums",
       currentKit: kit.id,
-      masterVolume: newDrums.masterVolume.volume.value,
+      masterVolume: masterVolume,
       channelVolumes,
       modelName: "Drums",
       name: "Drums,",
@@ -388,12 +407,14 @@ const Context = ({ children }: { children: ReactNode }) => {
           const selectedKit = dbProject.drumsKits.filter(
             (dbKit) => instrument.currentKit === dbKit.id,
           );
+          instrument.masterVolume;
 
           if (selectedKit[0]) {
             void newInstrumentDrums(
               selectedKit[0],
               true,
               instrument.channelVolumes,
+              instrument.masterVolume,
             );
           }
 

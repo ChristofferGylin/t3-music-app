@@ -8,6 +8,7 @@ import { scaleValue } from "~/utils/math/scaleValue";
 export type DrumsType = {
   currentStep: number;
   masterVolume: Volume;
+  setMasterVolume: (val: number) => void;
   name: string;
   channels: ChannelType[];
   type: "drums";
@@ -53,6 +54,15 @@ const drums = function (kit: DrumsKit): DrumsType {
     currentStep: 0,
     name: "drums",
     masterVolume,
+    setMasterVolume: function (val: number) {
+      const dBValue = scaleValue({
+        value: logCurve(val),
+        fromScale: { start: 0, end: 1 },
+        toScale: { start: -60, end: +6 },
+      });
+
+      this.masterVolume.volume.value = dBValue;
+    },
     channels: channels || [],
     type: "drums",
     modelName: "Drums",

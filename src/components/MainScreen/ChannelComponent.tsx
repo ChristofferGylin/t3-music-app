@@ -2,20 +2,37 @@ import Link from "next/link";
 import { type ContextType, AppContext } from "~/context";
 import { useContext } from "react";
 import { type InstrumentStateDrumsType } from "~/types/InstrumentStateType";
+import VolumeSlider from "../UI/VolumeSlider";
+import { type DrumsType } from "~/instruments/drums/drums";
 type SceneComponentProps = {
   instrumentIndex: number;
-  instrument: InstrumentStateDrumsType;
+  instrument: DrumsType;
+  instrumentState: InstrumentStateDrumsType;
 };
 
 const ChannelComponent = ({
   instrumentIndex,
   instrument,
+  instrumentState,
 }: SceneComponentProps) => {
-  const { currentSceneState } = useContext(AppContext)! as ContextType;
+  const { currentSceneState, setVolume } = useContext(
+    AppContext,
+  )! as ContextType;
+
+  const handleVolume = (val: number) => {
+    console.log("instrumentIndex:", instrumentIndex);
+    setVolume({
+      val,
+      instrumentIndex: instrumentIndex,
+      type: "drums",
+      master: true,
+    });
+    instrument.setMasterVolume(val);
+  };
 
   return (
     <li key={`instrument#${instrumentIndex}`} className="h-full">
-      <div className="flex h-full w-24 flex-col items-center justify-start rounded-t border border-slate-600 bg-slate-700/60 py-2">
+      <div className="flex h-full w-24 flex-col items-center justify-start gap-2 rounded-t border border-slate-600 bg-slate-700/60 py-2">
         <Link
           href={{
             pathname: "/studio/editor",
@@ -24,9 +41,13 @@ const ChannelComponent = ({
           className="flex w-full items-center justify-center"
         >
           <div className="flex w-3/4 items-center justify-center rounded bg-green-800 text-green-300">
-            {instrument.modelName}
+            {instrumentState.modelName}
           </div>
         </Link>
+        <VolumeSlider
+          valueState={instrumentState.masterVolume}
+          callback={handleVolume}
+        />
       </div>
     </li>
   );
