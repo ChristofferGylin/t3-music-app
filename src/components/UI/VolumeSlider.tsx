@@ -20,6 +20,7 @@ const VolumeSlider = ({
       invert
       onChange={handleChange}
       value={valueState}
+      step={0.001}
       renderThumb={(props) => (
         <div
           {...props}

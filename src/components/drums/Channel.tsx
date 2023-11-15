@@ -25,13 +25,14 @@ const Channel = ({
       channelIndex: channelIndex,
       type: "drums",
     });
+    drumChannel.setVolume(val);
   };
 
   let valueState =
     instrumentsState[instrumentIndex]?.channelVolumes[channelIndex];
 
-  if (!valueState) {
-    valueState = 0;
+  if (valueState === undefined) {
+    valueState = 79.014;
   }
 
   return (

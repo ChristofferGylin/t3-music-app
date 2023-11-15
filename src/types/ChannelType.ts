@@ -8,6 +8,7 @@ type ChannelType = {
   attack: Time;
   volume: number;
   play: (time?: Time) => void;
+  setVolume: (val: number) => void;
 };
 
 export default ChannelType;

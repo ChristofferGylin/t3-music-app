@@ -140,14 +140,28 @@ const Context = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const newInstrumentDrums = (kit: DrumsKit, loadingProject?: boolean) => {
+  const newInstrumentDrums = (
+    kit: DrumsKit,
+    loadingProject?: boolean,
+    chanVols?: number[],
+  ) => {
     const newDrums = drums(kit);
 
     instruments.current.push(newDrums);
 
-    const channelVolumes = newDrums.channels.map((channel) => {
-      return channel.sampler.volume.value;
-    });
+    let channelVolumes;
+
+    if (loadingProject && chanVols) {
+      channelVolumes = chanVols;
+      newDrums.channels.forEach((channel, index) => {
+        const vol = chanVols[index];
+        if (vol !== undefined) channel.setVolume(vol);
+      });
+    } else {
+      channelVolumes = newDrums.channels.map(() => {
+        return 79.014;
+      });
+    }
 
     const newDrumsState: InstrumentStateDrumsType = {
       type: "drums",
@@ -376,7 +390,11 @@ const Context = ({ children }: { children: ReactNode }) => {
           );
 
           if (selectedKit[0]) {
-            void newInstrumentDrums(selectedKit[0], true);
+            void newInstrumentDrums(
+              selectedKit[0],
+              true,
+              instrument.channelVolumes,
+            );
           }
 
           break;
