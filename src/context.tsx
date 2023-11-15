@@ -49,6 +49,12 @@ export type ContextType = {
   appIsLoaded: () => void;
   saving: boolean;
   setSavingState: (state: boolean) => void;
+  setVolume: (options: {
+    val: number;
+    instrumentIndex?: number;
+    channelIndex?: number;
+    type: string;
+  }) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -76,6 +82,30 @@ const Context = ({ children }: { children: ReactNode }) => {
   });
   const [playing, setPlaying] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const setVolume = (options: {
+    val: number;
+    instrumentIndex?: number;
+    channelIndex?: number;
+    type: string;
+  }) => {
+    if (options.type === "drums") {
+      setInstrumentsState((old) => {
+        const newState = [...old];
+
+        if (
+          options.instrumentIndex !== undefined &&
+          options.channelIndex !== undefined
+        ) {
+          newState[options.instrumentIndex]!.channelVolumes[
+            options.channelIndex
+          ] = options.val;
+        }
+
+        return newState;
+      });
+    }
+  };
 
   const setSavingState = (state: boolean) => {
     setSaving(state);
@@ -393,6 +423,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         appIsLoaded,
         saving,
         setSavingState,
+        setVolume,
       }}
     >
       {children}

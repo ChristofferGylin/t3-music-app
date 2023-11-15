@@ -16,7 +16,7 @@ export type DrumsType = {
 type KitChannelsType = [{ title: string; url: string }];
 
 const drums = function (kit: DrumsKit): DrumsType {
-  const masterVolume = new Volume(-10).toDestination();
+  const masterVolume = new Volume(0).toDestination();
 
   const kitChannels = JSON.parse(kit.channels) as KitChannelsType;
 
@@ -41,7 +41,7 @@ const drums = function (kit: DrumsKit): DrumsType {
   return {
     currentStep: 0,
     name: "drums",
-    masterVolume: new Volume(-10).toDestination(),
+    masterVolume,
     channels: channels || [],
     type: "drums",
     modelName: "Drums",
