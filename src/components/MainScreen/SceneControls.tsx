@@ -13,7 +13,7 @@ const SceneControls = ({ sceneIndex }: SceneComponentProps) => {
     AppContext,
   )! as ContextType;
   return (
-    <li className="flex h-16 bg-slate-700/60 odd:bg-slate-700/80">
+    <li className="flex h-16 bg-slate-800/30 odd:bg-slate-800/60">
       <div className="sticky left-0 top-0 flex h-full w-24 flex-col">
         <div className="flex justify-between">
           <IconButton
