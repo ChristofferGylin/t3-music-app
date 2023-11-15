@@ -14,7 +14,7 @@
     }
   }
   body {
-    @apply font-poppins bg-slate-900 tracking-wide text-slate-300;
+    @apply bg-slate-900 font-poppins tracking-wide text-slate-300;
   }
   a {
     @apply text-blue-600 visited:text-purple-600;

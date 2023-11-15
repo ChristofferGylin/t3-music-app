@@ -4,10 +4,13 @@ import PatternEditor from "~/components/PatternEditor";
 import Drums from "~/components/drums/Drums";
 import { type ContextType, AppContext } from "~/context";
 import { type DrumsType } from "~/instruments/drums/drums";
+import { type InstrumentStateDrumsType } from "~/types/InstrumentStateType";
 import { type PatternType } from "~/types/Pattern";
 
 const Editor = () => {
-  const { instruments, scenesState } = useContext(AppContext)! as ContextType;
+  const { instruments, scenesState, instrumentsState } = useContext(
+    AppContext,
+  )! as ContextType;
   const router = useRouter();
   const [instrumentIndex, setInstrumentIndex] = useState<number | undefined>(
     undefined,
@@ -16,6 +19,9 @@ const Editor = () => {
   const [instrument, setInstrument] = useState<DrumsType | undefined>(
     undefined,
   );
+  const [instrumentState, setInstrumentState] = useState<
+    InstrumentStateDrumsType | undefined
+  >(undefined);
   const [pattern, setPattern] = useState<PatternType | undefined>(undefined);
 
   useEffect(() => {
@@ -37,14 +43,23 @@ const Editor = () => {
           setInstrument(instruments.current[instInd]);
           setPattern(scenesState[scnInd]?.patterns[instInd]);
           setInstrumentIndex(instInd);
+          setInstrumentState(instrumentsState[instInd]);
           setSceneIndex(scnInd);
         }
       }
     }
-  }, [router, setInstrument, setPattern, instruments, scenesState]);
+  }, [
+    router,
+    setInstrument,
+    setPattern,
+    instruments,
+    scenesState,
+    instrumentsState,
+  ]);
 
   if (
     instrument === undefined ||
+    instrumentState === undefined ||
     pattern === undefined ||
     sceneIndex === undefined ||
     instrumentIndex === undefined
@@ -64,14 +79,23 @@ const Editor = () => {
   }
 
   return (
-    <div className="flex h-full flex-col justify-between pt-11 sm:pt-12 md:pt-14">
-      <PatternEditor
-        instrument={instrument}
-        sceneIndex={sceneIndex}
-        pattern={pattern}
-        instrumentIndex={instrumentIndex}
-      />
-      {<InstrumentComponent drummachine={instrument} />}
+    <div className="grid h-full w-full grid-rows-main-horizontal bg-slate-700 pt-11 sm:pt-12 md:pt-14">
+      <div className="h-full w-full overflow-auto">
+        <PatternEditor
+          instrument={instrument}
+          sceneIndex={sceneIndex}
+          pattern={pattern}
+          instrumentIndex={instrumentIndex}
+        />
+      </div>
+      <div className="flex items-center justify-center overflow-auto bg-slate-800 p-2">
+        {
+          <InstrumentComponent
+            drummachine={instrument}
+            instrumentIndex={instrumentIndex}
+          />
+        }
+      </div>
     </div>
   );
 };
