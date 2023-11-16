@@ -18,11 +18,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <Context>
       <SessionProvider session={session}>
         <Head>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1"
-          ></meta>
-          <meta name="viewport" content="viewport-fit=cover"></meta>
           <meta name="apple-mobile-web-app-capable" content="yes"></meta>
           <meta name="apple-mobile-web-app-title" content="PlinkPlonk"></meta>
           <link rel="apple-touch-icon" href="/plinkplonk-logo.png"></link>
