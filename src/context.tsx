@@ -416,6 +416,7 @@ const Context = ({ children }: { children: ReactNode }) => {
     if (!masterOut.current) {
       masterOut.current = new Tone.Volume(0).toDestination();
     }
+    Tone.Transport.bpm.value = dbProject.bpm;
     masterOut.current.volume.value = signalToDb(dbProject.masterVolume);
     instruments.current = [];
     setInstrumentsState([]);
