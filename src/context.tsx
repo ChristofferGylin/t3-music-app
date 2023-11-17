@@ -15,6 +15,7 @@ import { type EditNote } from "./types/EditNote";
 import { type DrumsKit } from "@prisma/client";
 import type ProjectWithKits from "./types/ProjectWithKits";
 import { type PatternSteps } from "./types/Pattern";
+import signalToDb from "./utils/math/signalToDb";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -35,7 +36,7 @@ export type ContextType = {
   deleteNote: (data: EditNote) => void;
   projectLoaded: boolean;
   setLoaded: (state: boolean) => void;
-  project: { id: string; name: string };
+  project: { id: string; name: string; masterVolume: number; bpm: number };
   loadProject: (dbProject: ProjectWithKits) => void;
   longerPattern: (data: { scene: number; instrument: number }) => void;
   shorterPattern: (data: { scene: number; instrument: number }) => void;
@@ -56,6 +57,8 @@ export type ContextType = {
     master?: boolean;
     type: string;
   }) => void;
+  masterOut: MutableRefObject<Tone.Volume | null>;
+  setMasterVolume: (val: number) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -77,12 +80,30 @@ const Context = ({ children }: { children: ReactNode }) => {
   const loop = useRef(true);
   const [currentSceneState, setCurrentSceneState] = useState(0);
   const [projectLoaded, setProjectLoaded] = useState(false);
-  const [project, setProject] = useState<{ id: string; name: string }>({
+  const [project, setProject] = useState<{
+    id: string;
+    name: string;
+    masterVolume: number;
+    bpm: number;
+  }>({
     id: "",
     name: "",
+    masterVolume: 79.014,
+    bpm: 120,
   });
   const [playing, setPlaying] = useState(false);
   const [saving, setSaving] = useState(false);
+  const masterOut = useRef<Tone.Volume | null>(null);
+
+  const setMasterVolume = (val: number) => {
+    setProject((old) => {
+      const newProject = { ...old };
+
+      newProject.masterVolume = val;
+
+      return newProject;
+    });
+  };
 
   const setVolume = (options: {
     val: number;
@@ -160,7 +181,9 @@ const Context = ({ children }: { children: ReactNode }) => {
     chanVols?: number[],
     masterVol?: number,
   ) => {
-    const newDrums = drums(kit);
+    if (!masterOut.current) return;
+
+    const newDrums = drums(masterOut.current, kit);
 
     instruments.current.push(newDrums);
 
@@ -390,9 +413,18 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const loadProject = (dbProject: ProjectWithKits) => {
+    if (!masterOut.current) {
+      masterOut.current = new Tone.Volume(0).toDestination();
+    }
+    masterOut.current.volume.value = signalToDb(dbProject.masterVolume);
     instruments.current = [];
     setInstrumentsState([]);
-    setProject({ id: dbProject.id, name: dbProject.name });
+    setProject({
+      id: dbProject.id,
+      name: dbProject.name,
+      masterVolume: dbProject.masterVolume,
+      bpm: dbProject.bpm,
+    });
     const dbInstruments = JSON.parse(
       dbProject.instruments,
     ) as InstrumentStateDrumsType[];
@@ -463,6 +495,8 @@ const Context = ({ children }: { children: ReactNode }) => {
         saving,
         setSavingState,
         setVolume,
+        masterOut,
+        setMasterVolume,
       }}
     >
       {children}

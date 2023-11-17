@@ -71,6 +71,7 @@ model Project {
   updated     DateTime   @default(now()) @updatedAt()
   drumsKits   DrumsKit[]
   masterVolume Float @default(79.014)
+  bpm Float @default(120)
 
   @@index([userId])
 }

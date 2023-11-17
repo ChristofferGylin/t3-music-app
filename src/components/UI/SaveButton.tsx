@@ -38,10 +38,10 @@ const SaveButton = ({
     });
 
     await saveToDb.mutateAsync({
-      id: project.id,
       instruments: instrumentsJSON,
       scenes: scenesJSON,
       kits: kitIds,
+      project: project,
     });
   };
 
