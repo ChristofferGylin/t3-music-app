@@ -1,13 +1,24 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import { Transport } from "tone";
 import { type ContextType, AppContext } from "~/context";
 
 const Bpm = () => {
   const { project, setBpm } = useContext(AppContext)! as ContextType;
   const [inputValue, setInputValue] = useState(`${project.bpm.toFixed(1)}`);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleBpm = () => {
-    const bpm = +inputValue;
+    const input = +inputValue;
+    let bpm: number;
+
+    if (input < 20) {
+      bpm = 20;
+    } else if (input > 1000) {
+      bpm = 1000;
+    } else {
+      bpm = input;
+    }
+
     Transport.bpm.value = bpm;
     setBpm(bpm);
     setInputValue(bpm.toFixed(1));
@@ -18,16 +29,26 @@ const Bpm = () => {
     handleBpm();
   };
 
+  const handleClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   return (
     <form
-      className="flex h-8 items-center rounded border border-slate-500 bg-slate-700 pl-5 focus-within:bg-slate-700/60 hover:bg-slate-700/60 sm:h-9 md:h-10"
+      className="group flex aspect-[3/2] h-8 flex-col items-center rounded border border-slate-500 bg-slate-700 focus-within:bg-slate-700/60 focus-within:text-slate-200 hover:bg-slate-700/60 sm:h-9 md:h-10"
       onBlur={handleBpm}
       onSubmit={handleSubmit}
+      onClick={handleClick}
     >
-      <div className="font-bold">BPM: </div>
+      <div className="text-xxs flex w-full justify-center font-bold group-hover:text-slate-200">
+        BPM
+      </div>
       <input
+        ref={inputRef}
         step={0.1}
-        className="flex w-16 items-center justify-center bg-transparent text-center outline-none"
+        className="flex w-16 items-center justify-center bg-transparent text-center outline-none group-hover:text-slate-200"
         type="number"
         value={inputValue}
         onChange={(e) => {
