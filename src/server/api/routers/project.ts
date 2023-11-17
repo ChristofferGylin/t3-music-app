@@ -22,7 +22,12 @@ export const projectRouter = createTRPCRouter({
   save: protectedProcedure
     .input(
       z.object({
-        id: z.string().min(1),
+        project: z.object({
+          id: z.string(),
+          name: z.string(),
+          masterVolume: z.number(),
+          bpm: z.number(),
+        }),
         instruments: z.string().min(1),
         scenes: z.string().min(1),
         kits: z.array(z.object({ id: z.string().min(1) })),
@@ -30,7 +35,7 @@ export const projectRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       return ctx.db.project.update({
-        where: { id: input.id },
+        where: { id: input.project.id },
         data: {
           instruments: input.instruments,
           scenes: input.scenes,
@@ -38,6 +43,8 @@ export const projectRouter = createTRPCRouter({
             set: [],
             connect: input.kits,
           },
+          masterVolume: input.project.masterVolume,
+          bpm: input.project.bpm,
         },
       });
     }),

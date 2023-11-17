@@ -1,10 +1,22 @@
+import { useContext } from "react";
 import VolumeSlider from "../UI/VolumeSlider";
-
-const handleVolume = (val: number) => {
-  console.log("volume:", val);
-};
+import { type ContextType, AppContext } from "~/context";
+import signalToDb from "~/utils/math/signalToDb";
 
 const MasterComponent = () => {
+  const { masterOut, setMasterVolume, project } = useContext(
+    AppContext,
+  )! as ContextType;
+
+  const handleVolume = (val: number) => {
+    const dbValue = signalToDb(val);
+
+    if (!masterOut.current) return;
+
+    masterOut.current.volume.value = dbValue;
+    setMasterVolume(val);
+  };
+
   return (
     <div className="flex h-full w-24 flex-col bg-slate-800 pt-1">
       <div key={`instrument#master`} className="h-full">
@@ -14,7 +26,10 @@ const MasterComponent = () => {
               Master
             </div>
           </div>
-          <VolumeSlider valueState={79.014} callback={handleVolume} />
+          <VolumeSlider
+            valueState={project.masterVolume}
+            callback={handleVolume}
+          />
         </div>
       </div>
     </div>

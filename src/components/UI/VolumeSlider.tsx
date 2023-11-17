@@ -24,6 +24,9 @@ const VolumeSlider = ({
       renderThumb={(props) => (
         <div
           {...props}
+          onDoubleClick={() => {
+            handleChange(79.014);
+          }}
           className="z-40 flex aspect-[2/1] w-full cursor-pointer items-center justify-center rounded border border-slate-700 bg-slate-800 shadow"
         >
           <div className="w-full border border-slate-300"></div>
