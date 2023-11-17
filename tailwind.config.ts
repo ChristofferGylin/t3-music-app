@@ -36,6 +36,9 @@ export default {
         "main-vertical": "6rem auto",
         projects: "auto 2.5rem",
       },
+      fontSize: {
+        xxs: ["10px", "14px"],
+      },
     },
   },
   plugins: [],
