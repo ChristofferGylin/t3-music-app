@@ -6,6 +6,7 @@ import { type ContextType, AppContext } from "~/context";
 import { useContext } from "react";
 import * as Tone from "tone";
 import { BsFillPlayFill } from "react-icons/bs";
+import Bpm from "./Bpm";
 
 const TransportControls = () => {
   const { loopState, toggleLoop, rewind, playing, setPlayState } = useContext(
@@ -49,6 +50,7 @@ const TransportControls = () => {
         callback={handleStart}
       />
       <TransportButton Icon={TfiLoop} state={loopState} callback={toggleLoop} />
+      <Bpm />
     </div>
   );
 };

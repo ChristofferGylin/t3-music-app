@@ -59,6 +59,7 @@ export type ContextType = {
   }) => void;
   masterOut: MutableRefObject<Tone.Volume | null>;
   setMasterVolume: (val: number) => void;
+  setBpm: (val: number) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -94,6 +95,14 @@ const Context = ({ children }: { children: ReactNode }) => {
   const [playing, setPlaying] = useState(false);
   const [saving, setSaving] = useState(false);
   const masterOut = useRef<Tone.Volume | null>(null);
+
+  const setBpm = (val: number) => {
+    setProject((old) => {
+      const newProject = { ...old };
+      newProject.bpm = val;
+      return newProject;
+    });
+  };
 
   const setMasterVolume = (val: number) => {
     setProject((old) => {
@@ -498,6 +507,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         setVolume,
         masterOut,
         setMasterVolume,
+        setBpm,
       }}
     >
       {children}
