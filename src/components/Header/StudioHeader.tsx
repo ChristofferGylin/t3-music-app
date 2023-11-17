@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import * as Tone from "tone";
 import { type Time } from "tone/build/esm/core/type/Units";
 import { type ContextType, AppContext } from "~/context";
-import TransportControls from "../TransportControls";
+import TransportControls from "../Transport/TransportControls";
 import BackButton from "../UI/BackButton";
 import { useRouter } from "next/router";
 import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";

@@ -15,7 +15,7 @@ const TransportButton = ({ Icon, callback, state }: TransportButtonProps) => {
 
   return (
     <button
-      className="rounded border border-slate-500 bg-slate-700 px-4 py-2 hover:bg-slate-700/60"
+      className="flex aspect-[3/2] h-8 items-center justify-center rounded border border-slate-500 bg-slate-700 hover:bg-slate-700/60 sm:h-9 md:h-10"
       onClick={callback}
     >
       <Icon className={`text-lg sm:text-xl md:text-2xl ${iconColor}`} />
