@@ -8,7 +8,6 @@ import "~/styles/globals.css";
 import Header from "~/components/Header/Header";
 import Context from "~/context";
 import Wrapper from "~/components/Wrapper";
-import Head from "next/head";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -17,17 +16,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <Context>
       <SessionProvider session={session}>
-        <Head>
-          <meta name="apple-mobile-web-app-capable" content="yes"></meta>
-          <meta name="apple-mobile-web-app-title" content="PlinkPlonk"></meta>
-          <link rel="apple-touch-icon" href="/plinkplonk-logo.png"></link>
-          <meta name="apple-touch-fullscreen" content="yes"></meta>
-          <meta
-            name="apple-touch-startup-image"
-            content="/plinkplonk-logo.png"
-          ></meta>
-          <meta name="mobile-web-app-capable" content="yes"></meta>
-        </Head>
         <Wrapper>
           <Header />
           <Component {...pageProps} />

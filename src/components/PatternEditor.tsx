@@ -75,7 +75,7 @@ const PatternEditor = ({
           </div>
         </div>
         <div className="flex w-full overflow-auto bg-slate-700">
-          <ul className="sticky left-0 top-0 grid grid-flow-col grid-rows-11 justify-start gap-0 bg-blue-950">
+          <ul className="grid-rows-drums sticky left-0 grid grid-flow-col justify-start gap-0 bg-blue-950">
             {instrument.channels.map((channel, index) => {
               return (
                 <li
@@ -90,7 +90,7 @@ const PatternEditor = ({
               );
             })}
           </ul>
-          <ul className="grid grid-flow-col grid-rows-11 justify-start gap-0 bg-blue-950">
+          <ul className="grid-rows-drums grid grid-flow-col justify-start gap-0">
             {pattern.pattern.map((step, stepIndex) => {
               if (stepIndex < pattern.length) {
                 if (
