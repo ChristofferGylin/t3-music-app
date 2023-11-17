@@ -8,7 +8,6 @@ import "~/styles/globals.css";
 import Header from "~/components/Header/Header";
 import Context from "~/context";
 import Wrapper from "~/components/Wrapper";
-import Head from "next/head";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
