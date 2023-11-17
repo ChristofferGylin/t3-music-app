@@ -38,6 +38,7 @@ export default {
       },
       fontSize: {
         xxs: ["10px", "14px"],
+        xxxs: ["8px", "12px"],
       },
     },
   },

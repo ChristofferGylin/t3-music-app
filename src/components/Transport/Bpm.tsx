@@ -42,13 +42,13 @@ const Bpm = () => {
       onSubmit={handleSubmit}
       onClick={handleClick}
     >
-      <div className="text-xxs flex w-full justify-center font-bold group-hover:text-slate-200">
+      <div className="text-xxxs flex w-full justify-center font-bold group-hover:text-slate-200 sm:text-xxs">
         BPM
       </div>
       <input
         ref={inputRef}
         step={0.1}
-        className="flex w-16 items-center justify-center bg-transparent text-center outline-none group-hover:text-slate-200"
+        className="flex w-16 items-center justify-center bg-transparent text-center text-xs outline-none group-hover:text-slate-200 sm:text-sm md:text-base"
         type="number"
         value={inputValue}
         onChange={(e) => {
