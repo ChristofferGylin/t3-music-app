@@ -3,6 +3,7 @@ import SideContainerScene from "./SideContainerScene";
 import { type SyntheticEvent, useRef, useContext } from "react";
 import { type ContextType, AppContext } from "~/context";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+import { MdOutlineContentCopy } from "react-icons/md";
 import IconButton from "../UI/IconButton";
 import ChannelComponent from "./ChannelComponent";
 import SceneControls from "./SceneControls";
@@ -20,6 +21,7 @@ const MainContainer = () => {
     newInstrumentDrums,
     instrumentsState,
     instruments,
+    copyScene,
   } = useContext(AppContext)! as ContextType;
 
   const handleScroll = (event: SyntheticEvent, target: HTMLDivElement) => {
@@ -50,6 +52,13 @@ const MainContainer = () => {
               state={false}
               Icon={AiOutlinePlusCircle}
               callback={newScene}
+            />
+            <IconButton
+              state={false}
+              Icon={MdOutlineContentCopy}
+              callback={() => {
+                copyScene(scenesState.length - 1);
+              }}
             />
           </li>
         </SideContainerScene>
