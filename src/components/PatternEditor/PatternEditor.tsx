@@ -20,9 +20,8 @@ const PatternEditor = ({
   sceneIndex,
   instrumentIndex,
 }: PatternEditorProps) => {
-  const { addNote, deleteNote, longerPattern, shorterPattern } = useContext(
-    AppContext,
-  )! as ContextType;
+  const { addNote, deleteNote, longerPattern, shorterPattern, doublePattern } =
+    useContext(AppContext)! as ContextType;
 
   const colorActive = "bg-green-400";
   const colorInactive = "bg-slate-700";
@@ -67,7 +66,10 @@ const PatternEditor = ({
               <PatternButton
                 Icon={TbMultiplier2X}
                 callback={() => {
-                  console.log("double");
+                  doublePattern({
+                    scene: sceneIndex,
+                    instrument: instrumentIndex,
+                  });
                 }}
                 size=""
               />
@@ -75,7 +77,7 @@ const PatternEditor = ({
           </div>
         </div>
         <div className="flex w-full overflow-auto bg-slate-700">
-          <ul className="grid-rows-drums sticky left-0 grid grid-flow-col justify-start gap-0 bg-blue-950">
+          <ul className="sticky left-0 grid grid-flow-col grid-rows-drums justify-start gap-0 bg-blue-950">
             {instrument.channels.map((channel, index) => {
               return (
                 <li
@@ -90,7 +92,7 @@ const PatternEditor = ({
               );
             })}
           </ul>
-          <ul className="grid-rows-drums grid grid-flow-col justify-start gap-0">
+          <ul className="grid grid-flow-col grid-rows-drums justify-start gap-0">
             {pattern.pattern.map((step, stepIndex) => {
               if (stepIndex < pattern.length) {
                 if (

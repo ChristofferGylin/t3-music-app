@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import PatternEditor from "~/components/PatternEditor";
+import PatternEditor from "~/components/PatternEditor/PatternEditor";
 import Drums from "~/components/drums/Drums";
 import { type ContextType, AppContext } from "~/context";
 import { type DrumsType } from "~/instruments/drums/drums";
