@@ -21,7 +21,7 @@ import { type PatternSteps } from "./types/Pattern";
 import signalToDb from "./utils/math/signalToDb";
 import deepCopyPatternSteps from "./utils/deepCopyPatternSteps";
 import deepCopyScene from "./utils/deepCopyScene";
-import bassic, { type BassicType } from "./instruments/drums/bassic";
+import bassic, { type BassicType } from "./instruments/bassic";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;

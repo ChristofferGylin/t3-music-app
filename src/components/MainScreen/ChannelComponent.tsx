@@ -7,7 +7,7 @@ import {
 } from "~/types/InstrumentStateType";
 import VolumeSlider from "../UI/VolumeSlider";
 import { type DrumsType } from "~/instruments/drums/drums";
-import { type BassicType } from "~/instruments/drums/bassic";
+import { type BassicType } from "~/instruments/bassic";
 type SceneComponentProps = {
   instrumentIndex: number;
   instrument: DrumsType | BassicType;

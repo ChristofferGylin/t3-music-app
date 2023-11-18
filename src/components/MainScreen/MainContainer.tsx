@@ -10,19 +10,13 @@ import SceneControls from "./SceneControls";
 import Link from "next/link";
 import ChannelContainer from "./ChannelContainer";
 import MasterComponent from "./MasterComponent";
-import { api } from "~/utils/api";
+import NewInstrument from "./NewInstrument";
 
 const MainContainer = () => {
   const scrollRefScenes = useRef<HTMLDivElement | null>(null);
   const scrollRefChannels = useRef<HTMLDivElement | null>(null);
-  const {
-    scenesState,
-    newScene,
-    newInstrumentDrums,
-    instrumentsState,
-    instruments,
-    copyScene,
-  } = useContext(AppContext)! as ContextType;
+  const { scenesState, newScene, instrumentsState, instruments, copyScene } =
+    useContext(AppContext)! as ContextType;
 
   const handleScroll = (event: SyntheticEvent, target: HTMLDivElement) => {
     if (target !== null) {
@@ -30,10 +24,6 @@ const MainContainer = () => {
       target.scrollLeft = eventTarget.scrollLeft;
     }
   };
-
-  const defKit = api.instruments.getDrumsKitById.useQuery({
-    id: "cloobtmk60000nvxoncyrom50",
-  }).data;
 
   return (
     <main className="grid h-full w-full grid-rows-main-horizontal bg-slate-700 pt-11 sm:pt-12 md:pt-14">
@@ -130,20 +120,7 @@ const MainContainer = () => {
                 />
               );
             })}
-            <li key={`newInstrument`} className="h-full">
-              <button
-                onClick={() => {
-                  if (defKit) {
-                    newInstrumentDrums(defKit);
-                  }
-                }}
-                className="group flex h-full w-24 items-center justify-center rounded-lg border-2 border-dashed border-slate-500 p-2  hover:border-slate-400"
-              >
-                <AiOutlinePlusCircle
-                  className={`fill-slate-300 text-2xl group-hover:fill-slate-200`}
-                />
-              </button>
-            </li>
+            <NewInstrument />
           </ChannelContainer>
         </div>
       </div>
