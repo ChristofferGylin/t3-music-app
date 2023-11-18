@@ -8,6 +8,8 @@ import { useRouter } from "next/router";
 import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
 import { useSession } from "next-auth/react";
 import SaveButton from "../UI/SaveButton";
+import { DrumsType } from "~/instruments/drums/drums";
+import { BassicType } from "~/instruments/bassic";
 
 const StudioHeader = () => {
   const {
@@ -38,7 +40,13 @@ const StudioHeader = () => {
     if (instruments.current !== null && instruments.current !== undefined) {
       let goToNext = false;
       for (let i = 0; i < instruments.current.length; i++) {
-        const currentInstrument = instruments.current[i];
+        let currentInstrument = instruments.current[i];
+
+        if (instruments.current[i]?.type === "drums") {
+          currentInstrument = instruments.current[i] as DrumsType;
+        }
+
+        if (!currentInstrument) continue;
 
         if (currentInstrument && currentInstrument.new) {
           const calcStep = (step: number) => {
@@ -57,11 +65,12 @@ const StudioHeader = () => {
           }
         }
 
-        const step = instruments.current[i]?.currentStep;
+        const step = currentInstrument.currentStep;
 
         if (step === undefined) return;
 
         if (instruments.current[i]?.type === "drums") {
+          currentInstrument = instruments.current[i] as DrumsType;
           const start =
             scenes.current[currentScene.current]?.patterns[i]?.pattern[step]
               ?.start;
@@ -72,15 +81,23 @@ const StudioHeader = () => {
             if (playIndex === undefined || typeof playIndex !== "number") {
               return;
             }
-            instruments.current[i]?.channels[playIndex]?.play(time);
+            currentInstrument.channels[playIndex]?.play(time);
+          }
+        } else {
+          currentInstrument = instruments.current[i] as BassicType;
+          const start =
+            scenes.current[currentScene.current]?.patterns[i]?.pattern[step]
+              ?.start;
+
+          if (start === undefined) return;
+
+          for (const playIndex of start) {
+            if (playIndex === undefined || typeof playIndex === "number") {
+              return;
+            }
+            currentInstrument.playAndStop(playIndex.note, "16n", time);
           }
         }
-
-        if (
-          instruments.current[i] === undefined ||
-          instruments.current[i] === null
-        )
-          return;
 
         const pattern = scenes.current[currentScene.current]?.patterns[i];
         const instrumentsArray = scenes.current[currentScene.current]?.patterns;

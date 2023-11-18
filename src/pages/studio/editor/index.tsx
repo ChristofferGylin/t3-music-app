@@ -3,8 +3,12 @@ import { useContext, useEffect, useState } from "react";
 import PatternEditor from "~/components/PatternEditor/PatternEditor";
 import Drums from "~/components/drums/Drums";
 import { type ContextType, AppContext } from "~/context";
+import { type BassicType } from "~/instruments/bassic";
 import { type DrumsType } from "~/instruments/drums/drums";
-import { type InstrumentStateDrumsType } from "~/types/InstrumentStateType";
+import {
+  type InstrumentStateBassicType,
+  type InstrumentStateDrumsType,
+} from "~/types/InstrumentStateType";
 import { type PatternType } from "~/types/Pattern";
 
 const Editor = () => {
@@ -16,11 +20,11 @@ const Editor = () => {
     undefined,
   );
   const [sceneIndex, setSceneIndex] = useState<number | undefined>(undefined);
-  const [instrument, setInstrument] = useState<DrumsType | undefined>(
-    undefined,
-  );
+  const [instrument, setInstrument] = useState<
+    DrumsType | BassicType | undefined
+  >(undefined);
   const [instrumentState, setInstrumentState] = useState<
-    InstrumentStateDrumsType | undefined
+    InstrumentStateDrumsType | InstrumentStateBassicType | undefined
   >(undefined);
   const [pattern, setPattern] = useState<PatternType | undefined>(undefined);
 
@@ -90,10 +94,10 @@ const Editor = () => {
       </div>
       <div className="flex items-center justify-center overflow-auto bg-slate-800 p-2">
         {
-          <InstrumentComponent
-            drummachine={instrument}
-            instrumentIndex={instrumentIndex}
-          />
+          // <InstrumentComponent
+          //   drummachine={instrument}
+          //   instrumentIndex={instrumentIndex}
+          // />
         }
       </div>
     </div>

@@ -30,6 +30,7 @@ export default {
       gridTemplateRows: {
         "11": "repeat(11, minmax(0, 1fr))",
         drums: "repeat(11, 2rem)",
+        keys: "repeat(96, 2rem)",
         "main-horizontal": "auto 20rem",
       },
       gridTemplateColumns: {

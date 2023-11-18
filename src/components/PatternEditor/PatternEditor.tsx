@@ -3,15 +3,29 @@ import { type PatternType } from "~/types/Pattern";
 import { useContext } from "react";
 import { type ContextType, AppContext } from "~/context";
 import { type EditNote } from "~/types/EditNote";
-import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
-import { TbMultiplier2X } from "react-icons/tb";
-import PatternButton from "./PatternButton";
+import scales from "~/instruments/scales";
+import { type BassicType } from "~/instruments/bassic";
+import PatternContainer from "./PatternContainer";
 
 type PatternEditorProps = {
-  instrument: DrumsType;
+  instrument: DrumsType | BassicType;
   pattern: PatternType;
   sceneIndex: number;
   instrumentIndex: number;
+};
+
+type GridCellProps = {
+  callback: () => void;
+  bgColor: string;
+};
+
+const GridCell = ({ callback, bgColor }: GridCellProps) => {
+  return (
+    <li
+      onClick={callback}
+      className={`flex h-8 w-12 items-center justify-center border-b border-r border-slate-600 ${bgColor}`}
+    ></li>
+  );
 };
 
 const PatternEditor = ({
@@ -20,150 +34,210 @@ const PatternEditor = ({
   sceneIndex,
   instrumentIndex,
 }: PatternEditorProps) => {
-  const { addNote, deleteNote, longerPattern, shorterPattern, doublePattern } =
-    useContext(AppContext)! as ContextType;
-
+  const { addNote, deleteNote } = useContext(AppContext)! as ContextType;
   const colorActive = "bg-green-400";
   const colorInactive = "bg-slate-700";
 
-  const things = [];
-
-  for (let i = 0; i < 176; i++) {
-    things.push(i);
-  }
-
   if (pattern.type === "drums") {
+    const currentInstrument = instrument as DrumsType;
+    const keys = currentInstrument.channels.map((channel, index) => {
+      return (
+        <li
+          onClick={() => {
+            channel.play();
+          }}
+          key={`drumLabel#${index}`}
+          className={`flex h-8 w-24 items-center justify-start border-b border-r border-slate-600 bg-slate-800 px-2 text-xs font-light uppercase tracking-wide text-slate-300`}
+        >
+          {channel.name}
+        </li>
+      );
+    });
+    const grid = pattern.pattern.map((step, stepIndex) => {
+      if (stepIndex < pattern.length) {
+        if (pattern.resolution === 16 && stepIndex % 4 !== 0 && stepIndex !== 0)
+          return;
+        if (pattern.resolution === 32 && stepIndex % 2 !== 0 && stepIndex !== 0)
+          return;
+
+        let bgColor;
+        let callback: () => void;
+        const elements: JSX.Element[] = [];
+
+        currentInstrument.channels.forEach((channel, i) => {
+          const editNoteArgs: EditNote = {
+            instrument: instrumentIndex,
+            type: "drums",
+            step: stepIndex,
+            note: i,
+            scene: sceneIndex,
+          };
+
+          if (step.start.filter((trig) => trig === i).length > 0) {
+            bgColor = colorActive;
+            callback = () => {
+              deleteNote(editNoteArgs);
+            };
+          } else {
+            bgColor = colorInactive;
+            callback = () => {
+              channel.play();
+              addNote(editNoteArgs);
+            };
+          }
+
+          elements.push(
+            <GridCell
+              key={`step#${stepIndex}sample${i}`}
+              callback={callback}
+              bgColor={bgColor}
+            />,
+          );
+        });
+
+        return elements;
+      }
+    });
+
     return (
-      <div className="flex h-full w-full flex-col">
-        <div className="flex w-full items-center justify-end bg-slate-800 p-2 text-slate-200">
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center justify-center gap-0.5">
-              <PatternButton
-                Icon={AiOutlineMinus}
-                callback={() => {
-                  shorterPattern({
-                    scene: sceneIndex,
-                    instrument: instrumentIndex,
-                  });
-                }}
-              />
-              <div className="flex aspect-[2/1] h-7 items-center justify-center rounded border border-slate-700 bg-slate-900/50 p-1 text-sm font-light">
-                {pattern.length === 64 ? (
-                  <p>1 bar</p>
-                ) : (
-                  <p>{pattern.length / 64} bars</p>
-                )}
-              </div>
-              <PatternButton
-                Icon={AiOutlinePlus}
-                callback={() => {
-                  longerPattern({
-                    scene: sceneIndex,
-                    instrument: instrumentIndex,
-                  });
-                }}
-              />
-              <PatternButton
-                Icon={TbMultiplier2X}
-                callback={() => {
-                  doublePattern({
-                    scene: sceneIndex,
-                    instrument: instrumentIndex,
-                  });
-                }}
-                size=""
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex w-full overflow-auto bg-slate-700">
-          <ul className="sticky left-0 grid grid-flow-col grid-rows-drums justify-start gap-0 bg-blue-950">
-            {instrument.channels.map((channel, index) => {
-              return (
-                <li
-                  onClick={() => {
-                    channel.play();
-                  }}
-                  key={`drumLabel#${index}`}
-                  className={`flex h-8 w-24 items-center justify-start border-b border-r border-slate-600 bg-slate-800 px-2 text-xs font-light uppercase tracking-wide text-slate-300`}
-                >
-                  {channel.name}
-                </li>
-              );
-            })}
-          </ul>
-          <ul className="grid grid-flow-col grid-rows-drums justify-start gap-0">
-            {pattern.pattern.map((step, stepIndex) => {
-              if (stepIndex < pattern.length) {
-                if (
-                  pattern.resolution === 16 &&
-                  stepIndex % 4 !== 0 &&
-                  stepIndex !== 0
-                )
-                  return;
-                if (
-                  pattern.resolution === 32 &&
-                  stepIndex % 2 !== 0 &&
-                  stepIndex !== 0
-                )
-                  return;
-
-                let bgColor;
-                let callback: () => void;
-                const elements: JSX.Element[] = [];
-
-                instrument.channels.forEach((channel, i) => {
-                  const editNoteArgs: EditNote = {
-                    instrument: instrumentIndex,
-                    type: "drums",
-                    step: stepIndex,
-                    note: i,
-                    scene: sceneIndex,
-                  };
-
-                  if (step.start.filter((trig) => trig === i).length > 0) {
-                    bgColor = colorActive;
-                    callback = () => {
-                      deleteNote(editNoteArgs);
-                    };
-                  } else {
-                    bgColor = colorInactive;
-                    callback = () => {
-                      channel.play();
-                      addNote(editNoteArgs);
-                    };
-                  }
-
-                  elements.push(
-                    <li
-                      onClick={callback}
-                      key={`step#${stepIndex}sample${i}`}
-                      className={`flex h-8 w-12 items-center justify-center border-b border-r border-slate-600 ${bgColor}`}
-                    ></li>,
-                  );
-                });
-
-                return elements;
-              }
-            })}
-          </ul>
-        </div>
-      </div>
+      <PatternContainer
+        pattern={pattern}
+        keys={keys}
+        grid={grid}
+        sceneIndex={sceneIndex}
+        instrumentIndex={instrumentIndex}
+      />
     );
   } else {
+    const currentInstrument = instrument as BassicType;
+    const keys: JSX.Element[] = [];
+
+    for (let j = 0; j < 8; j++) {
+      scales.chromatic.forEach((note) => {
+        let style = "bg-white text-slate-900";
+
+        if (note.length > 1) {
+          style = "bg-black text-slate-300";
+        }
+
+        const element = (
+          <li
+            onMouseDown={() => {
+              currentInstrument.play(`${note}${j}`);
+            }}
+            onMouseUp={() => {
+              currentInstrument.stop();
+            }}
+            key={`keyLabel#${note}${j}`}
+            className={`flex h-8 w-24 items-center justify-start border-b border-r border-slate-600 px-2 text-xs font-light uppercase tracking-wide ${style}`}
+          >
+            {`${note}${j}`}
+          </li>
+        );
+        keys.unshift(element);
+      });
+    }
+
+    const grid = pattern.pattern.map((step, stepIndex) => {
+      if (stepIndex < pattern.length) {
+        if (pattern.resolution === 16 && stepIndex % 4 !== 0 && stepIndex !== 0)
+          return;
+        if (pattern.resolution === 32 && stepIndex % 2 !== 0 && stepIndex !== 0)
+          return;
+
+        let bgColor;
+        let callback: () => void;
+        const elements: JSX.Element[] = [];
+
+        for (let j = 0; j < 9; j++) {
+          scales.chromatic.forEach((note) => {
+            const noteString = `${note}${j}`;
+            const editNoteArgs: EditNote = {
+              instrument: instrumentIndex,
+              type: "keys",
+              step: stepIndex,
+              note: noteString,
+              scene: sceneIndex,
+            };
+
+            if (
+              step.start.filter((trig) => {
+                if (typeof trig === "number") return false;
+
+                if (trig.note === noteString) return true;
+              }).length > 0
+            ) {
+              bgColor = colorActive;
+              callback = () => {
+                deleteNote(editNoteArgs);
+              };
+            } else {
+              bgColor = colorInactive;
+              callback = () => {
+                currentInstrument.playAndStop(
+                  noteString,
+                  `${pattern.resolution}n`,
+                  0,
+                );
+                addNote(editNoteArgs);
+              };
+            }
+
+            elements.unshift(
+              <GridCell
+                key={`step#${stepIndex}-${noteString}`}
+                callback={callback}
+                bgColor={bgColor}
+              />,
+            );
+          });
+        }
+
+        // currentInstrument.channels.forEach((channel, i) => {
+        //   const editNoteArgs: EditNote = {
+        //     instrument: instrumentIndex,
+        //     type: "drums",
+        //     step: stepIndex,
+        //     note: i,
+        //     scene: sceneIndex,
+        //   };
+
+        //   if (step.start.filter((trig) => trig === i).length > 0) {
+        //     bgColor = colorActive;
+        //     callback = () => {
+        //       deleteNote(editNoteArgs);
+        //     };
+        //   } else {
+        //     bgColor = colorInactive;
+        //     callback = () => {
+        //       channel.play();
+        //       addNote(editNoteArgs);
+        //     };
+        //   }
+
+        //   elements.push(
+        //     <GridCell
+        //       key={`step#${stepIndex}sample${i}`}
+        //       callback={callback}
+        //       i={i}
+        //       stepIndex={stepIndex}
+        //       bgColor={bgColor}
+        //     />,
+        //   );
+        // });
+
+        return elements;
+      }
+    });
+
     return (
-      <ul className="grid w-full grid-flow-col grid-rows-11 justify-start gap-0 bg-blue-950">
-        {things.map((step, index) => {
-          return (
-            <li
-              key={`step#${index}`}
-              className="flex h-6 w-12 items-center justify-center border-b border-r border-slate-400 bg-slate-700 text-blue-100"
-            >
-              {step}
-            </li>
-          );
-        })}
-      </ul>
+      <PatternContainer
+        pattern={pattern}
+        keys={keys}
+        grid={grid}
+        sceneIndex={sceneIndex}
+        instrumentIndex={instrumentIndex}
+      />
     );
   }
 };

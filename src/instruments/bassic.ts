@@ -1,9 +1,13 @@
 import { Volume, MonoSynth } from "tone";
+import { type Time } from "tone/build/esm/core/type/Units";
 import signalToDb from "~/utils/math/signalToDb";
 
 export type BassicType = {
   currentStep: number;
   masterVolume: Volume;
+  play: (note: string) => void;
+  stop: () => void;
+  playAndStop: (note: string, duration: Time, time: Time) => void;
   setMasterVolume: (val: number) => void;
   name: string;
   instrument: MonoSynth;
@@ -28,6 +32,15 @@ const bassic = function (masterOut: Volume): BassicType {
     currentStep: 0,
     name: "Bassic",
     masterVolume,
+    play: function (note: string) {
+      this.instrument.triggerAttack(note);
+    },
+    stop: function () {
+      this.instrument.triggerRelease();
+    },
+    playAndStop: function (note: string, duration: Time, time: Time) {
+      this.instrument.triggerAttackRelease(note, duration, time);
+    },
     setMasterVolume: function (val: number) {
       const dBValue = signalToDb(val);
 

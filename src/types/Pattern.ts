@@ -1,5 +1,7 @@
+import { type Time } from "tone/build/esm/core/type/Units";
+
 export type PatternSteps = {
-  start: (number | string)[];
+  start: (number | { note: string; duration: Time })[];
   stop: (number | string)[];
 };
 
