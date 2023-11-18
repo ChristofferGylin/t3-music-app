@@ -17,6 +17,7 @@ import type ProjectWithKits from "./types/ProjectWithKits";
 import { type PatternSteps } from "./types/Pattern";
 import signalToDb from "./utils/math/signalToDb";
 import deepCopyPatternSteps from "./utils/deepCopyPatternSteps";
+import deepCopyScene from "./utils/deepCopyScene";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -62,6 +63,7 @@ export type ContextType = {
   masterOut: MutableRefObject<Tone.Volume | null>;
   setMasterVolume: (val: number) => void;
   setBpm: (val: number) => void;
+  copyScene: (index: number) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -258,6 +260,16 @@ const Context = ({ children }: { children: ReactNode }) => {
     });
 
     scenes.current.push(newScene);
+  };
+
+  const copyScene = (index: number) => {
+    const originalScene = scenes.current[index];
+
+    if (!originalScene) return;
+
+    scenes.current.push(deepCopyScene(originalScene));
+
+    setScenesState((old) => [...old, deepCopyScene(originalScene)]);
   };
 
   const addNote = (data: EditNote) => {
@@ -547,6 +559,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         masterOut,
         setMasterVolume,
         setBpm,
+        copyScene,
       }}
     >
       {children}
