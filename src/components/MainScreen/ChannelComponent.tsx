@@ -1,13 +1,17 @@
 import Link from "next/link";
 import { type ContextType, AppContext } from "~/context";
 import { useContext } from "react";
-import { type InstrumentStateDrumsType } from "~/types/InstrumentStateType";
+import {
+  type InstrumentStateBassicType,
+  type InstrumentStateDrumsType,
+} from "~/types/InstrumentStateType";
 import VolumeSlider from "../UI/VolumeSlider";
 import { type DrumsType } from "~/instruments/drums/drums";
+import { type BassicType } from "~/instruments/drums/bassic";
 type SceneComponentProps = {
   instrumentIndex: number;
-  instrument: DrumsType;
-  instrumentState: InstrumentStateDrumsType;
+  instrument: DrumsType | BassicType;
+  instrumentState: InstrumentStateDrumsType | InstrumentStateBassicType;
 };
 
 const ChannelComponent = ({
@@ -20,7 +24,6 @@ const ChannelComponent = ({
   )! as ContextType;
 
   const handleVolume = (val: number) => {
-    console.log("instrumentIndex:", instrumentIndex);
     setVolume({
       val,
       instrumentIndex: instrumentIndex,

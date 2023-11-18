@@ -10,7 +10,10 @@ import drums, { type DrumsType } from "~/instruments/drums/drums";
 import { type Scene } from "~/types/Scene";
 import { v4 as uuid } from "uuid";
 import createPattern from "./functions/createPattern";
-import { type InstrumentStateDrumsType } from "./types/InstrumentStateType";
+import {
+  type InstrumentStateBassicType,
+  type InstrumentStateDrumsType,
+} from "./types/InstrumentStateType";
 import { type EditNote } from "./types/EditNote";
 import { type DrumsKit } from "@prisma/client";
 import type ProjectWithKits from "./types/ProjectWithKits";
@@ -18,13 +21,20 @@ import { type PatternSteps } from "./types/Pattern";
 import signalToDb from "./utils/math/signalToDb";
 import deepCopyPatternSteps from "./utils/deepCopyPatternSteps";
 import deepCopyScene from "./utils/deepCopyScene";
+import bassic, { type BassicType } from "./instruments/drums/bassic";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
   scenesState: Scene[];
   instruments: MutableRefObject<InstrumentsType>;
-  instrumentsState: InstrumentStateDrumsType[];
-  newInstrumentDrums: (kit: DrumsKit) => void;
+  instrumentsState: InstrumentsStateType;
+  newInstrumentDrums: (
+    kit: DrumsKit,
+    loadingProject?: boolean,
+    chanVols?: number[],
+    masterVol?: number,
+  ) => void;
+  newInstrumentBassic: (loadingProject?: boolean, masterVol?: number) => void;
   loop: MutableRefObject<boolean>;
   loopState: boolean;
   toggleLoop: () => void;
@@ -68,7 +78,10 @@ export type ContextType = {
 
 export const AppContext = createContext<ContextType | null>(null);
 
-type InstrumentsType = Array<DrumsType>;
+type InstrumentsType = Array<DrumsType | BassicType>;
+type InstrumentsStateType = Array<
+  InstrumentStateDrumsType | InstrumentStateBassicType
+>;
 
 const Context = ({ children }: { children: ReactNode }) => {
   const appLoaded = useRef(false);
@@ -76,9 +89,8 @@ const Context = ({ children }: { children: ReactNode }) => {
   const [scenesState, setScenesState] = useState<Scene[]>([]);
   const scenes = useRef<Scene[]>([]);
   const instruments = useRef<InstrumentsType>([]);
-  const [instrumentsState, setInstrumentsState] = useState<
-    InstrumentStateDrumsType[]
-  >([]);
+  const [instrumentsState, setInstrumentsState] =
+    useState<InstrumentsStateType>([]);
   const currentScene = useRef(0);
   const currentStep = useRef(0);
   const [loopState, setLoopState] = useState(true);
@@ -126,28 +138,25 @@ const Context = ({ children }: { children: ReactNode }) => {
     type: string;
   }) => {
     if (options.type === "drums") {
-      console.log("type: drums");
       setInstrumentsState((old) => {
         const newState = [...old];
 
-        if (options.master && options.instrumentIndex !== undefined) {
-          const instrument = newState[options.instrumentIndex];
-          console.log("nuuu");
-          if (instrument) {
-            console.log("instrument");
-            instrument.masterVolume = options.val;
-          }
+        if (options.instrumentIndex === undefined) return newState;
+
+        const instrument = newState[
+          options.instrumentIndex
+        ] as InstrumentStateDrumsType;
+
+        if (instrument === undefined) return newState;
+
+        if (options.master) {
+          instrument.masterVolume = options.val;
 
           return newState;
         }
 
-        if (
-          options.instrumentIndex !== undefined &&
-          options.channelIndex !== undefined
-        ) {
-          newState[options.instrumentIndex]!.channelVolumes[
-            options.channelIndex
-          ] = options.val;
+        if (options.channelIndex !== undefined) {
+          instrument.channelVolumes[options.channelIndex] = options.val;
         }
 
         return newState;
@@ -234,6 +243,44 @@ const Context = ({ children }: { children: ReactNode }) => {
     if (!loadingProject) {
       scenes.current.forEach((scene) => {
         scene.patterns.push(createPattern("drums"));
+      });
+
+      setScenesState([...scenes.current]);
+    }
+  };
+  const newInstrumentBassic = (
+    loadingProject?: boolean,
+    masterVol?: number,
+  ) => {
+    if (!masterOut.current) return;
+
+    const newInstrument = bassic(masterOut.current);
+
+    instruments.current.push(newInstrument);
+
+    let masterVolume;
+
+    if (loadingProject && masterVol) {
+      masterVolume = masterVol;
+      newInstrument.setMasterVolume(masterVolume);
+    } else {
+      masterVolume = 79.014;
+    }
+
+    const newInstrumentState: InstrumentStateBassicType = {
+      type: "keys",
+      masterVolume: masterVolume,
+      modelName: "Bassic",
+      name: "Bassic",
+    };
+
+    setInstrumentsState((old) => {
+      return [...old, newInstrumentState];
+    });
+
+    if (!loadingProject) {
+      scenes.current.forEach((scene) => {
+        scene.patterns.push(createPattern("keys"));
       });
 
       setScenesState([...scenes.current]);
@@ -527,6 +574,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         instruments,
         instrumentsState,
         newInstrumentDrums,
+        newInstrumentBassic,
         loop,
         toggleLoop,
         currentScene,

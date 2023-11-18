@@ -6,3 +6,10 @@ export type InstrumentStateDrumsType = {
   modelName: string;
   name: string;
 };
+
+export type InstrumentStateBassicType = {
+  type: "keys";
+  masterVolume: number;
+  modelName: string;
+  name: string;
+};
