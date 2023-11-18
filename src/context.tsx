@@ -16,6 +16,7 @@ import { type DrumsKit } from "@prisma/client";
 import type ProjectWithKits from "./types/ProjectWithKits";
 import { type PatternSteps } from "./types/Pattern";
 import signalToDb from "./utils/math/signalToDb";
+import deepCopyPatternSteps from "./utils/deepCopyPatternSteps";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -40,6 +41,7 @@ export type ContextType = {
   loadProject: (dbProject: ProjectWithKits) => void;
   longerPattern: (data: { scene: number; instrument: number }) => void;
   shorterPattern: (data: { scene: number; instrument: number }) => void;
+  doublePattern: (data: { scene: number; instrument: number }) => void;
   setCurrentStep: (data: { index?: number; next?: boolean }) => void;
   currentStep: MutableRefObject<number>;
   playing: boolean;
@@ -370,6 +372,42 @@ const Context = ({ children }: { children: ReactNode }) => {
     setScenesState([...scenes.current]);
   };
 
+  const doublePattern = (data: { scene: number; instrument: number }) => {
+    const pattern = scenes.current[data.scene]?.patterns[data.instrument];
+
+    if (pattern) {
+      if (pattern.pattern.length < 1024) {
+        if (pattern.length < pattern.pattern.length) {
+          pattern.pattern.length = pattern.length;
+        }
+
+        const newPattern = [
+          ...deepCopyPatternSteps(pattern.pattern),
+          ...deepCopyPatternSteps(pattern.pattern),
+        ];
+
+        if (newPattern.length > 1024) newPattern.length = 1024;
+
+        pattern.length = newPattern.length;
+        pattern.pattern = newPattern;
+
+        const scene = scenes.current[data.scene];
+
+        if (scene) {
+          let longest = 0;
+
+          scene.patterns.forEach((pat) => {
+            if (pat.length > longest) longest = pat.length;
+          });
+
+          scene.longestPattern = longest;
+        }
+      }
+    }
+
+    setScenesState([...scenes.current]);
+  };
+
   const rewind = () => {
     // for (let i = 0; i < instruments.current.length; i++) {
     //   instruments.current[i]!.currentStep = 0;
@@ -494,6 +532,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         loadProject,
         longerPattern,
         shorterPattern,
+        doublePattern,
         setCurrentStep,
         currentStep,
         playing,
