@@ -1,5 +1,9 @@
 import { type DrumsType } from "~/instruments/drums/drums";
-import { type PatternType } from "~/types/Pattern";
+import {
+  type PatternTypeDrums,
+  type PatternType,
+  type PatternTypeKeys,
+} from "~/types/Pattern";
 import { useContext } from "react";
 import { type ContextType, AppContext } from "~/context";
 import { type EditNote } from "~/types/EditNote";
@@ -39,6 +43,7 @@ const PatternEditor = ({
   const colorInactive = "bg-slate-700";
 
   if (pattern.type === "drums") {
+    const currentPattern = pattern as PatternTypeDrums;
     const currentInstrument = instrument as DrumsType;
     const keys = currentInstrument.channels.map((channel, index) => {
       return (
@@ -53,7 +58,7 @@ const PatternEditor = ({
         </li>
       );
     });
-    const grid = pattern.pattern.map((step, stepIndex) => {
+    const grid = currentPattern.pattern.map((step, stepIndex) => {
       if (stepIndex < pattern.length) {
         if (pattern.resolution === 16 && stepIndex % 4 !== 0 && stepIndex !== 0)
           return;
@@ -110,6 +115,7 @@ const PatternEditor = ({
     );
   } else {
     const currentInstrument = instrument as BassicType;
+    const currentPattern = pattern as PatternTypeKeys;
     const keys: JSX.Element[] = [];
 
     for (let j = 0; j < 8; j++) {
@@ -138,7 +144,7 @@ const PatternEditor = ({
       });
     }
 
-    const grid = pattern.pattern.map((step, stepIndex) => {
+    const grid = currentPattern.pattern.map((step, stepIndex) => {
       if (stepIndex < pattern.length) {
         if (pattern.resolution === 16 && stepIndex % 4 !== 0 && stepIndex !== 0)
           return;
@@ -149,7 +155,7 @@ const PatternEditor = ({
         let callback: () => void;
         const elements: JSX.Element[] = [];
 
-        for (let j = 0; j < 9; j++) {
+        for (let j = 0; j < 8; j++) {
           scales.chromatic.forEach((note) => {
             const noteString = `${note}${j}`;
             const editNoteArgs: EditNote = {
@@ -157,13 +163,12 @@ const PatternEditor = ({
               type: "keys",
               step: stepIndex,
               note: noteString,
+              duration: `${pattern.resolution}n`,
               scene: sceneIndex,
             };
 
             if (
               step.start.filter((trig) => {
-                if (typeof trig === "number") return false;
-
                 if (trig.note === noteString) return true;
               }).length > 0
             ) {

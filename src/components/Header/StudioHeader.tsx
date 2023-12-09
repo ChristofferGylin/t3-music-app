@@ -8,8 +8,9 @@ import { useRouter } from "next/router";
 import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
 import { useSession } from "next-auth/react";
 import SaveButton from "../UI/SaveButton";
-import { DrumsType } from "~/instruments/drums/drums";
-import { BassicType } from "~/instruments/bassic";
+import { type DrumsType } from "~/instruments/drums/drums";
+import { type BassicType } from "~/instruments/bassic";
+import { type PatternTypeKeys } from "~/types/Pattern";
 
 const StudioHeader = () => {
   const {
@@ -85,17 +86,26 @@ const StudioHeader = () => {
           }
         } else {
           currentInstrument = instruments.current[i] as BassicType;
-          const start =
-            scenes.current[currentScene.current]?.patterns[i]?.pattern[step]
-              ?.start;
+          const currentPattern = scenes.current[currentScene.current]?.patterns[
+            i
+          ] as PatternTypeKeys;
+          const start = currentPattern.pattern[step]?.start;
 
           if (start === undefined) return;
 
-          for (const playIndex of start) {
-            if (playIndex === undefined || typeof playIndex === "number") {
-              return;
+          for (let j = 0; j < start.length; j++) {
+            if (currentInstrument.polyphony === "mono" && j > 0) break;
+
+            const startObj = start[j];
+
+            if (startObj === undefined) {
+              continue;
             }
-            currentInstrument.playAndStop(playIndex.note, "16n", time);
+            currentInstrument.playAndStop(
+              startObj.note,
+              startObj.duration,
+              time,
+            );
           }
         }
 

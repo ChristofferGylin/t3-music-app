@@ -13,6 +13,7 @@ export type BassicType = {
   instrument: MonoSynth;
   type: "keys";
   modelName: string;
+  polyphony: string;
   new: boolean;
 };
 
@@ -24,7 +25,7 @@ const bassic = function (masterOut: Volume): BassicType {
       type: "square",
     },
     envelope: {
-      attack: 0.1,
+      attack: 0.001,
     },
   }).connect(masterVolume);
 
@@ -33,12 +34,14 @@ const bassic = function (masterOut: Volume): BassicType {
     name: "Bassic",
     masterVolume,
     play: function (note: string) {
+      this.stop();
       this.instrument.triggerAttack(note);
     },
     stop: function () {
       this.instrument.triggerRelease();
     },
     playAndStop: function (note: string, duration: Time, time: Time) {
+      this.stop();
       this.instrument.triggerAttackRelease(note, duration, time);
     },
     setMasterVolume: function (val: number) {
@@ -49,6 +52,7 @@ const bassic = function (masterOut: Volume): BassicType {
     instrument,
     type: "keys",
     modelName: "Bassic",
+    polyphony: "mono",
     new: true,
   };
 };

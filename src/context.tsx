@@ -9,7 +9,10 @@ import React, {
 import drums, { type DrumsType } from "~/instruments/drums/drums";
 import { type Scene } from "~/types/Scene";
 import { v4 as uuid } from "uuid";
-import createPattern from "./functions/createPattern";
+import {
+  createPatternDrums,
+  createPatternKeys,
+} from "./functions/createPattern";
 import {
   type InstrumentStateBassicType,
   type InstrumentStateDrumsType,
@@ -17,11 +20,20 @@ import {
 import { type EditNote } from "./types/EditNote";
 import { type DrumsKit } from "@prisma/client";
 import type ProjectWithKits from "./types/ProjectWithKits";
-import { type PatternSteps } from "./types/Pattern";
+import {
+  type PatternStepsDrums,
+  type PatternTypeDrums,
+  type PatternTypeKeys,
+  type PatternStepsKeys,
+} from "./types/Pattern";
 import signalToDb from "./utils/math/signalToDb";
-import deepCopyPatternSteps from "./utils/deepCopyPatternSteps";
+import {
+  deepCopyPatternStepsDrums,
+  deepCopyPatternStepsKeys,
+} from "./utils/deepCopyPatternSteps";
 import deepCopyScene from "./utils/deepCopyScene";
 import bassic, { type BassicType } from "./instruments/bassic";
+import { type Time } from "tone/build/esm/core/type/Units";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -242,7 +254,7 @@ const Context = ({ children }: { children: ReactNode }) => {
 
     if (!loadingProject) {
       scenes.current.forEach((scene) => {
-        scene.patterns.push(createPattern("drums"));
+        scene.patterns.push(createPatternDrums());
       });
 
       setScenesState([...scenes.current]);
@@ -280,7 +292,7 @@ const Context = ({ children }: { children: ReactNode }) => {
 
     if (!loadingProject) {
       scenes.current.forEach((scene) => {
-        scene.patterns.push(createPattern("keys"));
+        scene.patterns.push(createPatternKeys());
       });
 
       setScenesState([...scenes.current]);
@@ -298,7 +310,7 @@ const Context = ({ children }: { children: ReactNode }) => {
 
     for (const inst of instruments.current) {
       if (inst.type === "drums") {
-        newScene.patterns.push(createPattern("drums"));
+        newScene.patterns.push(createPatternDrums());
       }
     }
 
@@ -320,24 +332,40 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const addNote = (data: EditNote) => {
-    if (data.type === "drums") {
-      scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
-        data.step
-      ]?.start.push(data.note);
+    if (data.type === "drums" && typeof data.note === "number") {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeDrums;
+
+      pattern.pattern[data.step]?.start.push(data.note);
 
       setScenesState([...scenes.current]);
-    }
-  };
+    } else if (
+      data.type === "keys" &&
+      typeof data.note === "string" &&
+      data.duration
+    ) {
+      const note = {
+        note: data.note,
+        duration: data.duration,
+      };
 
-  const deleteNote = (data: EditNote) => {
-    if (data.type === "drums") {
-      scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
-        data.step
-      ]?.start.forEach((note, index) => {
-        if (note === data.note) {
-          scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
-            data.step
-          ]?.start.splice(index, 1);
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeKeys;
+
+      pattern.pattern[data.step]?.start.push(note);
+
+      pattern.pattern[data.step]?.start.sort((a, b) => {
+        const sortA = a.note.replace("#", "");
+        const sortB = b.note.replace("#", "");
+
+        if (sortA < sortB) {
+          return -1;
+        } else if (sortA > sortB) {
+          return 1;
+        } else {
+          return 0;
         }
       });
 
@@ -345,18 +373,47 @@ const Context = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const longerPattern = (data: { scene: number; instrument: number }) => {
-    const pattern = scenes.current[data.scene]?.patterns[data.instrument];
+  const deleteNote = (data: EditNote) => {
+    if (data.type === "drums") {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeDrums;
 
-    if (pattern) {
+      pattern.pattern[data.step]?.start.forEach((note, index) => {
+        if (note === data.note) {
+          pattern.pattern[data.step]?.start.splice(index, 1);
+        }
+      });
+    } else {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeKeys;
+
+      pattern.pattern[data.step]?.start.forEach((note, index) => {
+        if (note.note === data.note) {
+          pattern.pattern[data.step]?.start.splice(index, 1);
+        }
+      });
+    }
+    setScenesState([...scenes.current]);
+  };
+
+  const longerPattern = (data: { scene: number; instrument: number }) => {
+    if (
+      scenes.current[data.scene]?.patterns[data.instrument]?.type === "keys"
+    ) {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeKeys;
+
       if (pattern.pattern.length < 1024) {
         if (pattern.length < pattern.pattern.length) {
           pattern.length += 64;
         } else {
           for (let i = 0; i < 64; i++) {
-            const step: PatternSteps = {
-              start: [] as (number | string)[],
-              stop: [] as (number | string)[],
+            const step: PatternStepsKeys = {
+              start: [] as { note: string; duration: Time }[],
+              stop: [] as { note: string; duration: Time }[],
             };
 
             pattern.pattern.push(step);
@@ -366,19 +423,41 @@ const Context = ({ children }: { children: ReactNode }) => {
 
           pattern.length = pattern.pattern.length;
         }
+      }
+    } else {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeDrums;
 
-        const scene = scenes.current[data.scene];
+      if (pattern.pattern.length < 1024) {
+        if (pattern.length < pattern.pattern.length) {
+          pattern.length += 64;
+        } else {
+          for (let i = 0; i < 64; i++) {
+            const step: PatternStepsDrums = {
+              start: [] as number[],
+            };
 
-        if (scene) {
-          let longest = 0;
+            pattern.pattern.push(step);
+          }
 
-          scene.patterns.forEach((pat) => {
-            if (pat.length > longest) longest = pat.length;
-          });
+          if (pattern.pattern.length > 1024) pattern.pattern.length = 1024;
 
-          scene.longestPattern = longest;
+          pattern.length = pattern.pattern.length;
         }
       }
+    }
+
+    const scene = scenes.current[data.scene];
+
+    if (scene) {
+      let longest = 0;
+
+      scene.patterns.forEach((pat) => {
+        if (pat.length > longest) longest = pat.length;
+      });
+
+      scene.longestPattern = longest;
     }
 
     setScenesState([...scenes.current]);
@@ -432,36 +511,60 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const doublePattern = (data: { scene: number; instrument: number }) => {
-    const pattern = scenes.current[data.scene]?.patterns[data.instrument];
+    if (
+      scenes.current[data.scene]?.patterns[data.instrument]?.type === "keys"
+    ) {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeKeys;
 
-    if (pattern) {
       if (pattern.pattern.length < 1024) {
         if (pattern.length < pattern.pattern.length) {
           pattern.pattern.length = pattern.length;
         }
 
         const newPattern = [
-          ...deepCopyPatternSteps(pattern.pattern),
-          ...deepCopyPatternSteps(pattern.pattern),
+          ...deepCopyPatternStepsKeys(pattern.pattern),
+          ...deepCopyPatternStepsKeys(pattern.pattern),
         ];
 
         if (newPattern.length > 1024) newPattern.length = 1024;
 
         pattern.length = newPattern.length;
         pattern.pattern = newPattern;
-
-        const scene = scenes.current[data.scene];
-
-        if (scene) {
-          let longest = 0;
-
-          scene.patterns.forEach((pat) => {
-            if (pat.length > longest) longest = pat.length;
-          });
-
-          scene.longestPattern = longest;
-        }
       }
+    } else {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeDrums;
+
+      if (pattern.pattern.length < 1024) {
+        if (pattern.length < pattern.pattern.length) {
+          pattern.pattern.length = pattern.length;
+        }
+
+        const newPattern = [
+          ...deepCopyPatternStepsDrums(pattern.pattern),
+          ...deepCopyPatternStepsDrums(pattern.pattern),
+        ];
+
+        if (newPattern.length > 1024) newPattern.length = 1024;
+
+        pattern.length = newPattern.length;
+        pattern.pattern = newPattern;
+      }
+    }
+
+    const scene = scenes.current[data.scene];
+
+    if (scene) {
+      let longest = 0;
+
+      scene.patterns.forEach((pat) => {
+        if (pat.length > longest) longest = pat.length;
+      });
+
+      scene.longestPattern = longest;
     }
 
     setScenesState([...scenes.current]);
