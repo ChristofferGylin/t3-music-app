@@ -32,8 +32,13 @@ import {
   deepCopyPatternStepsKeys,
 } from "./utils/deepCopyPatternSteps";
 import deepCopyScene from "./utils/deepCopyScene";
-import bassic, { type BassicType } from "./instruments/bassic";
+import bassic, {
+  type BassicParameterType,
+  type BassicType,
+} from "./instruments/bassic";
 import { type Time } from "tone/build/esm/core/type/Units";
+import { scaleValue } from "./utils/math/scaleValue";
+import deepCopyInstrumentsState from "./utils/deepCopyInstrumentsState";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -86,6 +91,11 @@ export type ContextType = {
   setMasterVolume: (val: number) => void;
   setBpm: (val: number) => void;
   copyScene: (index: number) => void;
+  setBassicParameter: (
+    instrumentIndex: number,
+    parameter: BassicParameterType,
+    value: number,
+  ) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -284,6 +294,38 @@ const Context = ({ children }: { children: ReactNode }) => {
       masterVolume: masterVolume,
       modelName: "Bassic",
       name: "Bassic",
+      parameters: {
+        envelope: {
+          attack: 0,
+          decay: 0,
+          sustain: 100,
+          release: 0,
+        },
+        filterEnvelope: {
+          attack: 0,
+          decay: 0,
+          sustain: 100,
+          release: 0,
+        },
+        oscillator: {
+          type: "square",
+          detune: 0,
+          volume: 0,
+          pwmWidth: 0,
+        },
+        filter: {
+          frequency: 100,
+          resonance: 0,
+          type: "lowpass",
+          envelopeGain: 0,
+          lfoGain: 0,
+        },
+        lfo: {
+          frequency: 5,
+          amplitude: 0,
+          type: "sine",
+        },
+      },
     };
 
     setInstrumentsState((old) => {
@@ -296,6 +338,263 @@ const Context = ({ children }: { children: ReactNode }) => {
       });
 
       setScenesState([...scenes.current]);
+    }
+  };
+
+  const setBassicParameter = (
+    instrumentIndex: number,
+    parameter: BassicParameterType,
+    value: number,
+  ) => {
+    if (instruments.current[instrumentIndex]?.modelName === "Bassic") {
+      const instrument = instruments.current[instrumentIndex] as BassicType;
+      let calcedValue;
+      switch (parameter) {
+        case "env-a":
+          calcedValue = scaleValue({
+            value: value,
+            fromScale: { start: 0, end: 100 },
+            toScale: { start: 0.001, end: 3 },
+          });
+
+          for (const voice of instrument.voices) {
+            voice.envelope.attack = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.envelope.attack = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "env-d":
+          calcedValue = scaleValue({
+            value: value,
+            fromScale: { start: 0, end: 100 },
+            toScale: { start: 0.001, end: 3 },
+          });
+          for (const voice of instrument.voices) {
+            voice.envelope.decay = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.envelope.decay = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "env-s":
+          calcedValue = Math.exp((value / 100) * Math.log(1000)) / 1000;
+
+          for (const voice of instrument.voices) {
+            voice.envelope.sustain = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.envelope.sustain = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "env-r":
+          calcedValue = scaleValue({
+            value: value,
+            fromScale: { start: 0, end: 100 },
+            toScale: { start: 0.001, end: 3 },
+          });
+
+          for (const voice of instrument.voices) {
+            voice.envelope.release = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.envelope.release = value;
+            }
+
+            return newState;
+          });
+          break;
+
+        case "filter-freq":
+          calcedValue = Math.exp(
+            Math.log(20) + (value / 100) * (Math.log(20000) - Math.log(20)),
+          );
+
+          instrument.lfo.set({
+            max: calcedValue,
+          });
+
+          for (const voice of instrument.voices) {
+            voice.filter.frequency.value = calcedValue;
+            voice.filterEnvScaler.min = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.filter.frequency = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "filter-res":
+          calcedValue = (value / 100) * 20;
+
+          for (const voice of instrument.voices) {
+            voice.filter.Q.value = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.filter.resonance = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "filter-env":
+          calcedValue = Math.exp((value / 100) * Math.log(1000)) / 1000;
+
+          for (const voice of instrument.voices) {
+            voice.filterEnvGain.gain.value = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.filter.envelopeGain = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "filter-lfo":
+          instrument.lfo.set({ amplitude: value / 100 });
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.filter.lfoGain = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "lfo-type":
+          let newWave: Tone.ToneOscillatorType;
+
+          switch (instrument.lfo.type) {
+            case "sawtooth":
+              newWave = "square";
+              break;
+
+            case "square":
+              newWave = "triangle";
+              break;
+
+            case "triangle":
+              newWave = "sine";
+              break;
+
+            case "sine":
+              newWave = "sawtooth";
+              break;
+            default:
+              newWave = "sine";
+          }
+
+          instrument.lfo.type = newWave;
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              console.log(instrumentState);
+
+              instrumentState.parameters.lfo.type = newWave;
+            }
+
+            return newState;
+          });
+          break;
+
+        case "lfo-freq":
+          calcedValue = Math.exp(
+            Math.log(0.1) + (value / 100) * (Math.log(30) - Math.log(0.1)),
+          );
+          instrument.lfo.frequency.value = calcedValue;
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.lfo.frequency = value;
+            }
+
+            return newState;
+          });
+      }
     }
   };
 
@@ -711,6 +1010,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         setMasterVolume,
         setBpm,
         copyScene,
+        setBassicParameter,
       }}
     >
       {children}

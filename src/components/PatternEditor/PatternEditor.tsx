@@ -10,6 +10,7 @@ import { type EditNote } from "~/types/EditNote";
 import scales from "~/instruments/scales";
 import { type BassicType } from "~/instruments/bassic";
 import PatternContainer from "./PatternContainer";
+import { Transport } from "tone";
 
 type PatternEditorProps = {
   instrument: DrumsType | BassicType;
@@ -129,10 +130,10 @@ const PatternEditor = ({
         const element = (
           <li
             onMouseDown={() => {
-              currentInstrument.play(`${note}${j}`);
+              currentInstrument.play(`${note}${j}`, Transport.now());
             }}
             onMouseUp={() => {
-              currentInstrument.stop();
+              currentInstrument.stop(Transport.now());
             }}
             key={`keyLabel#${note}${j}`}
             className={`flex h-8 w-24 items-center justify-start border-b border-r border-slate-600 px-2 text-xs font-light uppercase tracking-wide ${style}`}

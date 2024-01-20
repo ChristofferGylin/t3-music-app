@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import type ChannelType from "~/types/ChannelType";
-import VolumeSlider from "../UI/VolumeSlider";
+import VolumeSlider from "../../UI/VolumeSlider";
 import { type ContextType, AppContext } from "~/context";
+import { type InstrumentStateDrumsType } from "~/types/InstrumentStateType";
 
 type ChannelPropsType = {
   drumChannel: ChannelType;
@@ -28,8 +29,11 @@ const Channel = ({
     drumChannel.setVolume(val);
   };
 
-  let valueState =
-    instrumentsState[instrumentIndex]?.channelVolumes[channelIndex];
+  const instrument = instrumentsState[
+    instrumentIndex
+  ] as InstrumentStateDrumsType;
+
+  let valueState = instrument.channelVolumes[channelIndex];
 
   if (valueState === undefined) {
     valueState = 79.014;

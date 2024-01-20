@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import PatternEditor from "~/components/PatternEditor/PatternEditor";
-import Drums from "~/components/drums/Drums";
+import Drums from "~/components/Instruments/Drums/Drums";
 import { type ContextType, AppContext } from "~/context";
 import { type BassicType } from "~/instruments/bassic";
 import { type DrumsType } from "~/instruments/drums/drums";
@@ -10,6 +10,7 @@ import {
   type InstrumentStateDrumsType,
 } from "~/types/InstrumentStateType";
 import { type PatternType } from "~/types/Pattern";
+import Bassic from "~/components/Instruments/Bassic/Bassic";
 
 const Editor = () => {
   const { instruments, scenesState, instrumentsState } = useContext(
@@ -77,6 +78,9 @@ const Editor = () => {
     case "Drums":
       InstrumentComponent = Drums;
       break;
+    case "Bassic":
+      InstrumentComponent = Bassic;
+      break;
 
     default:
       InstrumentComponent = Drums;
@@ -94,10 +98,10 @@ const Editor = () => {
       </div>
       <div className="flex items-center justify-center overflow-auto bg-slate-800 p-2">
         {
-          // <InstrumentComponent
-          //   drummachine={instrument}
-          //   instrumentIndex={instrumentIndex}
-          // />
+          <InstrumentComponent
+            instrument={instrument}
+            instrumentIndex={instrumentIndex}
+          />
         }
       </div>
     </div>
