@@ -46,7 +46,9 @@ export type BassicParameterType =
   | "filter-env-s"
   | "filter-env-r"
   | "lfo-type"
-  | "lfo-freq";
+  | "lfo-freq"
+  | "lfo-retrig"
+  | "osc-poly";
 
 export type BassicVoiceType = {
   oscillator: Oscillator;

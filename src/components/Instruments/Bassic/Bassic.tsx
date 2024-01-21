@@ -1,6 +1,6 @@
 import { type InstrumentType } from "~/types/InstrumentType";
-import Slider from "./Slider";
-import { useContext } from "react";
+import Slider, { paramLabelStyle, paramItemStyle } from "./Slider";
+import { FormEvent, useContext, useState } from "react";
 import { AppContext, type ContextType } from "~/context";
 import { type InstrumentStateBassicType } from "~/types/InstrumentStateType";
 import getWaveIcon from "~/utils/instruments/getWaveIcon";
@@ -16,6 +16,9 @@ const Bassic = ({
     AppContext,
   )! as ContextType;
   const state = instrumentsState[instrumentIndex] as InstrumentStateBassicType;
+  const [polyphony, setPolyphony] = useState(
+    state.parameters.oscillator.polyphony,
+  );
   if (instrument.modelName === "Bassic" && state !== undefined) {
     const WaveIcon = getWaveIcon(state.parameters.lfo.type);
 
@@ -26,8 +29,13 @@ const Bassic = ({
     const paramGroupTitleClasses =
       "w-full text-center text-xs sm:text-sm md:text-base lg:text-lg";
 
+    const handlePolySubmit = (e: FormEvent) => {
+      e.preventDefault();
+      setBassicParameter(instrumentIndex, "osc-poly", polyphony);
+    };
+
     return (
-      <div className="grid grid-cols-[2fr_4fr_4fr] justify-center gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 p-2 shadow-lg sm:gap-2 sm:p-4 md:gap-3 md:p-5 lg:gap-4 lg:p-6">
+      <div className="grid grid-cols-[2fr_4fr_4fr_4fr] justify-center gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 p-2 shadow-lg sm:gap-2 sm:p-4 md:gap-3 md:p-5 lg:gap-4 lg:p-6">
         <div className={paramGroupClasses}>
           <h2 className={paramGroupTitleClasses}>LFO</h2>
           <div className={paramGroupInnerClasses}>
@@ -38,10 +46,8 @@ const Bassic = ({
               }}
               valueState={state.parameters.lfo.frequency}
             />
-            <div className="grid aspect-[1/4] w-6 grid-rows-[1fr_5fr] gap-1 sm:w-8 md:w-10 lg:w-12">
-              <div className="flex h-full w-full items-center justify-center self-center justify-self-center overflow-hidden rounded bg-purple-950 text-[8px] text-purple-300 sm:text-[10px] md:text-xs lg:text-sm">
-                WAVE
-              </div>
+            <div className={paramItemStyle}>
+              <div className={paramLabelStyle}>WAVE</div>
               <button
                 onClick={() => {
                   setBassicParameter(instrumentIndex, "lfo-type", 0);
@@ -50,6 +56,65 @@ const Bassic = ({
               >
                 <WaveIcon className="w-full text-sm sm:text-base md:h-5 md:text-lg lg:h-6 lg:text-xl" />
               </button>
+            </div>
+          </div>
+        </div>
+        <div className={paramGroupClasses}>
+          <h2 className={paramGroupTitleClasses}>OSC</h2>
+          <div className={paramGroupInnerClasses}>
+            <Slider
+              name="LEVEL"
+              callback={(val) => {
+                setBassicParameter(instrumentIndex, "lfo-freq", val);
+              }}
+              valueState={state.parameters.lfo.frequency}
+            />
+            <Slider
+              name="SUB"
+              callback={(val) => {
+                setBassicParameter(instrumentIndex, "lfo-freq", val);
+              }}
+              valueState={state.parameters.lfo.frequency}
+            />
+            <Slider
+              name="NOISE"
+              callback={(val) => {
+                setBassicParameter(instrumentIndex, "lfo-freq", val);
+              }}
+              valueState={state.parameters.lfo.frequency}
+            />
+            <div className={paramItemStyle}>
+              <div className={paramLabelStyle}>WAVE</div>
+
+              <button
+                onClick={() => {
+                  setBassicParameter(instrumentIndex, "lfo-type", 0);
+                }}
+                className="flex w-full items-center justify-center self-start justify-self-center overflow-hidden rounded bg-slate-600 text-xl hover:bg-slate-600/80"
+              >
+                <WaveIcon className="w-full text-sm sm:text-base md:h-5 md:text-lg lg:h-6 lg:text-xl" />
+              </button>
+              <div className={paramLabelStyle}>POLY</div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setBassicParameter(instrumentIndex, "osc-poly", polyphony);
+                }}
+              >
+                <input
+                  type="number"
+                  min={1}
+                  max={32}
+                  value={polyphony}
+                  onChange={(e) => {
+                    setPolyphony(Number(e.target.value));
+                  }}
+                  onBlur={() => {
+                    setBassicParameter(instrumentIndex, "osc-poly", polyphony);
+                  }}
+                  className="flex flex h-4 w-full w-full items-center justify-center justify-center self-start self-center justify-self-center justify-self-center overflow-hidden overflow-hidden rounded  bg-slate-600 text-center text-[10px] hover:bg-slate-600/80 sm:h-5 sm:text-xs md:h-6 md:text-sm lg:h-7 lg:text-base"
+                />
+              </form>
             </div>
           </div>
         </div>

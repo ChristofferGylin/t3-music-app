@@ -312,6 +312,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           detune: 0,
           volume: 0,
           pwmWidth: 0,
+          polyphony: 1,
         },
         filter: {
           frequency: 100,
@@ -324,6 +325,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           frequency: 5,
           amplitude: 0,
           type: "sine",
+          retrig: true,
         },
       },
     };
@@ -590,6 +592,39 @@ const Context = ({ children }: { children: ReactNode }) => {
               ] as InstrumentStateBassicType;
 
               instrumentState.parameters.lfo.frequency = value;
+            }
+
+            return newState;
+          });
+          break;
+
+        case "lfo-retrig":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.lfo.retrig =
+                !instrumentState.parameters.lfo.retrig;
+            }
+
+            return newState;
+          });
+          break;
+
+        case "osc-poly":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.oscillator.polyphony = value;
             }
 
             return newState;

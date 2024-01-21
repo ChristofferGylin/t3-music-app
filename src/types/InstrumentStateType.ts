@@ -35,6 +35,7 @@ export type InstrumentStateBassicType = {
       detune: number;
       volume: number;
       pwmWidth: number;
+      polyphony: number;
     };
     filter: {
       frequency: number;
@@ -47,6 +48,7 @@ export type InstrumentStateBassicType = {
       frequency: number;
       amplitude: number;
       type: ToneOscillatorType;
+      retrig: boolean;
     };
   };
 };

@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import VolumeSlider from "../../UI/VolumeSlider";
 
 type SliderPropsType = {
@@ -9,6 +7,11 @@ type SliderPropsType = {
   valueState: number;
 };
 
+export const paramLabelStyle =
+  "flex h-4 w-full items-center justify-center self-center justify-self-center overflow-hidden rounded bg-purple-950 text-[8px] text-purple-300 sm:h-5 sm:text-[10px] md:h-6 md:text-xs lg:h-7 lg:text-sm";
+
+export const paramItemStyle =
+  "flex aspect-[1/4] w-6 flex-col gap-0.5 sm:w-8 sm:gap-1 md:w-10 md:gap-1.5 lg:w-12 lg:gap-2";
 const Slider = ({ name, callback, valueState }: SliderPropsType) => {
   const labelRef = useRef<HTMLDivElement>(null);
   const [textSize, setTextSize] = useState(0);
@@ -42,11 +45,8 @@ const Slider = ({ name, callback, valueState }: SliderPropsType) => {
   // }, [labelRef]);
 
   return (
-    <div className="grid aspect-[1/4] w-6 grid-rows-[1fr_5fr] gap-1 xs:w-7 sm:w-8 md:w-10 lg:w-12">
-      <div
-        ref={labelRef}
-        className="flex h-full w-full items-center justify-center self-center justify-self-center overflow-hidden rounded bg-purple-950 text-[8px] text-purple-300 sm:text-[10px] md:text-xs lg:text-sm"
-      >
+    <div className={paramItemStyle}>
+      <div ref={labelRef} className={paramLabelStyle}>
         {name}
       </div>
       <VolumeSlider callback={handleChange} valueState={valueState} />
