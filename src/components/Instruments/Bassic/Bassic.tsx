@@ -19,11 +19,18 @@ const Bassic = ({
   if (instrument.modelName === "Bassic" && state !== undefined) {
     const WaveIcon = getWaveIcon(state.parameters.lfo.type);
 
+    const paramGroupClasses =
+      "flex flex-col gap-2 h-full w-full items-center text-center justify-center rounded-xl border border-slate-600 p-1 sm:p-2 md:p-3 lg:p-4";
+    const paramGroupInnerClasses =
+      "flex h-full w-full gap-1 sm:gap-2 md:gap-3 lg:gap-4 justify-center";
+    const paramGroupTitleClasses =
+      "w-full text-center text-xs sm:text-sm md:text-base lg:text-lg";
+
     return (
-      <div className="flex h-full w-fit justify-center gap-4 rounded-xl border border-slate-700/70 bg-slate-700/50 p-8 shadow-lg">
-        <div className="flex h-full flex-col items-center gap-4 rounded-xl border border-slate-600 p-4">
-          <h2 className="text-lg">LFO</h2>
-          <div className="flex h-full gap-4">
+      <div className="grid grid-cols-[2fr_4fr_4fr] justify-center gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 p-2 shadow-lg sm:gap-2 sm:p-4 md:gap-3 md:p-5 lg:gap-4 lg:p-6">
+        <div className={paramGroupClasses}>
+          <h2 className={paramGroupTitleClasses}>LFO</h2>
+          <div className={paramGroupInnerClasses}>
             <Slider
               name="RATE"
               callback={(val) => {
@@ -31,24 +38,24 @@ const Bassic = ({
               }}
               valueState={state.parameters.lfo.frequency}
             />
-            <div className="grid h-full w-12 grid-rows-[1.5rem_1fr] gap-2">
-              <div className="flex h-6 w-full items-center justify-center self-center justify-self-center overflow-hidden rounded bg-purple-950 text-sm text-purple-300">
+            <div className="grid aspect-[1/4] w-6 grid-rows-[1fr_5fr] gap-1 sm:w-8 md:w-10 lg:w-12">
+              <div className="flex h-full w-full items-center justify-center self-center justify-self-center overflow-hidden rounded bg-purple-950 text-[8px] text-purple-300 sm:text-[10px] md:text-xs lg:text-sm">
                 WAVE
               </div>
               <button
                 onClick={() => {
                   setBassicParameter(instrumentIndex, "lfo-type", 0);
                 }}
-                className="flex h-6 w-full items-center justify-center self-start justify-self-center overflow-hidden rounded bg-slate-600 text-xl hover:bg-slate-600/80"
+                className="flex w-full items-center justify-center self-start justify-self-center overflow-hidden rounded bg-slate-600 text-xl hover:bg-slate-600/80"
               >
-                <WaveIcon />
+                <WaveIcon className="w-full text-sm sm:text-base md:h-5 md:text-lg lg:h-6 lg:text-xl" />
               </button>
             </div>
           </div>
         </div>
-        <div className="flex h-full flex-col items-center gap-4 rounded-xl border border-slate-600 p-4">
-          <h2 className="text-lg">FILTER</h2>
-          <div className="flex h-full gap-4">
+        <div className={paramGroupClasses}>
+          <h2 className={paramGroupTitleClasses}>FILTER</h2>
+          <div className={paramGroupInnerClasses}>
             <Slider
               name="FREQ"
               callback={(val) => {
@@ -79,9 +86,9 @@ const Bassic = ({
             />
           </div>
         </div>
-        <div className="flex h-full flex-col items-center gap-4 rounded-xl border border-slate-600 p-4">
-          <h2 className="text-lg">ENVELOPE</h2>
-          <div className="flex h-full gap-4">
+        <div className={paramGroupClasses}>
+          <h2 className={paramGroupTitleClasses}>ENVELOPE</h2>
+          <div className={paramGroupInnerClasses}>
             <Slider
               name="A"
               callback={(val) => {
