@@ -96,7 +96,7 @@ const Editor = () => {
           instrumentIndex={instrumentIndex}
         />
       </div>
-      <div className="flex items-center justify-center overflow-auto bg-slate-800 p-2">
+      <div className="flex items-start justify-center overflow-auto bg-slate-800">
         {
           <InstrumentComponent
             instrument={instrument}
