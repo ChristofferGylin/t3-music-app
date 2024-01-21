@@ -4,9 +4,9 @@ import {
   PiWaveSquare,
   PiWaveTriangle,
 } from "react-icons/pi";
-import { type ToneOscillatorType } from "tone";
+import { type OmniOscillatorType } from "tone/build/esm/source/oscillator/OscillatorInterface";
 
-const getWaveIcon = (waveType: ToneOscillatorType) => {
+const getWaveIcon = (waveType: OmniOscillatorType) => {
   switch (waveType) {
     case "sawtooth":
       return PiWaveSawtooth;
