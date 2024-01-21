@@ -1,6 +1,6 @@
 import { type InstrumentType } from "~/types/InstrumentType";
 import Slider, { paramLabelStyle, paramItemStyle } from "./Slider";
-import { FormEvent, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { AppContext, type ContextType } from "~/context";
 import { type InstrumentStateBassicType } from "~/types/InstrumentStateType";
 import getWaveIcon from "~/utils/instruments/getWaveIcon";
@@ -29,13 +29,8 @@ const Bassic = ({
     const paramGroupTitleClasses =
       "w-full text-center text-xs sm:text-sm md:text-base lg:text-lg";
 
-    const handlePolySubmit = (e: FormEvent) => {
-      e.preventDefault();
-      setBassicParameter(instrumentIndex, "osc-poly", polyphony);
-    };
-
     return (
-      <div className="grid grid-cols-[2fr_4fr_4fr_4fr] justify-center gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 p-2 shadow-lg sm:gap-2 sm:p-4 md:gap-3 md:p-5 lg:gap-4 lg:p-6">
+      <div className="grid grid-cols-[2fr_4fr_5fr_4fr] justify-center gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 p-2 shadow-lg sm:gap-2 sm:p-4 md:gap-3 md:p-5 lg:gap-4 lg:p-6">
         <div className={paramGroupClasses}>
           <h2 className={paramGroupTitleClasses}>LFO</h2>
           <div className={paramGroupInnerClasses}>
@@ -55,6 +50,19 @@ const Bassic = ({
                 className="flex w-full items-center justify-center self-start justify-self-center overflow-hidden rounded bg-slate-600 text-xl hover:bg-slate-600/80"
               >
                 <WaveIcon className="w-full text-sm sm:text-base md:h-5 md:text-lg lg:h-6 lg:text-xl" />
+              </button>
+              <div className={paramLabelStyle}>RETRIG</div>
+              <button
+                onClick={() => {
+                  setBassicParameter(instrumentIndex, "lfo-retrig", 0);
+                }}
+                className="flex h-4 w-full items-center justify-center  self-center justify-self-center overflow-hidden rounded  bg-slate-600 text-center text-[10px] hover:bg-slate-600/80 sm:h-5 sm:text-xs md:h-6 md:text-sm lg:h-7 lg:text-base"
+              >
+                {state.parameters.lfo.retrig ? (
+                  <p className="text-green-500">ON</p>
+                ) : (
+                  <p>OFF</p>
+                )}
               </button>
             </div>
           </div>
@@ -112,7 +120,7 @@ const Bassic = ({
                   onBlur={() => {
                     setBassicParameter(instrumentIndex, "osc-poly", polyphony);
                   }}
-                  className="flex flex h-4 w-full w-full items-center justify-center justify-center self-start self-center justify-self-center justify-self-center overflow-hidden overflow-hidden rounded  bg-slate-600 text-center text-[10px] hover:bg-slate-600/80 sm:h-5 sm:text-xs md:h-6 md:text-sm lg:h-7 lg:text-base"
+                  className="flex h-4 w-full items-center justify-center self-center justify-self-center overflow-hidden rounded  bg-slate-600 text-center text-[10px] hover:bg-slate-600/80 sm:h-5 sm:text-xs md:h-6 md:text-sm lg:h-7 lg:text-base"
                 />
               </form>
             </div>
@@ -144,6 +152,13 @@ const Bassic = ({
             />
             <Slider
               name="LFO"
+              callback={(val) => {
+                setBassicParameter(instrumentIndex, "filter-lfo", val);
+              }}
+              valueState={state.parameters.filter.lfoGain}
+            />
+            <Slider
+              name="KYBD"
               callback={(val) => {
                 setBassicParameter(instrumentIndex, "filter-lfo", val);
               }}
