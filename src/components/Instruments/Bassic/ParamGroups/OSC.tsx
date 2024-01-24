@@ -47,7 +47,7 @@ const OSC = ({ instrumentIndex }: { instrumentIndex: number }) => {
           }}
           valueState={state.parameters.lfo.frequency}
         />
-        <div className={paramItemStyle}>
+        <div className={`${paramItemStyle}`}>
           <div className={paramLabelStyle}>WAVE</div>
 
           <button

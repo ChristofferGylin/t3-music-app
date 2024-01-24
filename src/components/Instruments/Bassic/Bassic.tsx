@@ -10,7 +10,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { VscChromeMinimize, VscChromeMaximize } from "react-icons/vsc";
 
 export const paramGroupClasses =
-  "flex flex-col gap-2 h-full w-full items-center text-center justify-center rounded-xl border border-slate-600 p-1 sm:p-2 md:p-2 lg:p-3";
+  "flex flex-col gap-2 h-full items-center text-center justify-center rounded-xl border border-slate-600 p-1 sm:p-2 md:p-2 lg:p-3";
 export const paramGroupInnerClasses =
   "flex h-full w-full gap-1 sm:gap-2 md:gap-2 lg:gap-3 justify-center";
 export const paramGroupTitleClasses =
@@ -86,21 +86,21 @@ const Bassic = ({
           </div>
         </div>
         <div className="flex h-full w-full items-center justify-center">
-          <div className="min-w-80 min-h-44 hidden grid-cols-[2fr_4fr_5fr_4fr] justify-center gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 p-0.5 shadow-lg xs:grid sm:gap-2 sm:p-1 md:gap-2 md:p-2 lg:gap-3 lg:p-3">
+          <div className="min-w-80 min-h-44 hidden grid-cols-[2fr_4fr_5fr_4fr] justify-center gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 p-0.5 shadow-lg xs:grid xs:p-1 sm:gap-2 sm:p-1 md:gap-2 md:p-2 lg:gap-3 lg:p-3">
             <LFO instrumentIndex={instrumentIndex} />
             <OSC instrumentIndex={instrumentIndex} />
             <Filter instrumentIndex={instrumentIndex} />
             <Envelope instrumentIndex={instrumentIndex} />
           </div>
-          <div className="flex h-44 w-80 flex-col justify-start gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 p-0.5 shadow-lg xs:hidden">
+          <div className="flex w-11/12 min-w-[348px] flex-col justify-start gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 shadow-lg xs:hidden">
             {mobileTab === 1 && (
-              <div className="grid h-full grid-cols-[2fr_4fr_3fr] items-start justify-start gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 p-0.5 shadow-lg">
+              <div className="flex h-full items-center justify-start gap-2 rounded-xl border border-slate-700/70 bg-slate-700/50 p-1 shadow-lg">
                 <LFO instrumentIndex={instrumentIndex} />
                 <OSC instrumentIndex={instrumentIndex} />
               </div>
             )}
             {mobileTab === 2 && (
-              <div className="grid grid-cols-[5fr_4fr] justify-center gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 p-0.5 shadow-lg">
+              <div className="flex items-center justify-start gap-1 rounded-xl border border-slate-700/70 bg-slate-700/50 p-1 shadow-lg">
                 <Filter instrumentIndex={instrumentIndex} />
                 <Envelope instrumentIndex={instrumentIndex} />
               </div>
