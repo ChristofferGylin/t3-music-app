@@ -52,7 +52,7 @@ const OSC = ({ instrumentIndex }: { instrumentIndex: number }) => {
 
           <button
             onClick={() => {
-              setBassicParameter(instrumentIndex, "lfo-type", 0);
+              setBassicParameter(instrumentIndex, "osc-type", 0);
             }}
             className="flex w-full items-center justify-center self-start justify-self-center overflow-hidden rounded bg-slate-600 text-xl hover:bg-slate-600/80"
           >

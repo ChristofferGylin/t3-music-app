@@ -568,8 +568,6 @@ const Context = ({ children }: { children: ReactNode }) => {
                 instrumentIndex
               ] as InstrumentStateBassicType;
 
-              console.log(instrumentState);
-
               instrumentState.parameters.lfo.type = newWave;
             }
 
@@ -629,6 +627,49 @@ const Context = ({ children }: { children: ReactNode }) => {
 
             return newState;
           });
+          break;
+
+        case "osc-type":
+          let newOscWave: Tone.ToneOscillatorType;
+
+          switch (instrument.voices[0]?.oscillator.type) {
+            case "sawtooth":
+              newOscWave = "square";
+              break;
+
+            case "square":
+              newOscWave = "triangle";
+              break;
+
+            case "triangle":
+              newOscWave = "sine";
+              break;
+
+            case "sine":
+              newOscWave = "sawtooth";
+              break;
+            default:
+              newOscWave = "sine";
+          }
+
+          instrument.voices.forEach((voice) => {
+            voice.oscillator.type = newOscWave;
+          });
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.oscillator.type = newOscWave;
+            }
+
+            return newState;
+          });
+          break;
       }
     }
   };
