@@ -43,6 +43,7 @@ export type InstrumentStateBassicType = {
       type: BiquadFilterType;
       envelopeGain: number;
       lfoGain: number;
+      kybd: number;
     };
     lfo: {
       frequency: number;

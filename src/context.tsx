@@ -320,6 +320,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           type: "lowpass",
           envelopeGain: 0,
           lfoGain: 0,
+          kybd: 0,
         },
         lfo: {
           frequency: 5,
@@ -530,6 +531,21 @@ const Context = ({ children }: { children: ReactNode }) => {
               ] as InstrumentStateBassicType;
 
               instrumentState.parameters.filter.lfoGain = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "filter-kybd":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.filter.kybd = value;
             }
 
             return newState;

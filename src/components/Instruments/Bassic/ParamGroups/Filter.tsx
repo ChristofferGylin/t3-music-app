@@ -50,9 +50,9 @@ const Filter = ({ instrumentIndex }: { instrumentIndex: number }) => {
         <Slider
           name="KYBD"
           callback={(val) => {
-            setBassicParameter(instrumentIndex, "filter-lfo", val);
+            setBassicParameter(instrumentIndex, "filter-kybd", val);
           }}
-          valueState={state.parameters.filter.lfoGain}
+          valueState={state.parameters.filter.kybd}
         />
       </div>
     </div>

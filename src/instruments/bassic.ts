@@ -37,6 +37,7 @@ export type BassicParameterType =
   | "filter-res"
   | "filter-env"
   | "filter-lfo"
+  | "filter-kybd"
   | "env-a"
   | "env-d"
   | "env-s"
