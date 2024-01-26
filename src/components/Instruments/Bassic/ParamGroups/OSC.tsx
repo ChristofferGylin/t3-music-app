@@ -36,16 +36,16 @@ const OSC = ({ instrumentIndex }: { instrumentIndex: number }) => {
         <Slider
           name="SUB"
           callback={(val) => {
-            setBassicParameter(instrumentIndex, "lfo-freq", val);
+            setBassicParameter(instrumentIndex, "osc-sub", val);
           }}
-          valueState={state.parameters.lfo.frequency}
+          valueState={state.parameters.oscillator.sub}
         />
         <Slider
           name="NOISE"
           callback={(val) => {
-            setBassicParameter(instrumentIndex, "lfo-freq", val);
+            setBassicParameter(instrumentIndex, "osc-noise", val);
           }}
-          valueState={state.parameters.lfo.frequency}
+          valueState={state.parameters.oscillator.noise}
         />
         <div className={`${paramItemStyle}`}>
           <div className={paramLabelStyle}>WAVE</div>

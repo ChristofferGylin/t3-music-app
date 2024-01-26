@@ -36,6 +36,8 @@ export type InstrumentStateBassicType = {
       gain: number;
       pwmWidth: number;
       polyphony: number;
+      sub: number;
+      noise: number;
     };
     filter: {
       frequency: number;

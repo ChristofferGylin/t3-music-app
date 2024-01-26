@@ -313,6 +313,8 @@ const Context = ({ children }: { children: ReactNode }) => {
           gain: 50,
           pwmWidth: 0,
           polyphony: 1,
+          sub: 0,
+          noise: 0,
         },
         filter: {
           frequency: 100,
@@ -645,6 +647,44 @@ const Context = ({ children }: { children: ReactNode }) => {
           });
           instrument.voices.forEach((voice) => {
             voice.oscGain.gain.value = value / 100;
+          });
+          break;
+
+        case "osc-sub":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.oscillator.sub = value;
+            }
+
+            return newState;
+          });
+          instrument.voices.forEach((voice) => {
+            voice.subOscGain.gain.value = value / 100;
+          });
+          break;
+
+        case "osc-noise":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.oscillator.noise = value;
+            }
+
+            return newState;
+          });
+          instrument.voices.forEach((voice) => {
+            voice.noiseGain.gain.value = value / 100;
           });
           break;
 

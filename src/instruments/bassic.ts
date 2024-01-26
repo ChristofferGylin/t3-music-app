@@ -26,6 +26,7 @@ export type BassicType = {
   polyphony: number;
   new: boolean;
   lfo: LFO;
+  noise: Noise;
   //lfoFilterScaler: Scale;
   lfoFilterGain: Gain;
 };
@@ -33,6 +34,9 @@ export type BassicType = {
 export type BassicParameterType =
   | "osc-type"
   | "osc-gain"
+  | "osc-poly"
+  | "osc-sub"
+  | "osc-noise"
   | "filter-freq"
   | "filter-res"
   | "filter-env"
@@ -48,13 +52,11 @@ export type BassicParameterType =
   | "filter-env-r"
   | "lfo-type"
   | "lfo-freq"
-  | "lfo-retrig"
-  | "osc-poly";
+  | "lfo-retrig";
 
 export type BassicVoiceType = {
   oscillator: Oscillator;
   subOscillator: Oscillator;
-  noise: Noise;
   filter: Filter;
   envelope: Envelope;
   vca: Gain;
@@ -74,6 +76,7 @@ const bassic = function (masterOut: Volume): BassicType {
     masterVolume: new Volume(0).connect(masterOut),
     voices: [] as BassicVoiceType[],
     lfo: new LFO(5, 0, 20000).set({ amplitude: 0 }).start(now),
+    noise: new Noise("white").start(),
     //lfoFilterScaler: new Scale(0, 4000),
     lfoFilterGain: new Gain(0),
     currentStep: 0,
@@ -141,7 +144,6 @@ const bassic = function (masterOut: Volume): BassicType {
     const voice: BassicVoiceType = {
       oscillator: new Oscillator(440, "square").start(now),
       subOscillator: new Oscillator(440, "square").start(now),
-      noise: new Noise("white"),
       filter: new Filter(20000),
       envelope: new Envelope(0.001, 0.001, 1, 0.001),
       vca: new Gain(0),
@@ -160,16 +162,13 @@ const bassic = function (masterOut: Volume): BassicType {
     voice.oscGain.connect(voice.filter);
     voice.filter.connect(voice.vca);
     voice.vca.connect(newBassic.masterVolume);
-    // voice.subOscillator
-    //   .connect(newBassic.subOscGain)
-    //   .connect(voice.filter)
-    //   .connect(voice.vca)
-    //   .connect(newBassic.masterVolume);
-    // voice.noise
-    //   .connect(newBassic.noiseGain)
-    //   .connect(voice.filter)
-    //   .connect(voice.vca)
-    //   .connect(newBassic.masterVolume);
+
+    voice.subOscillator.connect(voice.subOscGain);
+    voice.subOscGain.connect(voice.filter);
+
+    newBassic.noise.connect(voice.noiseGain);
+    voice.noiseGain.connect(voice.filter);
+
     //newBassic.lfoFilterScaler.connect(voice.filter.frequency);
     newBassic.lfo.connect(voice.filter.frequency);
     voice.envelope.connect(voice.ampGain);
