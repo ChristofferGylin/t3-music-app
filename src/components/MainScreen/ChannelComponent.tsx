@@ -47,10 +47,12 @@ const ChannelComponent = ({
             {instrumentState.modelName}
           </div>
         </Link>
-        <VolumeSlider
-          valueState={instrumentState.masterVolume}
-          callback={handleVolume}
-        />
+        <div className="h-full w-8/12">
+          <VolumeSlider
+            valueState={instrumentState.masterVolume}
+            callback={handleVolume}
+          />
+        </div>
       </div>
     </li>
   );
