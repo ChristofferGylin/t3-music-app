@@ -29,9 +29,9 @@ const OSC = ({ instrumentIndex }: { instrumentIndex: number }) => {
         <Slider
           name="LEVEL"
           callback={(val) => {
-            setBassicParameter(instrumentIndex, "lfo-freq", val);
+            setBassicParameter(instrumentIndex, "osc-gain", val);
           }}
-          valueState={state.parameters.lfo.frequency}
+          valueState={state.parameters.oscillator.gain}
         />
         <Slider
           name="SUB"

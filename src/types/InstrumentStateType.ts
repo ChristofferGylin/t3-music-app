@@ -33,7 +33,7 @@ export type InstrumentStateBassicType = {
     oscillator: {
       type: OmniOscillatorType;
       detune: number;
-      volume: number;
+      gain: number;
       pwmWidth: number;
       polyphony: number;
     };

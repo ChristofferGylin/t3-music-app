@@ -310,7 +310,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         oscillator: {
           type: "square",
           detune: 0,
-          volume: 0,
+          gain: 50,
           pwmWidth: 0,
           polyphony: 1,
         },
@@ -626,6 +626,25 @@ const Context = ({ children }: { children: ReactNode }) => {
             }
 
             return newState;
+          });
+          break;
+
+        case "osc-gain":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.oscillator.gain = value;
+            }
+
+            return newState;
+          });
+          instrument.voices.forEach((voice) => {
+            voice.oscGain.gain.value = value / 100;
           });
           break;
 

@@ -32,7 +32,7 @@ export type BassicType = {
 
 export type BassicParameterType =
   | "osc-type"
-  | "osc-volume"
+  | "osc-gain"
   | "filter-freq"
   | "filter-res"
   | "filter-env"
