@@ -94,7 +94,7 @@ const StudioHeader = () => {
           if (start === undefined) return;
 
           for (let j = 0; j < start.length; j++) {
-            if (currentInstrument.polyphony === "mono" && j > 0) break;
+            if (currentInstrument.polyphony === 1 && j > 0) break;
 
             const startObj = start[j];
 
