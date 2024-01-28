@@ -1,11 +1,16 @@
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import PatternEditor from "~/components/PatternEditor/PatternEditor";
-import Drums from "~/components/drums/Drums";
+import Drums from "~/components/Instruments/Drums/Drums";
 import { type ContextType, AppContext } from "~/context";
+import { type BassicType } from "~/instruments/bassic/bassic";
 import { type DrumsType } from "~/instruments/drums/drums";
-import { type InstrumentStateDrumsType } from "~/types/InstrumentStateType";
+import {
+  type InstrumentStateBassicType,
+  type InstrumentStateDrumsType,
+} from "~/types/InstrumentStateType";
 import { type PatternType } from "~/types/Pattern";
+import Bassic from "~/components/Instruments/Bassic/Bassic";
 
 const Editor = () => {
   const { instruments, scenesState, instrumentsState } = useContext(
@@ -16,11 +21,11 @@ const Editor = () => {
     undefined,
   );
   const [sceneIndex, setSceneIndex] = useState<number | undefined>(undefined);
-  const [instrument, setInstrument] = useState<DrumsType | undefined>(
-    undefined,
-  );
+  const [instrument, setInstrument] = useState<
+    DrumsType | BassicType | undefined
+  >(undefined);
   const [instrumentState, setInstrumentState] = useState<
-    InstrumentStateDrumsType | undefined
+    InstrumentStateDrumsType | InstrumentStateBassicType | undefined
   >(undefined);
   const [pattern, setPattern] = useState<PatternType | undefined>(undefined);
 
@@ -73,6 +78,9 @@ const Editor = () => {
     case "Drums":
       InstrumentComponent = Drums;
       break;
+    case "Bassic":
+      InstrumentComponent = Bassic;
+      break;
 
     default:
       InstrumentComponent = Drums;
@@ -88,10 +96,10 @@ const Editor = () => {
           instrumentIndex={instrumentIndex}
         />
       </div>
-      <div className="flex items-center justify-center overflow-auto bg-slate-800 p-2">
+      <div className="flex items-start justify-center overflow-auto bg-slate-800">
         {
           <InstrumentComponent
-            drummachine={instrument}
+            instrument={instrument}
             instrumentIndex={instrumentIndex}
           />
         }

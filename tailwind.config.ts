@@ -7,13 +7,13 @@ export default {
     screens: {
       xs: "560px",
       // => @media (min-width: 560px) { ... }
-      sm: "640px",
+      sm: "750px",
       // => @media (min-width: 640px) { ... }
 
-      md: "768px",
+      md: "860px",
       // => @media (min-width: 768px) { ... }
 
-      lg: "1024px",
+      lg: "1100px",
       // => @media (min-width: 1024px) { ... }
 
       xl: "1280px",
@@ -30,6 +30,7 @@ export default {
       gridTemplateRows: {
         "11": "repeat(11, minmax(0, 1fr))",
         drums: "repeat(11, 2rem)",
+        keys: "repeat(96, 2rem)",
         "main-horizontal": "auto 20rem",
       },
       gridTemplateColumns: {

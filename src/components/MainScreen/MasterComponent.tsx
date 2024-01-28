@@ -26,10 +26,12 @@ const MasterComponent = () => {
               Master
             </div>
           </div>
-          <VolumeSlider
-            valueState={project.masterVolume}
-            callback={handleVolume}
-          />
+          <div className="h-full w-8/12">
+            <VolumeSlider
+              valueState={project.masterVolume}
+              callback={handleVolume}
+            />
+          </div>
         </div>
       </div>
     </div>

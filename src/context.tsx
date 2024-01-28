@@ -9,22 +9,59 @@ import React, {
 import drums, { type DrumsType } from "~/instruments/drums/drums";
 import { type Scene } from "~/types/Scene";
 import { v4 as uuid } from "uuid";
-import createPattern from "./functions/createPattern";
-import { type InstrumentStateDrumsType } from "./types/InstrumentStateType";
+import {
+  createPatternDrums,
+  createPatternKeys,
+} from "./functions/createPattern";
+import {
+  type InstrumentStateBassicType,
+  type InstrumentStateDrumsType,
+} from "./types/InstrumentStateType";
 import { type EditNote } from "./types/EditNote";
 import { type DrumsKit } from "@prisma/client";
 import type ProjectWithKits from "./types/ProjectWithKits";
-import { type PatternSteps } from "./types/Pattern";
+import {
+  type PatternStepsDrums,
+  type PatternTypeDrums,
+  type PatternTypeKeys,
+  type PatternStepsKeys,
+} from "./types/Pattern";
 import signalToDb from "./utils/math/signalToDb";
-import deepCopyPatternSteps from "./utils/deepCopyPatternSteps";
+import {
+  deepCopyPatternStepsDrums,
+  deepCopyPatternStepsKeys,
+} from "./utils/deepCopyPatternSteps";
 import deepCopyScene from "./utils/deepCopyScene";
+import bassic, {
+  type BassicParameterType,
+  type BassicType,
+} from "./instruments/bassic/bassic";
+import { type Time } from "tone/build/esm/core/type/Units";
+import deepCopyInstrumentsState from "./utils/deepCopyInstrumentsState";
+import {
+  sliderToParam,
+  sliderToParamEnv,
+  sliderToParamFilterFreq,
+  sliderToParamFilterRes,
+  sliderToParamLfoFreq,
+  sliderToSignal,
+} from "./instruments/bassic/utils";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
   scenesState: Scene[];
   instruments: MutableRefObject<InstrumentsType>;
-  instrumentsState: InstrumentStateDrumsType[];
-  newInstrumentDrums: (kit: DrumsKit) => void;
+  instrumentsState: InstrumentsStateType;
+  newInstrumentDrums: (
+    kit: DrumsKit,
+    loadingProject?: boolean,
+    chanVols?: number[],
+    masterVol?: number,
+  ) => void;
+  newInstrumentBassic: (
+    loadingProject?: boolean,
+    state?: InstrumentStateBassicType,
+  ) => void;
   loop: MutableRefObject<boolean>;
   loopState: boolean;
   toggleLoop: () => void;
@@ -64,11 +101,19 @@ export type ContextType = {
   setMasterVolume: (val: number) => void;
   setBpm: (val: number) => void;
   copyScene: (index: number) => void;
+  setBassicParameter: (
+    instrumentIndex: number,
+    parameter: BassicParameterType,
+    value: number,
+  ) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
 
-type InstrumentsType = Array<DrumsType>;
+type InstrumentsType = Array<DrumsType | BassicType>;
+type InstrumentsStateType = Array<
+  InstrumentStateDrumsType | InstrumentStateBassicType
+>;
 
 const Context = ({ children }: { children: ReactNode }) => {
   const appLoaded = useRef(false);
@@ -76,9 +121,8 @@ const Context = ({ children }: { children: ReactNode }) => {
   const [scenesState, setScenesState] = useState<Scene[]>([]);
   const scenes = useRef<Scene[]>([]);
   const instruments = useRef<InstrumentsType>([]);
-  const [instrumentsState, setInstrumentsState] = useState<
-    InstrumentStateDrumsType[]
-  >([]);
+  const [instrumentsState, setInstrumentsState] =
+    useState<InstrumentsStateType>([]);
   const currentScene = useRef(0);
   const currentStep = useRef(0);
   const [loopState, setLoopState] = useState(true);
@@ -126,28 +170,25 @@ const Context = ({ children }: { children: ReactNode }) => {
     type: string;
   }) => {
     if (options.type === "drums") {
-      console.log("type: drums");
       setInstrumentsState((old) => {
         const newState = [...old];
 
-        if (options.master && options.instrumentIndex !== undefined) {
-          const instrument = newState[options.instrumentIndex];
-          console.log("nuuu");
-          if (instrument) {
-            console.log("instrument");
-            instrument.masterVolume = options.val;
-          }
+        if (options.instrumentIndex === undefined) return newState;
+
+        const instrument = newState[
+          options.instrumentIndex
+        ] as InstrumentStateDrumsType;
+
+        if (instrument === undefined) return newState;
+
+        if (options.master) {
+          instrument.masterVolume = options.val;
 
           return newState;
         }
 
-        if (
-          options.instrumentIndex !== undefined &&
-          options.channelIndex !== undefined
-        ) {
-          newState[options.instrumentIndex]!.channelVolumes[
-            options.channelIndex
-          ] = options.val;
+        if (options.channelIndex !== undefined) {
+          instrument.channelVolumes[options.channelIndex] = options.val;
         }
 
         return newState;
@@ -233,10 +274,470 @@ const Context = ({ children }: { children: ReactNode }) => {
 
     if (!loadingProject) {
       scenes.current.forEach((scene) => {
-        scene.patterns.push(createPattern("drums"));
+        scene.patterns.push(createPatternDrums());
       });
 
       setScenesState([...scenes.current]);
+    }
+  };
+  const newInstrumentBassic = (
+    loadingProject?: boolean,
+    state?: InstrumentStateBassicType,
+  ) => {
+    if (!masterOut.current) return;
+
+    const newInstrument = bassic(masterOut.current);
+
+    instruments.current.push(newInstrument);
+
+    let newInstrumentState: InstrumentStateBassicType;
+
+    if (loadingProject && state) {
+      newInstrumentState = { ...state };
+      newInstrument.loadPreset(newInstrumentState);
+    } else {
+      newInstrumentState = {
+        type: "keys",
+        masterVolume: 79.014,
+        modelName: "Bassic",
+        name: "Bassic",
+        parameters: {
+          envelope: {
+            attack: 0,
+            decay: 0,
+            sustain: 100,
+            release: 0,
+          },
+          filterEnvelope: {
+            attack: 0,
+            decay: 0,
+            sustain: 100,
+            release: 0,
+          },
+          oscillator: {
+            type: "square",
+            detune: 0,
+            gain: 50,
+            pwmWidth: 0,
+            polyphony: 1,
+            sub: 0,
+            noise: 0,
+          },
+          filter: {
+            frequency: 100,
+            resonance: 0,
+            type: "lowpass",
+            envelopeGain: 0,
+            lfoGain: 0,
+            kybd: 0,
+          },
+          lfo: {
+            frequency: 5,
+            amplitude: 0,
+            type: "sine",
+            retrig: true,
+          },
+        },
+      };
+    }
+
+    setInstrumentsState((old) => {
+      return [...old, newInstrumentState];
+    });
+
+    if (!loadingProject) {
+      scenes.current.forEach((scene) => {
+        scene.patterns.push(createPatternKeys());
+      });
+
+      setScenesState([...scenes.current]);
+    }
+  };
+
+  const setBassicParameter = (
+    instrumentIndex: number,
+    parameter: BassicParameterType,
+    value: number,
+  ) => {
+    if (instruments.current[instrumentIndex]?.modelName === "Bassic") {
+      const instrument = instruments.current[instrumentIndex] as BassicType;
+      let calcedValue;
+      switch (parameter) {
+        case "env-a":
+          calcedValue = sliderToParamEnv(value);
+
+          for (const voice of instrument.voices) {
+            voice.envelope.attack = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.envelope.attack = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "env-d":
+          calcedValue = sliderToParamEnv(value);
+          for (const voice of instrument.voices) {
+            voice.envelope.decay = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.envelope.decay = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "env-s":
+          calcedValue = sliderToParam(value);
+
+          for (const voice of instrument.voices) {
+            voice.envelope.sustain = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.envelope.sustain = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "env-r":
+          calcedValue = sliderToParamEnv(value);
+
+          for (const voice of instrument.voices) {
+            voice.envelope.release = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.envelope.release = value;
+            }
+
+            return newState;
+          });
+          break;
+
+        case "filter-freq":
+          calcedValue = sliderToParamFilterFreq(value);
+
+          instrument.lfo.set({
+            max: calcedValue,
+          });
+
+          for (const voice of instrument.voices) {
+            voice.filter.frequency.value = calcedValue;
+            voice.filterEnvScaler.min = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.filter.frequency = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "filter-res":
+          calcedValue = sliderToParamFilterRes(value);
+
+          for (const voice of instrument.voices) {
+            voice.filter.Q.value = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.filter.resonance = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "filter-env":
+          calcedValue = sliderToParam(value);
+
+          for (const voice of instrument.voices) {
+            voice.filterEnvGain.gain.value = calcedValue;
+          }
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.filter.envelopeGain = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "filter-lfo":
+          instrument.lfo.set({ amplitude: sliderToSignal(value) });
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.filter.lfoGain = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "filter-kybd":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.filter.kybd = value;
+            }
+
+            return newState;
+          });
+          break;
+        case "lfo-type":
+          let newWave: Tone.ToneOscillatorType;
+
+          switch (instrument.lfo.type) {
+            case "sawtooth":
+              newWave = "square";
+              break;
+
+            case "square":
+              newWave = "triangle";
+              break;
+
+            case "triangle":
+              newWave = "sine";
+              break;
+
+            case "sine":
+              newWave = "sawtooth";
+              break;
+            default:
+              newWave = "sine";
+          }
+
+          instrument.lfo.type = newWave;
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.lfo.type = newWave;
+            }
+
+            return newState;
+          });
+          break;
+
+        case "lfo-freq":
+          calcedValue = sliderToParamLfoFreq(value);
+          instrument.lfo.frequency.value = calcedValue;
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.lfo.frequency = value;
+            }
+
+            return newState;
+          });
+          break;
+
+        case "lfo-retrig":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.lfo.retrig =
+                !instrumentState.parameters.lfo.retrig;
+            }
+
+            return newState;
+          });
+          break;
+
+        case "osc-gain":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.oscillator.gain = value;
+            }
+
+            return newState;
+          });
+          instrument.voices.forEach((voice) => {
+            voice.oscGain.gain.value = sliderToSignal(value);
+          });
+          break;
+
+        case "osc-sub":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.oscillator.sub = value;
+            }
+
+            return newState;
+          });
+          instrument.voices.forEach((voice) => {
+            voice.subOscGain.gain.value = sliderToSignal(value);
+          });
+          break;
+
+        case "osc-noise":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.oscillator.noise = value;
+            }
+
+            return newState;
+          });
+          instrument.voices.forEach((voice) => {
+            voice.noiseGain.gain.value = sliderToSignal(value);
+          });
+          break;
+
+        case "osc-poly":
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.oscillator.polyphony = value;
+            }
+
+            return newState;
+          });
+          break;
+
+        case "osc-type":
+          let newOscWave: Tone.ToneOscillatorType;
+
+          switch (instrument.voices[0]?.oscillator.type) {
+            case "sawtooth":
+              newOscWave = "square";
+              break;
+
+            case "square":
+              newOscWave = "triangle";
+              break;
+
+            case "triangle":
+              newOscWave = "sine";
+              break;
+
+            case "sine":
+              newOscWave = "sawtooth";
+              break;
+            default:
+              newOscWave = "sine";
+          }
+
+          instrument.voices.forEach((voice) => {
+            voice.oscillator.type = newOscWave;
+          });
+
+          setInstrumentsState((old) => {
+            const newState = deepCopyInstrumentsState(old);
+
+            if (newState[instrumentIndex]?.modelName === "Bassic") {
+              const instrumentState = newState[
+                instrumentIndex
+              ] as InstrumentStateBassicType;
+
+              instrumentState.parameters.oscillator.type = newOscWave;
+            }
+
+            return newState;
+          });
+          break;
+      }
     }
   };
 
@@ -251,7 +752,7 @@ const Context = ({ children }: { children: ReactNode }) => {
 
     for (const inst of instruments.current) {
       if (inst.type === "drums") {
-        newScene.patterns.push(createPattern("drums"));
+        newScene.patterns.push(createPatternDrums());
       }
     }
 
@@ -273,24 +774,40 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const addNote = (data: EditNote) => {
-    if (data.type === "drums") {
-      scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
-        data.step
-      ]?.start.push(data.note);
+    if (data.type === "drums" && typeof data.note === "number") {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeDrums;
+
+      pattern.pattern[data.step]?.start.push(data.note);
 
       setScenesState([...scenes.current]);
-    }
-  };
+    } else if (
+      data.type === "keys" &&
+      typeof data.note === "string" &&
+      data.duration
+    ) {
+      const note = {
+        note: data.note,
+        duration: data.duration,
+      };
 
-  const deleteNote = (data: EditNote) => {
-    if (data.type === "drums") {
-      scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
-        data.step
-      ]?.start.forEach((note, index) => {
-        if (note === data.note) {
-          scenes.current[data.scene]?.patterns[data.instrument]?.pattern[
-            data.step
-          ]?.start.splice(index, 1);
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeKeys;
+
+      pattern.pattern[data.step]?.start.push(note);
+
+      pattern.pattern[data.step]?.start.sort((a, b) => {
+        const sortA = a.note.replace("#", "");
+        const sortB = b.note.replace("#", "");
+
+        if (sortA < sortB) {
+          return -1;
+        } else if (sortA > sortB) {
+          return 1;
+        } else {
+          return 0;
         }
       });
 
@@ -298,18 +815,47 @@ const Context = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const longerPattern = (data: { scene: number; instrument: number }) => {
-    const pattern = scenes.current[data.scene]?.patterns[data.instrument];
+  const deleteNote = (data: EditNote) => {
+    if (data.type === "drums") {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeDrums;
 
-    if (pattern) {
+      pattern.pattern[data.step]?.start.forEach((note, index) => {
+        if (note === data.note) {
+          pattern.pattern[data.step]?.start.splice(index, 1);
+        }
+      });
+    } else {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeKeys;
+
+      pattern.pattern[data.step]?.start.forEach((note, index) => {
+        if (note.note === data.note) {
+          pattern.pattern[data.step]?.start.splice(index, 1);
+        }
+      });
+    }
+    setScenesState([...scenes.current]);
+  };
+
+  const longerPattern = (data: { scene: number; instrument: number }) => {
+    if (
+      scenes.current[data.scene]?.patterns[data.instrument]?.type === "keys"
+    ) {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeKeys;
+
       if (pattern.pattern.length < 1024) {
         if (pattern.length < pattern.pattern.length) {
           pattern.length += 64;
         } else {
           for (let i = 0; i < 64; i++) {
-            const step: PatternSteps = {
-              start: [] as (number | string)[],
-              stop: [] as (number | string)[],
+            const step: PatternStepsKeys = {
+              start: [] as { note: string; duration: Time }[],
+              stop: [] as { note: string; duration: Time }[],
             };
 
             pattern.pattern.push(step);
@@ -319,19 +865,41 @@ const Context = ({ children }: { children: ReactNode }) => {
 
           pattern.length = pattern.pattern.length;
         }
+      }
+    } else {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeDrums;
 
-        const scene = scenes.current[data.scene];
+      if (pattern.pattern.length < 1024) {
+        if (pattern.length < pattern.pattern.length) {
+          pattern.length += 64;
+        } else {
+          for (let i = 0; i < 64; i++) {
+            const step: PatternStepsDrums = {
+              start: [] as number[],
+            };
 
-        if (scene) {
-          let longest = 0;
+            pattern.pattern.push(step);
+          }
 
-          scene.patterns.forEach((pat) => {
-            if (pat.length > longest) longest = pat.length;
-          });
+          if (pattern.pattern.length > 1024) pattern.pattern.length = 1024;
 
-          scene.longestPattern = longest;
+          pattern.length = pattern.pattern.length;
         }
       }
+    }
+
+    const scene = scenes.current[data.scene];
+
+    if (scene) {
+      let longest = 0;
+
+      scene.patterns.forEach((pat) => {
+        if (pat.length > longest) longest = pat.length;
+      });
+
+      scene.longestPattern = longest;
     }
 
     setScenesState([...scenes.current]);
@@ -385,36 +953,60 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const doublePattern = (data: { scene: number; instrument: number }) => {
-    const pattern = scenes.current[data.scene]?.patterns[data.instrument];
+    if (
+      scenes.current[data.scene]?.patterns[data.instrument]?.type === "keys"
+    ) {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeKeys;
 
-    if (pattern) {
       if (pattern.pattern.length < 1024) {
         if (pattern.length < pattern.pattern.length) {
           pattern.pattern.length = pattern.length;
         }
 
         const newPattern = [
-          ...deepCopyPatternSteps(pattern.pattern),
-          ...deepCopyPatternSteps(pattern.pattern),
+          ...deepCopyPatternStepsKeys(pattern.pattern),
+          ...deepCopyPatternStepsKeys(pattern.pattern),
         ];
 
         if (newPattern.length > 1024) newPattern.length = 1024;
 
         pattern.length = newPattern.length;
         pattern.pattern = newPattern;
-
-        const scene = scenes.current[data.scene];
-
-        if (scene) {
-          let longest = 0;
-
-          scene.patterns.forEach((pat) => {
-            if (pat.length > longest) longest = pat.length;
-          });
-
-          scene.longestPattern = longest;
-        }
       }
+    } else {
+      const pattern = scenes.current[data.scene]?.patterns[
+        data.instrument
+      ] as PatternTypeDrums;
+
+      if (pattern.pattern.length < 1024) {
+        if (pattern.length < pattern.pattern.length) {
+          pattern.pattern.length = pattern.length;
+        }
+
+        const newPattern = [
+          ...deepCopyPatternStepsDrums(pattern.pattern),
+          ...deepCopyPatternStepsDrums(pattern.pattern),
+        ];
+
+        if (newPattern.length > 1024) newPattern.length = 1024;
+
+        pattern.length = newPattern.length;
+        pattern.pattern = newPattern;
+      }
+    }
+
+    const scene = scenes.current[data.scene];
+
+    if (scene) {
+      let longest = 0;
+
+      scene.patterns.forEach((pat) => {
+        if (pat.length > longest) longest = pat.length;
+      });
+
+      scene.longestPattern = longest;
     }
 
     setScenesState([...scenes.current]);
@@ -487,7 +1079,7 @@ const Context = ({ children }: { children: ReactNode }) => {
     });
     const dbInstruments = JSON.parse(
       dbProject.instruments,
-    ) as InstrumentStateDrumsType[];
+    ) as InstrumentsStateType;
     const dbScenes = JSON.parse(dbProject.scenes) as Scene[];
 
     setScenesState([...dbScenes]);
@@ -496,19 +1088,25 @@ const Context = ({ children }: { children: ReactNode }) => {
     dbInstruments.forEach((instrument) => {
       switch (instrument.modelName) {
         case "Drums":
+          const drums = instrument as InstrumentStateDrumsType;
           const selectedKit = dbProject.drumsKits.filter(
-            (dbKit) => instrument.currentKit === dbKit.id,
+            (dbKit) => drums.currentKit === dbKit.id,
           );
-          instrument.masterVolume;
 
           if (selectedKit[0]) {
             void newInstrumentDrums(
               selectedKit[0],
               true,
-              instrument.channelVolumes,
-              instrument.masterVolume,
+              drums.channelVolumes,
+              drums.masterVolume,
             );
           }
+
+          break;
+
+        case "Bassic":
+          const bassicPreset = instrument as InstrumentStateBassicType;
+          void newInstrumentBassic(true, bassicPreset);
 
           break;
       }
@@ -527,6 +1125,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         instruments,
         instrumentsState,
         newInstrumentDrums,
+        newInstrumentBassic,
         loop,
         toggleLoop,
         currentScene,
@@ -560,6 +1159,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         setMasterVolume,
         setBpm,
         copyScene,
+        setBassicParameter,
       }}
     >
       {children}

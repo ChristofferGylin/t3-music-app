@@ -15,7 +15,7 @@ const VolumeSlider = ({
 
   return (
     <ReactSlider
-      className="h-full w-3/4 self-center justify-self-center rounded border border-slate-600/30 bg-slate-800/40 shadow-inner"
+      className="h-full w-full self-center justify-self-center rounded border border-slate-600/30 bg-slate-800/40 shadow-inner"
       orientation="vertical"
       invert
       onChange={handleChange}
