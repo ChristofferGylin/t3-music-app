@@ -8,7 +8,7 @@ import { useContext } from "react";
 import { type ContextType, AppContext } from "~/context";
 import { type EditNote } from "~/types/EditNote";
 import scales from "~/instruments/scales";
-import { type BassicType } from "~/instruments/bassic";
+import { type BassicType } from "~/instruments/bassic/bassic";
 import PatternContainer from "./PatternContainer";
 import { Transport } from "tone";
 

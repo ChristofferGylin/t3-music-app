@@ -1,7 +1,4 @@
-import {
-  type ToneOscillatorType,
-  type OmniOscillatorType,
-} from "tone/build/esm/source/oscillator/OscillatorInterface";
+import { type ToneOscillatorType } from "tone/build/esm/source/oscillator/OscillatorInterface";
 
 export type InstrumentStateDrumsType = {
   type: "drums";
@@ -31,7 +28,7 @@ export type InstrumentStateBassicType = {
       release: number;
     };
     oscillator: {
-      type: OmniOscillatorType;
+      type: ToneOscillatorType;
       detune: number;
       gain: number;
       pwmWidth: number;

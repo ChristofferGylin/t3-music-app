@@ -10,7 +10,16 @@ import {
   LFO,
 } from "tone";
 import { type Time } from "tone/build/esm/core/type/Units";
+import { type InstrumentStateBassicType } from "~/types/InstrumentStateType";
 import signalToDb from "~/utils/math/signalToDb";
+import {
+  sliderToParam,
+  sliderToParamEnv,
+  sliderToParamFilterFreq,
+  sliderToParamFilterRes,
+  sliderToParamLfoFreq,
+  sliderToSignal,
+} from "./utils";
 
 export type BassicType = {
   voices: BassicVoiceType[];
@@ -20,6 +29,7 @@ export type BassicType = {
   stop: (time: Time) => void;
   playAndStop: (note: string, duration: Time, time: Time) => void;
   setMasterVolume: (val: number) => void;
+  loadPreset: (preset: InstrumentStateBassicType) => void;
   name: string;
   type: "keys";
   modelName: "Bassic";
@@ -130,6 +140,89 @@ const bassic = function (masterOut: Volume): BassicType {
       const dBValue = signalToDb(val);
 
       this.masterVolume.volume.value = dBValue;
+    },
+    loadPreset: function (preset: InstrumentStateBassicType) {
+      const envAttack = sliderToParamEnv(preset.parameters.envelope.attack);
+
+      for (const voice of this.voices) {
+        voice.envelope.attack = envAttack;
+      }
+
+      const envDecay = sliderToParamEnv(preset.parameters.envelope.decay);
+
+      for (const voice of this.voices) {
+        voice.envelope.decay = envDecay;
+      }
+
+      const envSustain = sliderToParam(preset.parameters.envelope.sustain);
+
+      for (const voice of this.voices) {
+        voice.envelope.sustain = envSustain;
+      }
+
+      const envRelease = sliderToParamEnv(preset.parameters.envelope.release);
+
+      for (const voice of this.voices) {
+        voice.envelope.release = envRelease;
+      }
+
+      const filterFreq = sliderToParamFilterFreq(
+        preset.parameters.filter.frequency,
+      );
+
+      for (const voice of this.voices) {
+        voice.filter.frequency.value = filterFreq;
+        voice.filterEnvScaler.min = filterFreq;
+      }
+
+      const filterRes = sliderToParamFilterRes(
+        preset.parameters.filter.resonance,
+      );
+
+      for (const voice of this.voices) {
+        voice.filter.Q.value = filterRes;
+      }
+
+      const filterEnv = sliderToParam(preset.parameters.filter.envelopeGain);
+
+      for (const voice of this.voices) {
+        voice.filterEnvGain.gain.value = filterEnv;
+      }
+
+      this.lfo.set({
+        amplitude: sliderToSignal(preset.parameters.filter.lfoGain),
+      });
+
+      this.lfo.set({
+        max: filterFreq,
+      });
+
+      this.lfo.type = preset.parameters.lfo.type;
+      this.lfo.frequency.value = sliderToParamLfoFreq(
+        preset.parameters.lfo.frequency,
+      );
+
+      const oscGain = sliderToSignal(preset.parameters.oscillator.gain);
+
+      for (const voice of this.voices) {
+        voice.oscGain.gain.value = oscGain;
+      }
+
+      const subGain = sliderToSignal(preset.parameters.oscillator.sub);
+
+      for (const voice of this.voices) {
+        voice.subOscGain.gain.value = subGain;
+      }
+
+      const noiseGain = sliderToSignal(preset.parameters.oscillator.noise);
+
+      for (const voice of this.voices) {
+        voice.noiseGain.gain.value = noiseGain;
+      }
+
+      for (const voice of this.voices) {
+        voice.oscillator.type = preset.parameters.oscillator.type;
+      }
     },
     type: "keys",
     modelName: "Bassic",

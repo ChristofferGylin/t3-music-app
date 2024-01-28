@@ -35,10 +35,17 @@ import deepCopyScene from "./utils/deepCopyScene";
 import bassic, {
   type BassicParameterType,
   type BassicType,
-} from "./instruments/bassic";
+} from "./instruments/bassic/bassic";
 import { type Time } from "tone/build/esm/core/type/Units";
-import { scaleValue } from "./utils/math/scaleValue";
 import deepCopyInstrumentsState from "./utils/deepCopyInstrumentsState";
+import {
+  sliderToParam,
+  sliderToParamEnv,
+  sliderToParamFilterFreq,
+  sliderToParamFilterRes,
+  sliderToParamLfoFreq,
+  sliderToSignal,
+} from "./instruments/bassic/utils";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -51,7 +58,10 @@ export type ContextType = {
     chanVols?: number[],
     masterVol?: number,
   ) => void;
-  newInstrumentBassic: (loadingProject?: boolean, masterVol?: number) => void;
+  newInstrumentBassic: (
+    loadingProject?: boolean,
+    state?: InstrumentStateBassicType,
+  ) => void;
   loop: MutableRefObject<boolean>;
   loopState: boolean;
   toggleLoop: () => void;
@@ -272,7 +282,7 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
   const newInstrumentBassic = (
     loadingProject?: boolean,
-    masterVol?: number,
+    state?: InstrumentStateBassicType,
   ) => {
     if (!masterOut.current) return;
 
@@ -280,58 +290,56 @@ const Context = ({ children }: { children: ReactNode }) => {
 
     instruments.current.push(newInstrument);
 
-    let masterVolume;
+    let newInstrumentState: InstrumentStateBassicType;
 
-    if (loadingProject && masterVol) {
-      masterVolume = masterVol;
-      newInstrument.setMasterVolume(masterVolume);
+    if (loadingProject && state) {
+      newInstrumentState = { ...state };
+      newInstrument.loadPreset(newInstrumentState);
     } else {
-      masterVolume = 79.014;
+      newInstrumentState = {
+        type: "keys",
+        masterVolume: 79.014,
+        modelName: "Bassic",
+        name: "Bassic",
+        parameters: {
+          envelope: {
+            attack: 0,
+            decay: 0,
+            sustain: 100,
+            release: 0,
+          },
+          filterEnvelope: {
+            attack: 0,
+            decay: 0,
+            sustain: 100,
+            release: 0,
+          },
+          oscillator: {
+            type: "square",
+            detune: 0,
+            gain: 50,
+            pwmWidth: 0,
+            polyphony: 1,
+            sub: 0,
+            noise: 0,
+          },
+          filter: {
+            frequency: 100,
+            resonance: 0,
+            type: "lowpass",
+            envelopeGain: 0,
+            lfoGain: 0,
+            kybd: 0,
+          },
+          lfo: {
+            frequency: 5,
+            amplitude: 0,
+            type: "sine",
+            retrig: true,
+          },
+        },
+      };
     }
-
-    const newInstrumentState: InstrumentStateBassicType = {
-      type: "keys",
-      masterVolume: masterVolume,
-      modelName: "Bassic",
-      name: "Bassic",
-      parameters: {
-        envelope: {
-          attack: 0,
-          decay: 0,
-          sustain: 100,
-          release: 0,
-        },
-        filterEnvelope: {
-          attack: 0,
-          decay: 0,
-          sustain: 100,
-          release: 0,
-        },
-        oscillator: {
-          type: "square",
-          detune: 0,
-          gain: 50,
-          pwmWidth: 0,
-          polyphony: 1,
-          sub: 0,
-          noise: 0,
-        },
-        filter: {
-          frequency: 100,
-          resonance: 0,
-          type: "lowpass",
-          envelopeGain: 0,
-          lfoGain: 0,
-          kybd: 0,
-        },
-        lfo: {
-          frequency: 5,
-          amplitude: 0,
-          type: "sine",
-          retrig: true,
-        },
-      },
-    };
 
     setInstrumentsState((old) => {
       return [...old, newInstrumentState];
@@ -356,11 +364,7 @@ const Context = ({ children }: { children: ReactNode }) => {
       let calcedValue;
       switch (parameter) {
         case "env-a":
-          calcedValue = scaleValue({
-            value: value,
-            fromScale: { start: 0, end: 100 },
-            toScale: { start: 0.001, end: 3 },
-          });
+          calcedValue = sliderToParamEnv(value);
 
           for (const voice of instrument.voices) {
             voice.envelope.attack = calcedValue;
@@ -381,11 +385,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           });
           break;
         case "env-d":
-          calcedValue = scaleValue({
-            value: value,
-            fromScale: { start: 0, end: 100 },
-            toScale: { start: 0.001, end: 3 },
-          });
+          calcedValue = sliderToParamEnv(value);
           for (const voice of instrument.voices) {
             voice.envelope.decay = calcedValue;
           }
@@ -405,7 +405,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           });
           break;
         case "env-s":
-          calcedValue = Math.exp((value / 100) * Math.log(1000)) / 1000;
+          calcedValue = sliderToParam(value);
 
           for (const voice of instrument.voices) {
             voice.envelope.sustain = calcedValue;
@@ -426,11 +426,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           });
           break;
         case "env-r":
-          calcedValue = scaleValue({
-            value: value,
-            fromScale: { start: 0, end: 100 },
-            toScale: { start: 0.001, end: 3 },
-          });
+          calcedValue = sliderToParamEnv(value);
 
           for (const voice of instrument.voices) {
             voice.envelope.release = calcedValue;
@@ -452,9 +448,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           break;
 
         case "filter-freq":
-          calcedValue = Math.exp(
-            Math.log(20) + (value / 100) * (Math.log(20000) - Math.log(20)),
-          );
+          calcedValue = sliderToParamFilterFreq(value);
 
           instrument.lfo.set({
             max: calcedValue,
@@ -480,7 +474,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           });
           break;
         case "filter-res":
-          calcedValue = (value / 100) * 20;
+          calcedValue = sliderToParamFilterRes(value);
 
           for (const voice of instrument.voices) {
             voice.filter.Q.value = calcedValue;
@@ -501,7 +495,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           });
           break;
         case "filter-env":
-          calcedValue = Math.exp((value / 100) * Math.log(1000)) / 1000;
+          calcedValue = sliderToParam(value);
 
           for (const voice of instrument.voices) {
             voice.filterEnvGain.gain.value = calcedValue;
@@ -522,7 +516,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           });
           break;
         case "filter-lfo":
-          instrument.lfo.set({ amplitude: value / 100 });
+          instrument.lfo.set({ amplitude: sliderToSignal(value) });
 
           setInstrumentsState((old) => {
             const newState = deepCopyInstrumentsState(old);
@@ -594,9 +588,7 @@ const Context = ({ children }: { children: ReactNode }) => {
           break;
 
         case "lfo-freq":
-          calcedValue = Math.exp(
-            Math.log(0.1) + (value / 100) * (Math.log(30) - Math.log(0.1)),
-          );
+          calcedValue = sliderToParamLfoFreq(value);
           instrument.lfo.frequency.value = calcedValue;
 
           setInstrumentsState((old) => {
@@ -646,7 +638,7 @@ const Context = ({ children }: { children: ReactNode }) => {
             return newState;
           });
           instrument.voices.forEach((voice) => {
-            voice.oscGain.gain.value = value / 100;
+            voice.oscGain.gain.value = sliderToSignal(value);
           });
           break;
 
@@ -665,7 +657,7 @@ const Context = ({ children }: { children: ReactNode }) => {
             return newState;
           });
           instrument.voices.forEach((voice) => {
-            voice.subOscGain.gain.value = value / 100;
+            voice.subOscGain.gain.value = sliderToSignal(value);
           });
           break;
 
@@ -684,7 +676,7 @@ const Context = ({ children }: { children: ReactNode }) => {
             return newState;
           });
           instrument.voices.forEach((voice) => {
-            voice.noiseGain.gain.value = value / 100;
+            voice.noiseGain.gain.value = sliderToSignal(value);
           });
           break;
 
@@ -1087,7 +1079,7 @@ const Context = ({ children }: { children: ReactNode }) => {
     });
     const dbInstruments = JSON.parse(
       dbProject.instruments,
-    ) as InstrumentStateDrumsType[];
+    ) as InstrumentsStateType;
     const dbScenes = JSON.parse(dbProject.scenes) as Scene[];
 
     setScenesState([...dbScenes]);
@@ -1096,19 +1088,25 @@ const Context = ({ children }: { children: ReactNode }) => {
     dbInstruments.forEach((instrument) => {
       switch (instrument.modelName) {
         case "Drums":
+          const drums = instrument as InstrumentStateDrumsType;
           const selectedKit = dbProject.drumsKits.filter(
-            (dbKit) => instrument.currentKit === dbKit.id,
+            (dbKit) => drums.currentKit === dbKit.id,
           );
-          instrument.masterVolume;
 
           if (selectedKit[0]) {
             void newInstrumentDrums(
               selectedKit[0],
               true,
-              instrument.channelVolumes,
-              instrument.masterVolume,
+              drums.channelVolumes,
+              drums.masterVolume,
             );
           }
+
+          break;
+
+        case "Bassic":
+          const bassicPreset = instrument as InstrumentStateBassicType;
+          void newInstrumentBassic(true, bassicPreset);
 
           break;
       }

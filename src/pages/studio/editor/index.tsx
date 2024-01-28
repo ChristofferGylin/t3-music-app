@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import PatternEditor from "~/components/PatternEditor/PatternEditor";
 import Drums from "~/components/Instruments/Drums/Drums";
 import { type ContextType, AppContext } from "~/context";
-import { type BassicType } from "~/instruments/bassic";
+import { type BassicType } from "~/instruments/bassic/bassic";
 import { type DrumsType } from "~/instruments/drums/drums";
 import {
   type InstrumentStateBassicType,

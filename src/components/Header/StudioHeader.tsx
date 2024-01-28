@@ -9,7 +9,7 @@ import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
 import { useSession } from "next-auth/react";
 import SaveButton from "../UI/SaveButton";
 import { type DrumsType } from "~/instruments/drums/drums";
-import { type BassicType } from "~/instruments/bassic";
+import { type BassicType } from "~/instruments/bassic/bassic";
 import { type PatternTypeKeys } from "~/types/Pattern";
 
 const StudioHeader = () => {
