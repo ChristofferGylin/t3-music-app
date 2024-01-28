@@ -4,6 +4,7 @@ import { TfiSave } from "react-icons/tfi";
 import { type ContextType, AppContext } from "~/context";
 import { api } from "~/utils/api";
 import MenuItem from "../HamburgerMenu/MenuItem";
+import { type InstrumentStateDrumsType } from "~/types/InstrumentStateType";
 
 const SaveButton = ({
   hamburger,
@@ -28,13 +29,21 @@ const SaveButton = ({
   });
 
   const handleSave = async () => {
-    console.log("saving");
     setSavingState(true);
     const instrumentsJSON = JSON.stringify(instrumentsState);
     const scenesJSON = JSON.stringify(scenesState);
 
-    const kitIds = instrumentsState.map((inst) => {
-      return { id: inst.currentKit };
+    type KitIds = {
+      id: string;
+    }[];
+
+    const kitIds: KitIds = [];
+
+    instrumentsState.forEach((inst) => {
+      if (inst.modelName === "Drums") {
+        const drums = inst as InstrumentStateDrumsType;
+        kitIds.push({ id: drums.currentKit });
+      }
     });
 
     await saveToDb.mutateAsync({
