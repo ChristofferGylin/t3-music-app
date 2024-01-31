@@ -74,7 +74,7 @@ const Drums = ({
                 const newNum = oldNum + 1;
 
                 if (newNum > mobileTabMax) {
-                  return mobileTabMax - 1;
+                  return mobileTabMax;
                 } else {
                   return newNum;
                 }
