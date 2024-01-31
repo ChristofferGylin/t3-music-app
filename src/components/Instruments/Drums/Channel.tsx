@@ -39,18 +39,23 @@ const Channel = ({
     valueState = 79.014;
   }
 
-  return (
-    <div className="grid h-full w-16 grid-rows-[1.5rem_1fr_4rem] gap-2">
-      <div className="flex h-6 w-full items-center justify-center self-center justify-self-center overflow-hidden rounded bg-purple-950 text-sm text-purple-300">
-        {drumChannel.name}
-      </div>
-      <VolumeSlider callback={handleChange} valueState={valueState} />
+  const paramLabelStyle =
+    "flex aspect-[4/3] w-full items-center justify-center self-center justify-self-center overflow-hidden rounded bg-purple-950 text-[6px] text-purple-300 sm:h-5 sm:text-[8px] md:h-6 md:text-[9px] lg:h-7 lg:text-[10px]";
 
-      <button
-        className="aspect-[2/3] h-full self-center justify-self-center rounded border border-purple-300 bg-purple-400"
-        onClick={() => drumChannel.play()}
-      />
-    </div>
+  const paramItemStyle =
+    "flex aspect-[1/3] w-8 xs:w-8 flex-col gap-0.5 sm:w-9 sm:gap-1 md:w-10 md:gap-1.5 lg:w-12 lg:gap-2";
+
+  return (
+    <>
+      <div className={paramItemStyle}>
+        <div className={paramLabelStyle}>{drumChannel.name}</div>
+        <VolumeSlider callback={handleChange} valueState={valueState} />
+        <button
+          className="aspect-[2/3] w-3/4 self-center justify-self-center rounded border border-purple-300 bg-purple-400"
+          onClick={() => drumChannel.play()}
+        />
+      </div>
+    </>
   );
 };
 
