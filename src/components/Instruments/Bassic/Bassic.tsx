@@ -28,7 +28,7 @@ const Bassic = ({
   const [mobileTab, setMobileTab] = useState(1);
   if (instrument.modelName === "Bassic" && state !== undefined) {
     return (
-      <div className="grid h-full w-full grid-rows-[1.5rem_auto] ">
+      <div className="grid h-full w-full grid-rows-[1.5rem_auto]">
         <div className="grid h-full grid-cols-3  bg-slate-600/20 px-1">
           <div className="flex h-full items-center justify-start text-[10px] shadow">
             <button
