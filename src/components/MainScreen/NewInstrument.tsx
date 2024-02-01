@@ -7,9 +7,13 @@ import DialogBox from "../UI/DialogBox";
 
 const NewInstrument = () => {
   const [showModal, setShowModal] = useState(false);
-  const { newInstrumentDrums, newInstrumentBassic } = useContext(
+  const { newInstrumentDrums, newInstrumentBassic, instruments } = useContext(
     AppContext,
   )! as ContextType;
+
+  if (instruments.current.length === 0 && !showModal) {
+    setShowModal(true);
+  }
 
   const defKit = api.instruments.getDrumsKitById.useQuery({
     id: "cloobtmk60000nvxoncyrom50",
