@@ -60,7 +60,7 @@ const Projects = () => {
             setShowModal(false);
           }}
         >
-          <DialogBox>
+          <DialogBox classes="p-4">
             <div className="flex flex-col gap-6">
               <h1 className="text-xl">NEW PROJECT</h1>
               <TextInput
