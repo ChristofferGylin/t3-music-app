@@ -28,8 +28,8 @@ const NewInstrument = () => {
     <li key={`newInstrument`} className="h-full">
       {showModal && (
         <ModalScreen close={handleClose}>
-          <DialogBox classes="flex flex-col gap-2 h-3/4 w-3/4">
-            <h1 className="m-4 w-full text-center uppercase">
+          <DialogBox classes="flex flex-col items-center gap-2 h-3/4 w-3/4">
+            <h1 className="m-4 border-b border-slate-500 text-lg uppercase xs:text-xl sm:text-2xl lg:text-3xl">
               Add a new instrument
             </h1>
             <ul className="flex w-full flex-col gap-4 overflow-y-auto overflow-x-hidden">

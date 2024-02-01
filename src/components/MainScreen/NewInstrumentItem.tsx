@@ -27,7 +27,9 @@ const NewInstrumentItem = ({
         className="w-full rounded border-2 border-transparent p-4 hover:border-slate-500/20"
       >
         <div className="flex w-full flex-col gap-3 text-left">
-          <h3 className="uppercase tracking-wider">{title}</h3>
+          <h3 className="text-base uppercase tracking-wider xs:text-lg sm:text-xl lg:text-2xl">
+            {title}
+          </h3>
           <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
             <Image
               src={img.url}
@@ -36,7 +38,9 @@ const NewInstrumentItem = ({
               height={img.height}
               className="w-full md:w-1/2"
             />
-            <p className="text-base font-light tracking-wider">{text}</p>
+            <p className="text-sm font-light tracking-wider xs:text-base lg:text-lg">
+              {text}
+            </p>
           </div>
         </div>
       </button>
