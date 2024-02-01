@@ -744,15 +744,11 @@ const Context = ({ children }: { children: ReactNode }) => {
   const newScene = () => {
     const newScene: Scene = { id: uuid(), patterns: [], longestPattern: 64 };
 
-    // for (let i = 0; i < instruments.current.length; i++) {
-    //   if (instruments.current[i]?.type === "drums") {
-    //     newScene.patterns.push(createPattern("drums"));
-    //   }
-    // }
-
     for (const inst of instruments.current) {
       if (inst.type === "drums") {
         newScene.patterns.push(createPatternDrums());
+      } else if (inst.type === "keys") {
+        newScene.patterns.push(createPatternKeys());
       }
     }
 

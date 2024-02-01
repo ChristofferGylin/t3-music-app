@@ -36,7 +36,7 @@ const Projects = () => {
     await deleteProject.mutateAsync({ id });
   };
 
-  const { setLoaded, loadProject, loadApp } = useContext(
+  const { setLoaded, loadProject, loadApp, newScene } = useContext(
     AppContext,
   )! as ContextType;
 
@@ -47,6 +47,7 @@ const Projects = () => {
       name: newProjectName,
     });
     loadProject(newProject);
+    newScene();
     setShowModal(false);
     void router.push("/studio");
   };
