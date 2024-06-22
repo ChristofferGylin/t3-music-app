@@ -17,7 +17,7 @@ const NewInstrument = () => {
   }
 
   const defKit = api.instruments.getDrumsKitById.useQuery({
-    id: "cloobtmk60000nvxoncyrom50",
+    id: "clxq398r20000nvuwtnd9ejms",
   }).data;
 
   const handleClose = () => {
