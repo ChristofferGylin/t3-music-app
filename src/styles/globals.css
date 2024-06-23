@@ -50,4 +50,16 @@
   p {
     @apply tracking-wide;
   }
+
+  .turnable-knob {
+    transform-origin: 50% 50%;
+    transform-box: fill-box;
+    -webkit-transform-box: fill-box;
+  }
+
+  .prevent-select {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 }
