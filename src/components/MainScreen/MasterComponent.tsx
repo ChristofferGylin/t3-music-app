@@ -2,6 +2,7 @@ import { useContext } from "react";
 import VolumeSlider from "../UI/VolumeSlider";
 import { type ContextType, AppContext } from "~/context";
 import signalToDb from "~/utils/math/signalToDb";
+import TurnableKnob from "../UI/TurnableKnob/TurnableKnob";
 
 const MasterComponent = () => {
   const { masterOut, setMasterVolume, project } = useContext(
@@ -17,6 +18,10 @@ const MasterComponent = () => {
     setMasterVolume(val);
   };
 
+  const panKnobCallback = () => {
+    // do stuff
+  };
+
   return (
     <div className="flex h-full w-24 flex-col bg-slate-800 pt-1">
       <div key={`instrument#master`} className="h-full">
@@ -25,6 +30,15 @@ const MasterComponent = () => {
             <div className="flex w-3/4 items-center justify-center rounded bg-green-800 text-green-300">
               Master
             </div>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2 text-xs">
+            PAN
+            <TurnableKnob
+              width="w-10"
+              range="PlusMinus"
+              callback={panKnobCallback}
+              value={0.5}
+            />
           </div>
           <div className="h-full w-8/12">
             <VolumeSlider
