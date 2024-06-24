@@ -51,9 +51,9 @@ const TurnableKnob = ({
 
   useEffect(() => {
     if (lightRingRef.current) {
-      setStatusRing(lightRingRef.current, range, value);
+      setStatusRing(lightRingRef.current, range, currentValue);
     }
-  }, [range, value]);
+  }, [range, currentValue]);
 
   return (
     <div className={`${width} flex aspect-square items-center justify-center`}>
