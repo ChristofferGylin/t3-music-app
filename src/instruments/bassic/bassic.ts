@@ -8,6 +8,7 @@ import {
   Scale,
   Transport,
   LFO,
+  Panner,
 } from "tone";
 import { type Time } from "tone/build/esm/core/type/Units";
 import { type InstrumentStateBassicType } from "~/types/InstrumentStateType";
@@ -25,6 +26,7 @@ export type BassicType = {
   voices: BassicVoiceType[];
   currentStep: number;
   masterVolume: Volume;
+  pan: Panner;
   play: (note: string, time: Time) => void;
   stop: (time: Time) => void;
   playAndStop: (note: string, duration: Time, time: Time) => void;
@@ -83,7 +85,8 @@ const bassic = function (masterOut: Volume): BassicType {
   const now = Transport.now();
 
   const newBassic: BassicType = {
-    masterVolume: new Volume(0).connect(masterOut),
+    pan: new Panner({ channelCount: 2 }).connect(masterOut),
+    masterVolume: new Volume(0),
     voices: [] as BassicVoiceType[],
     lfo: new LFO(5, 0, 20000).set({ amplitude: 0 }).start(now),
     noise: new Noise("white").start(),
@@ -229,7 +232,7 @@ const bassic = function (masterOut: Volume): BassicType {
     polyphony: 1,
     new: true,
   };
-
+  newBassic.masterVolume.connect(newBassic.pan);
   //newBassic.lfo.connect(newBassic.lfoFilterGain);
   //newBassic.lfoFilterGain.connect(newBassic.lfoFilterScaler);
 

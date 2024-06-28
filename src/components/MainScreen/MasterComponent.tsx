@@ -3,7 +3,7 @@ import VolumeSlider from "../UI/VolumeSlider";
 import { type ContextType, AppContext } from "~/context";
 import signalToDb from "~/utils/math/signalToDb";
 import TurnableKnob from "../UI/TurnableKnob/TurnableKnob";
-import { scaleValue } from "~/utils/math/scaleValue";
+import handlePan from "~/utils/handlePan";
 
 const MasterComponent = () => {
   const { masterOut, masterPan, setMasterVolume, project } = useContext(
@@ -17,16 +17,6 @@ const MasterComponent = () => {
 
     masterOut.current.volume.value = dbValue;
     setMasterVolume(val);
-  };
-
-  const handlePan = (value: number) => {
-    if (!masterPan.current) return;
-    const scaledValue = scaleValue({
-      value,
-      fromScale: { start: 0, end: 1 },
-      toScale: { start: -1, end: 1 },
-    });
-    masterPan.current.pan.value = scaledValue;
   };
 
   return (
@@ -43,7 +33,10 @@ const MasterComponent = () => {
             <TurnableKnob
               width="w-10"
               range="PlusMinus"
-              callback={handlePan}
+              callback={(value) => {
+                if (!masterPan.current) return;
+                handlePan(value, masterPan.current);
+              }}
               value={0.5}
             />
           </div>
