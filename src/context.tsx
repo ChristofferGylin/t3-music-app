@@ -98,6 +98,7 @@ export type ContextType = {
     type: string;
   }) => void;
   masterOut: MutableRefObject<Tone.Volume | null>;
+  masterPan: MutableRefObject<Tone.Panner | null>;
   setMasterVolume: (val: number) => void;
   setBpm: (val: number) => void;
   copyScene: (index: number) => void;
@@ -143,6 +144,7 @@ const Context = ({ children }: { children: ReactNode }) => {
   const [playing, setPlaying] = useState(false);
   const [saving, setSaving] = useState(false);
   const masterOut = useRef<Tone.Volume | null>(null);
+  const masterPan = useRef<Tone.Panner | null>(null);
 
   const setBpm = (val: number) => {
     setProject((old) => {
@@ -1060,8 +1062,11 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const loadProject = (dbProject: ProjectWithKits) => {
+    if (!masterPan.current) {
+      masterPan.current = new Tone.Panner({ channelCount: 2 }).toDestination();
+    }
     if (!masterOut.current) {
-      masterOut.current = new Tone.Volume(0).toDestination();
+      masterOut.current = new Tone.Volume(0).connect(masterPan.current);
     }
     Tone.Transport.bpm.value = dbProject.bpm;
     masterOut.current.volume.value = signalToDb(dbProject.masterVolume);
@@ -1152,6 +1157,7 @@ const Context = ({ children }: { children: ReactNode }) => {
         setSavingState,
         setVolume,
         masterOut,
+        masterPan,
         setMasterVolume,
         setBpm,
         copyScene,
