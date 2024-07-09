@@ -19,8 +19,8 @@ import {
   sliderToParamLfoFreq,
   sliderToSignal,
 } from "./utils";
-import type ChannelStrip from "~/types/ChanelStrip";
-import channelStrip from "../newChannelStrip";
+import type ChannelStrip from "~/types/ChannelStrip";
+import newChannelStrip from "../newChannelStrip";
 
 export type BassicType = {
   channelStrip: ChannelStrip;
@@ -83,7 +83,7 @@ const bassic = function (masterOut: Volume): BassicType {
   const now = Transport.now();
 
   const newBassic: BassicType = {
-    channelStrip: channelStrip(masterOut),
+    channelStrip: newChannelStrip(masterOut),
     voices: [] as BassicVoiceType[],
     lfo: new LFO(5, 0, 20000).set({ amplitude: 0 }).start(now),
     noise: new Noise("white").start(),
@@ -224,7 +224,6 @@ const bassic = function (masterOut: Volume): BassicType {
     polyphony: 1,
     new: true,
   };
-  newBassic.channelStrip.masterVolume.connect(newBassic.channelStrip.pan);
   //newBassic.lfo.connect(newBassic.lfoFilterGain);
   //newBassic.lfoFilterGain.connect(newBassic.lfoFilterScaler);
 

@@ -1,14 +1,14 @@
 import { type DrumsKit } from "@prisma/client";
-import { Volume, Sampler, Panner } from "tone";
+import { type Volume, Sampler, Panner } from "tone";
 import { type Time } from "tone/build/esm/core/type/Units";
+import type ChannelStrip from "~/types/ChannelStrip";
 import type ChannelType from "~/types/ChannelType";
 import signalToDb from "~/utils/math/signalToDb";
+import newChannelStrip from "../newChannelStrip";
 
 export type DrumsType = {
   currentStep: number;
-  masterVolume: Volume;
-  pan: Panner;
-  setMasterVolume: (val: number) => void;
+  channelStrip: ChannelStrip;
   name: string;
   channels: ChannelType[];
   type: "drums";
@@ -19,15 +19,15 @@ export type DrumsType = {
 type KitChannelsType = [{ title: string; url: string }];
 
 const drums = function (masterOut: Volume, kit: DrumsKit): DrumsType {
-  const pan = new Panner({ channelCount: 2 }).connect(masterOut);
-  const masterVolume = new Volume(0).connect(pan);
-
+  const channelStrip = newChannelStrip(masterOut);
   const kitChannels = JSON.parse(kit.channels) as KitChannelsType;
 
   const channels = kitChannels.map((kit) => {
     const channel = {
       name: kit.title,
-      channelPan: new Panner({ channelCount: 2 }).connect(masterVolume),
+      channelPan: new Panner({ channelCount: 2 }).connect(
+        channelStrip.masterVolume,
+      ),
       sampler: new Sampler({
         urls: {
           C3: kit.url,
@@ -53,13 +53,7 @@ const drums = function (masterOut: Volume, kit: DrumsKit): DrumsType {
   return {
     currentStep: 0,
     name: "drums",
-    masterVolume,
-    pan,
-    setMasterVolume: function (val: number) {
-      const dBValue = signalToDb(val);
-
-      this.masterVolume.volume.value = dBValue;
-    },
+    channelStrip,
     channels: channels || [],
     type: "drums",
     modelName: "Drums",

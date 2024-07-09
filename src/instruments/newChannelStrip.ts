@@ -1,17 +1,20 @@
 import { Volume, Panner } from "tone";
-import type ChannelStrip from "~/types/ChanelStrip";
+import type ChannelStrip from "~/types/ChannelStrip";
 import signalToDb from "~/utils/math/signalToDb";
 
-const channelStrip = function (masterOut: Volume): ChannelStrip {
-  return {
-    masterVolume: new Volume(0),
+const newChannelStrip = function (masterOut: Volume): ChannelStrip {
+  const channelStrip = {
     pan: new Panner({ channelCount: 2 }).connect(masterOut),
+    masterVolume: new Volume(0),
     setMasterVolume: function (val: number) {
       const dBValue = signalToDb(val);
 
       this.masterVolume.volume.value = dBValue;
     },
   };
+  channelStrip.masterVolume.connect(channelStrip.pan);
+
+  return channelStrip;
 };
 
-export default channelStrip;
+export default newChannelStrip;

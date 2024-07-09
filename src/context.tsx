@@ -249,7 +249,7 @@ const Context = ({ children }: { children: ReactNode }) => {
     if (loadingProject && chanVols && masterVol) {
       channelVolumes = chanVols;
       masterVolume = masterVol;
-      newDrums.setMasterVolume(masterVolume);
+      newDrums.channelStrip.setMasterVolume(masterVolume);
       newDrums.channels.forEach((channel, index) => {
         const vol = chanVols[index];
         if (vol !== undefined) channel.setVolume(vol);
