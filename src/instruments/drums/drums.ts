@@ -1,5 +1,5 @@
 import { type DrumsKit } from "@prisma/client";
-import { type Volume, Sampler, Panner } from "tone";
+import { Sampler, Panner } from "tone";
 import { type Time } from "tone/build/esm/core/type/Units";
 import type ChannelStrip from "~/types/ChannelStrip";
 import type ChannelType from "~/types/ChannelType";
@@ -18,8 +18,8 @@ export type DrumsType = {
 
 type KitChannelsType = [{ title: string; url: string }];
 
-const drums = function (masterOut: Volume, kit: DrumsKit): DrumsType {
-  const channelStrip = newChannelStrip(masterOut);
+const drums = function (output: ChannelStrip, kit: DrumsKit): DrumsType {
+  const channelStrip = newChannelStrip(output.masterVolume);
   const kitChannels = JSON.parse(kit.channels) as KitChannelsType;
 
   const channels = kitChannels.map((kit) => {

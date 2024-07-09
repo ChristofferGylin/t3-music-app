@@ -1,5 +1,4 @@
 import {
-  type Volume,
   Filter,
   Envelope,
   Gain,
@@ -79,11 +78,11 @@ export type BassicVoiceType = {
   noiseGain: Gain;
 };
 
-const bassic = function (masterOut: Volume): BassicType {
+const bassic = function (output: ChannelStrip): BassicType {
   const now = Transport.now();
 
   const newBassic: BassicType = {
-    channelStrip: newChannelStrip(masterOut),
+    channelStrip: newChannelStrip(output.masterVolume),
     voices: [] as BassicVoiceType[],
     lfo: new LFO(5, 0, 20000).set({ amplitude: 0 }).start(now),
     noise: new Noise("white").start(),

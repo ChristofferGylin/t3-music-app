@@ -46,6 +46,8 @@ import {
   sliderToParamLfoFreq,
   sliderToSignal,
 } from "./instruments/bassic/utils";
+import type ChannelStrip from "./types/ChannelStrip";
+import newChannelStrip from "./instruments/newChannelStrip";
 
 export type ContextType = {
   scenes: MutableRefObject<Scene[]>;
@@ -97,9 +99,8 @@ export type ContextType = {
     master?: boolean;
     type: string;
   }) => void;
-  masterOut: MutableRefObject<Tone.Volume | null>;
-  masterPan: MutableRefObject<Tone.Panner | null>;
   setMasterVolume: (val: number) => void;
+  masterChannel: MutableRefObject<ChannelStrip | null>;
   setBpm: (val: number) => void;
   copyScene: (index: number) => void;
   setBassicParameter: (
@@ -143,16 +144,7 @@ const Context = ({ children }: { children: ReactNode }) => {
   });
   const [playing, setPlaying] = useState(false);
   const [saving, setSaving] = useState(false);
-  const masterOut = useRef<Tone.Volume | null>(null);
-  const masterPan = useRef<Tone.Panner | null>(null);
-
-  const setBpm = (val: number) => {
-    setProject((old) => {
-      const newProject = { ...old };
-      newProject.bpm = val;
-      return newProject;
-    });
-  };
+  const masterChannel = useRef<ChannelStrip | null>(null);
 
   const setMasterVolume = (val: number) => {
     setProject((old) => {
@@ -160,6 +152,14 @@ const Context = ({ children }: { children: ReactNode }) => {
 
       newProject.masterVolume = val;
 
+      return newProject;
+    });
+  };
+
+  const setBpm = (val: number) => {
+    setProject((old) => {
+      const newProject = { ...old };
+      newProject.bpm = val;
       return newProject;
     });
   };
@@ -237,9 +237,9 @@ const Context = ({ children }: { children: ReactNode }) => {
     chanVols?: number[],
     masterVol?: number,
   ) => {
-    if (!masterOut.current) return;
+    if (!masterChannel.current) return;
 
-    const newDrums = drums(masterOut.current, kit);
+    const newDrums = drums(masterChannel.current, kit);
 
     instruments.current.push(newDrums);
 
@@ -286,9 +286,9 @@ const Context = ({ children }: { children: ReactNode }) => {
     loadingProject?: boolean,
     state?: InstrumentStateBassicType,
   ) => {
-    if (!masterOut.current) return;
+    if (!masterChannel.current) return;
 
-    const newInstrument = bassic(masterOut.current);
+    const newInstrument = bassic(masterChannel.current);
 
     instruments.current.push(newInstrument);
 
@@ -1062,14 +1062,14 @@ const Context = ({ children }: { children: ReactNode }) => {
   };
 
   const loadProject = (dbProject: ProjectWithKits) => {
-    if (!masterPan.current) {
-      masterPan.current = new Tone.Panner({ channelCount: 2 }).toDestination();
+    if (!masterChannel.current) {
+      masterChannel.current = newChannelStrip();
     }
-    if (!masterOut.current) {
-      masterOut.current = new Tone.Volume(0).connect(masterPan.current);
-    }
+
     Tone.Transport.bpm.value = dbProject.bpm;
-    masterOut.current.volume.value = signalToDb(dbProject.masterVolume);
+    masterChannel.current.masterVolume.volume.value = signalToDb(
+      dbProject.masterVolume,
+    );
     instruments.current = [];
     setInstrumentsState([]);
     setProject({
@@ -1156,12 +1156,11 @@ const Context = ({ children }: { children: ReactNode }) => {
         saving,
         setSavingState,
         setVolume,
-        masterOut,
-        masterPan,
-        setMasterVolume,
+        masterChannel,
         setBpm,
         copyScene,
         setBassicParameter,
+        setMasterVolume,
       }}
     >
       {children}

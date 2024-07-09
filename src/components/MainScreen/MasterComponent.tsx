@@ -6,16 +6,17 @@ import TurnableKnob from "../UI/TurnableKnob/TurnableKnob";
 import handlePan from "~/utils/handlePan";
 
 const MasterComponent = () => {
-  const { masterOut, masterPan, setMasterVolume, project } = useContext(
+  const { masterChannel, setMasterVolume, project } = useContext(
     AppContext,
   )! as ContextType;
 
   const handleVolume = (val: number) => {
     const dbValue = signalToDb(val);
 
-    if (!masterOut.current) return;
+    if (!masterChannel.current) return;
 
-    masterOut.current.volume.value = dbValue;
+    masterChannel.current.masterVolume.volume.value = dbValue;
+    masterChannel.current.setMasterVolume(val);
     setMasterVolume(val);
   };
 
@@ -34,8 +35,8 @@ const MasterComponent = () => {
               width="w-10"
               range="PlusMinus"
               callback={(value) => {
-                if (!masterPan.current) return;
-                handlePan(value, masterPan.current);
+                if (!masterChannel.current) return;
+                handlePan(value, masterChannel.current.pan);
               }}
               value={0.5}
             />
