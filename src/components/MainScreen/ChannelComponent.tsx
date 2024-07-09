@@ -32,7 +32,7 @@ const ChannelComponent = ({
       type: "drums",
       master: true,
     });
-    instrument.setMasterVolume(val);
+    instrument.channelStrip.setMasterVolume(val);
   };
 
   return (
@@ -55,7 +55,7 @@ const ChannelComponent = ({
             width="w-10"
             range="PlusMinus"
             callback={(value) => {
-              handlePan(value, instrument.pan);
+              handlePan(value, instrument.channelStrip.pan);
             }}
             value={0.5}
           />
