@@ -1,9 +1,8 @@
-import { type Volume } from "tone";
+import type ChannelStrip from "./ChannelStrip";
 
 export type InstrumentType = {
   currentStep: number;
-  masterVolume: Volume;
-  setMasterVolume: (val: number) => void;
+  channelStrip: ChannelStrip;
   name: string;
   type: string;
   modelName: string;

@@ -2,45 +2,40 @@ import { useEffect, useRef, useState } from "react";
 import StandardKnob from "./Knobs/StandardKnob";
 import { setStatusRing } from "./setStatusRing";
 import { type KnobRange } from "~/types/Knobs";
-import { scaleValue } from "~/utils/math/scaleValue";
 
 const TurnableKnob = ({
   width = "w-8",
   value,
   range = "Plus",
-  setValue,
+  callback,
 }: {
   width?: string;
   value: number;
   range?: KnobRange;
-  setValue: (newValue: number) => void;
+  callback: (value: number) => void;
 }) => {
-  const [offsetOrigin, setOffsetOrigin] = useState(0);
+  const [currentValue, setCurrentValue] = useState(value);
+  let offsetOrigin: number | undefined;
   const maxRotation = 270;
-  const scaledValue =
-    range === "PlusMinus"
-      ? scaleValue({
-          value,
-          fromScale: { start: -1, end: 1 },
-          toScale: { start: 0, end: 1 },
-        })
-      : value;
-  const rotation = `${maxRotation * scaledValue}deg`;
+  const minValue = 0;
+  const maxValue = 1;
+  const rotation = `${maxRotation * currentValue}deg`;
   const lightRingRef = useRef(null);
 
   const handleMouseMove = (e: MouseEvent) => {
-    const offset = -((e.clientY - offsetOrigin) / 100);
-    const minValue = range === "PlusMinus" ? -1 : 0;
+    if (!offsetOrigin) return;
 
-    let newValue = value + offset;
+    const offset = -((e.clientY - offsetOrigin) / 100);
+
+    let newValue = currentValue + offset;
 
     if (newValue < minValue) {
       newValue = minValue;
-    } else if (newValue > 1) {
-      newValue = 1;
+    } else if (newValue > maxValue) {
+      newValue = maxValue;
     }
-
-    setValue(newValue);
+    setCurrentValue(newValue);
+    callback(newValue);
   };
 
   const handleMouseUp = () => {
@@ -49,16 +44,16 @@ const TurnableKnob = ({
   };
 
   const handleClick = (e: React.MouseEvent<Element, MouseEvent>) => {
-    setOffsetOrigin(e.clientY);
+    offsetOrigin = e.clientY;
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
   };
 
   useEffect(() => {
     if (lightRingRef.current) {
-      setStatusRing(lightRingRef.current, range, value);
+      setStatusRing(lightRingRef.current, range, currentValue);
     }
-  }, [range, value]);
+  }, [range, currentValue]);
 
   return (
     <div className={`${width} flex aspect-square items-center justify-center`}>

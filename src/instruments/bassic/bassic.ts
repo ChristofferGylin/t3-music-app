@@ -1,5 +1,4 @@
 import {
-  Volume,
   Filter,
   Envelope,
   Gain,
@@ -11,7 +10,6 @@ import {
 } from "tone";
 import { type Time } from "tone/build/esm/core/type/Units";
 import { type InstrumentStateBassicType } from "~/types/InstrumentStateType";
-import signalToDb from "~/utils/math/signalToDb";
 import {
   sliderToParam,
   sliderToParamEnv,
@@ -20,15 +18,16 @@ import {
   sliderToParamLfoFreq,
   sliderToSignal,
 } from "./utils";
+import type ChannelStrip from "~/types/ChannelStrip";
+import newChannelStrip from "../newChannelStrip";
 
 export type BassicType = {
+  channelStrip: ChannelStrip;
   voices: BassicVoiceType[];
   currentStep: number;
-  masterVolume: Volume;
   play: (note: string, time: Time) => void;
   stop: (time: Time) => void;
   playAndStop: (note: string, duration: Time, time: Time) => void;
-  setMasterVolume: (val: number) => void;
   loadPreset: (preset: InstrumentStateBassicType) => void;
   name: string;
   type: "keys";
@@ -79,11 +78,11 @@ export type BassicVoiceType = {
   noiseGain: Gain;
 };
 
-const bassic = function (masterOut: Volume): BassicType {
+const bassic = function (output: ChannelStrip): BassicType {
   const now = Transport.now();
 
   const newBassic: BassicType = {
-    masterVolume: new Volume(0).connect(masterOut),
+    channelStrip: newChannelStrip(output.masterVolume),
     voices: [] as BassicVoiceType[],
     lfo: new LFO(5, 0, 20000).set({ amplitude: 0 }).start(now),
     noise: new Noise("white").start(),
@@ -135,11 +134,6 @@ const bassic = function (masterOut: Volume): BassicType {
           firstVoice.envelope.triggerAttackRelease(duration, time);
         }
       }
-    },
-    setMasterVolume: function (val: number) {
-      const dBValue = signalToDb(val);
-
-      this.masterVolume.volume.value = dBValue;
     },
     loadPreset: function (preset: InstrumentStateBassicType) {
       const envAttack = sliderToParamEnv(preset.parameters.envelope.attack);
@@ -229,7 +223,6 @@ const bassic = function (masterOut: Volume): BassicType {
     polyphony: 1,
     new: true,
   };
-
   //newBassic.lfo.connect(newBassic.lfoFilterGain);
   //newBassic.lfoFilterGain.connect(newBassic.lfoFilterScaler);
 
@@ -254,7 +247,7 @@ const bassic = function (masterOut: Volume): BassicType {
     voice.oscillator.connect(voice.oscGain);
     voice.oscGain.connect(voice.filter);
     voice.filter.connect(voice.vca);
-    voice.vca.connect(newBassic.masterVolume);
+    voice.vca.connect(newBassic.channelStrip.masterVolume);
 
     voice.subOscillator.connect(voice.subOscGain);
     voice.subOscGain.connect(voice.filter);

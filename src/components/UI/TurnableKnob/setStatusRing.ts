@@ -1,4 +1,5 @@
 import { type KnobRange } from "~/types/Knobs";
+import { scaleValue } from "~/utils/math/scaleValue";
 
 export const setStatusRing = (
   element: SVGCircleElement,
@@ -7,6 +8,11 @@ export const setStatusRing = (
 ) => {
   if (range === "PlusMinus") {
     element.style.rotate = "-90deg";
+    value = scaleValue({
+      value,
+      fromScale: { start: 0, end: 1 },
+      toScale: { start: -1, end: 1 },
+    });
   } else {
     element.style.rotate = "135deg";
   }

@@ -8,6 +8,8 @@ import {
 import VolumeSlider from "../UI/VolumeSlider";
 import { type DrumsType } from "~/instruments/drums/drums";
 import { type BassicType } from "~/instruments/bassic/bassic";
+import TurnableKnob from "../UI/TurnableKnob/TurnableKnob";
+import handlePan from "~/utils/handlePan";
 type SceneComponentProps = {
   instrumentIndex: number;
   instrument: DrumsType | BassicType;
@@ -30,7 +32,7 @@ const ChannelComponent = ({
       type: "drums",
       master: true,
     });
-    instrument.setMasterVolume(val);
+    instrument.channelStrip.setMasterVolume(val);
   };
 
   return (
@@ -47,6 +49,17 @@ const ChannelComponent = ({
             {instrumentState.modelName}
           </div>
         </Link>
+        <div className="flex flex-col items-center justify-center gap-2 text-xs">
+          PAN
+          <TurnableKnob
+            width="w-10"
+            range="PlusMinus"
+            callback={(value) => {
+              handlePan(value, instrument.channelStrip.pan);
+            }}
+            value={0.5}
+          />
+        </div>
         <div className="h-full w-8/12">
           <VolumeSlider
             valueState={instrumentState.masterVolume}
